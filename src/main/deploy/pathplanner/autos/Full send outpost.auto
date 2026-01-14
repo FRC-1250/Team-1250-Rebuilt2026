@@ -13,18 +13,6 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Outpost p2"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Outpost p3"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
             "pathName": "Outpost p4"
           }
         }
