@@ -60,7 +60,11 @@
     "edu.wpi.first.math.**.struct.*",
   ],
   "java.dependency.enableDependencyCheckup": false,
+  // 1250 Custom settings 
   "editor.tabSize": 4,
   "editor.detectIndentation": false,
-  "editor.insertSpaces": true
+  "editor.insertSpaces": true,
+  "[java]": {
+    "editor.formatOnSave": true
+}
 }
