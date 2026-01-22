@@ -12,7 +12,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 public class HealthMonitor {
     private static HealthMonitor instance;
-    private final Map<String, Map<String, HealthStatus>> healthStatus = new ConcurrentHashMap<>();
+    private final Map<String, Map<String, DeviceStatus>> healthStatus = new ConcurrentHashMap<>();
     private final Map<String, Map<String, PhoenixHealthChecker>> subsystems = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final long checkInterval;
@@ -44,7 +44,7 @@ public class HealthMonitor {
     private HealthMonitor addComponent(String deviceName, PhoenixHealthChecker e) {
         subsystems.computeIfAbsent(e.subsystemName, k -> new ConcurrentHashMap<>()).put(deviceName, e);
         healthStatus.computeIfAbsent(e.subsystemName, k -> new ConcurrentHashMap<>()).put(deviceName,
-                HealthStatus.IS_OK);
+                DeviceStatus.OK);
         return this;
     }
 
@@ -72,30 +72,31 @@ public class HealthMonitor {
     }
 
     private void checkHealth() {
-        if (!paused) {
-            for (var subsystem : subsystems.entrySet()) {
-                for (var component : subsystem.getValue().entrySet()) {
-                    if (component.getValue().isDeviceHealthy()) {
-                        healthStatus.get(subsystem.getKey()).put(component.getKey(), HealthStatus.IS_OK);
-                    } else {
-                        healthStatus.get(subsystem.getKey()).put(component.getKey(), HealthStatus.ERROR);
-                    }
+        if (paused)
+            return;
+        else {
+            for (Map.Entry<String, Map<String, PhoenixHealthChecker>> subsystem : subsystems.entrySet()) {
+                for (Map.Entry<String, PhoenixHealthChecker> component : subsystem.getValue().entrySet()) {
+                    healthStatus.get(subsystem.getKey()).put(component.getKey(), component.getValue().runHealthCheck());
                 }
             }
         }
     }
 
-    public HealthStatus getSubsystemStatus(String subsystemName) {
-        if (paused) {
-            return HealthStatus.IS_OK;
+    public DeviceStatus getSubsystemStatus(String subsystemName) {
+        if (paused || !healthStatus.containsKey(subsystemName)) {
+            return DeviceStatus.OK;
         } else {
-            if (healthStatus.containsKey(subsystemName)) {
-                for (var component : healthStatus.get(subsystemName).values()) {
-                    if (component == HealthStatus.ERROR)
-                        return HealthStatus.ERROR;
+            DeviceStatus aggregateStatus = DeviceStatus.OK;
+            for (DeviceStatus status : healthStatus.get(subsystemName).values()) {
+                if (status == DeviceStatus.ERROR) {
+                    return DeviceStatus.ERROR;
+                }
+                if (status == DeviceStatus.WARN) {
+                    aggregateStatus = DeviceStatus.WARN;
                 }
             }
-            return HealthStatus.IS_OK;
+            return aggregateStatus;
         }
     }
 }

@@ -1,7 +1,5 @@
 package frc.robot.telemetry;
 
-import java.util.List;
-
 import com.ctre.phoenix6.hardware.ParentDevice;
 
 import edu.wpi.first.wpilibj.Alert;
@@ -12,46 +10,41 @@ public abstract class PhoenixHealthChecker {
     private final int deviceID;
     public final String subsystemName;
     private final Alert alert;
-    private boolean healthy;
+
+    private DeviceStatus status = DeviceStatus.OK;
+    protected String lastErrorMessage = "";
 
     public PhoenixHealthChecker(final ParentDevice device, final String subsystemName) {
         this.device = device;
         this.deviceID = device.getDeviceID();
         this.subsystemName = subsystemName;
-        alert = new Alert("", AlertType.kError);
+        this.alert = new Alert("", AlertType.kError);
     }
 
-    public boolean isDeviceHealthy() {
-        healthy = checkUp();
-        alert.set(!healthy);
-        return healthy;
+    public DeviceStatus runHealthCheck() {
+        status = checkDeviceHealth();
+        if (status == DeviceStatus.OK) {
+            alert.set(false);
+        } else {
+            alert.set(true);
+        }
+        return status;
     }
 
-    protected abstract List<Boolean> faultsToBooleanList();
+    protected abstract DeviceStatus checkSpecificDeviceHealth();
 
-    private boolean checkUp() {
+    protected void updateAlertIfChanged(String newError) {
+        if (!newError.equals(lastErrorMessage)) {
+            lastErrorMessage = newError;
+            alert.setText(String.format("[%s] ID %d: %s", subsystemName, deviceID, newError));
+        }
+    }
+
+    private DeviceStatus checkDeviceHealth() {
         if (!device.isConnected()) {
-            setAlertMessage("is device connected? Check for power or CAN bus issues.");
-            return false;
+            updateAlertIfChanged("Disconnected: Check power/CAN connections.");
+            return DeviceStatus.ERROR;
         }
-
-        if (!areBooleanStatusSignalsHealthy(faultsToBooleanList())) {
-            setAlertMessage("faults detected. Check phoenix tuner.");
-            return false;
-        }
-        return true;
-    }
-
-    private void setAlertMessage(final String errorString) {
-        alert.setText(String.format("[%s] CAN ID %d, %s", subsystemName, deviceID, errorString));
-    }
-
-    private boolean areBooleanStatusSignalsHealthy(final List<Boolean> statusSignalValues) {
-        for (final boolean statusSignalValue : statusSignalValues) {
-            if (statusSignalValue) {
-                return false;
-            }
-        }
-        return true;
+        return checkSpecificDeviceHealth();
     }
 }

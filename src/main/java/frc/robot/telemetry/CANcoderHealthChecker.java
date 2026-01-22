@@ -1,24 +1,40 @@
 package frc.robot.telemetry;
 
-import java.util.Arrays;
-import java.util.List;
-
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.CANcoder;
 
 public class CANcoderHealthChecker extends PhoenixHealthChecker {
 
-    private final CANcoder cancoder;
+    private final StatusSignal<Boolean> bootDuringEnable;
+    private final StatusSignal<Boolean> badMagnet;
+    private final StatusSignal<Boolean> undervoltage;
 
     public CANcoderHealthChecker(CANcoder cancoder, String subsystemName) {
         super(cancoder, subsystemName);
-        this.cancoder = cancoder;
+        this.bootDuringEnable = cancoder.getFault_BootDuringEnable();
+        this.badMagnet = cancoder.getFault_BadMagnet();
+        this.undervoltage = cancoder.getFault_Undervoltage();
     }
 
     @Override
-    protected List<Boolean> faultsToBooleanList() {
-        return Arrays.asList(
-                cancoder.getFault_BootDuringEnable().getValue(),
-                cancoder.getFault_BadMagnet().getValue(),
-                cancoder.getFault_Undervoltage().getValue());
+    protected DeviceStatus checkSpecificDeviceHealth() {
+        BaseStatusSignal.refreshAll(bootDuringEnable, badMagnet, undervoltage);
+
+        if (bootDuringEnable.getValue()) {
+            updateAlertIfChanged("Fault: Boot During Enable");
+            return DeviceStatus.ERROR;
+        }
+        if (badMagnet.getValue()) {
+            updateAlertIfChanged("Fault: Bad Magnet");
+            return DeviceStatus.ERROR;
+        }
+        if (undervoltage.getValue()) {
+            updateAlertIfChanged("Fault: Undervoltage");
+            return DeviceStatus.ERROR;
+        }
+
+        lastErrorMessage = "";
+        return DeviceStatus.OK;
     }
 }
