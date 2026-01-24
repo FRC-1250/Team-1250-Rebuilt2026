@@ -17,7 +17,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FuelLine;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
@@ -28,7 +30,7 @@ import frc.robot.subsystems.Swerve;
 public class RobotContainer {
 
     /* Subsystems */
-    private final Swerve swerve = new Swerve(); // PLACEHOLDER
+    public final CommandSwerveDrivetrain SwerveDriveState = TunerConstants.createDrivetrain();
     private final FuelLine intake = new FuelLine();
     private final Shooter shooter = new Shooter();
     private final Climber climber = new Climber();
@@ -36,7 +38,7 @@ public class RobotContainer {
     private final Leds leds = new Leds();
 
     private final CommandFactory commandFactory = new CommandFactory(
-            swerve,
+            SwerveDriveState,
             intake,
             shooter,
             climber,
