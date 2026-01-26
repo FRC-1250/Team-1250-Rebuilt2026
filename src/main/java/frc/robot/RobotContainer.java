@@ -24,20 +24,19 @@ import frc.robot.subsystems.FuelLine;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Swerve;
 
 @Logged
 public class RobotContainer {
 
     /* Subsystems */
-    public final CommandSwerveDrivetrain SwerveDriveState = TunerConstants.createDrivetrain();
+    private final CommandSwerveDrivetrain SwerveDriveState = TunerConstants.createDrivetrain();
     private final FuelLine intake = new FuelLine();
     private final Shooter shooter = new Shooter();
     private final Climber climber = new Climber();
     private final Limelight limelight = new Limelight();
     private final Leds leds = new Leds();
 
-    private final CommandFactory commandFactory = new CommandFactory(
+    public final CommandFactory commandFactory = new CommandFactory(
             SwerveDriveState,
             intake,
             shooter,
