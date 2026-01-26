@@ -35,11 +35,6 @@ public class TalonHealthChecker extends PhoenixHealthChecker {
                 deviceTemp, bootDuringEnable, oversupplyV,
                 remoteSensorDataInvalid, remoteSensorReset, underVoltage, unstableSupplyV);
 
-        if (deviceTemp.getValueAsDouble() > 75.0) {
-            updateAlertIfChanged("Motor Overheating (" + deviceTemp.getValueAsDouble() + "C)");
-            return DeviceStatus.WARN;
-        }
-
         if (bootDuringEnable.getValue()) {
             updateAlertIfChanged("Fault: Boot During Enable");
             return DeviceStatus.ERROR;
@@ -68,6 +63,11 @@ public class TalonHealthChecker extends PhoenixHealthChecker {
         if (underVoltage.getValue()) {
             updateAlertIfChanged("Fault: Undervoltage");
             return DeviceStatus.ERROR;
+        }
+
+        if (deviceTemp.getValueAsDouble() > 75.0) {
+            updateAlertIfChanged("Motor Overheating (" + deviceTemp.getValueAsDouble() + "C)");
+            return DeviceStatus.WARN;
         }
 
         lastErrorMessage = "";
