@@ -21,6 +21,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FuelLine;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
@@ -30,7 +31,8 @@ public class RobotContainer {
 
     /* Subsystems */
     private final CommandSwerveDrivetrain SwerveDriveState = TunerConstants.createDrivetrain();
-    private final FuelLine intake = new FuelLine();
+    private final FuelLine fuelLine = new FuelLine();
+    private final Intake intake = new Intake();
     private final Shooter shooter = new Shooter();
     private final Climber climber = new Climber();
     private final Limelight limelight = new Limelight();
@@ -38,6 +40,7 @@ public class RobotContainer {
 
     public final CommandFactory commandFactory = new CommandFactory(
             SwerveDriveState,
+            fuelLine,
             intake,
             shooter,
             climber,
@@ -85,6 +88,7 @@ public class RobotContainer {
     }
 
     private void configureSinglePlayerBindings() {
+        SmartDashboard.putData(commandFactory.cmdSetIntakeVelocity(0));
 
     }
 
