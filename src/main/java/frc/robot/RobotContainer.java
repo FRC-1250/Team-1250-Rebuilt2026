@@ -25,6 +25,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
+import frc.robot.telemetry.HealthMonitor;
 
 @Logged
 public class RobotContainer {
@@ -67,6 +68,13 @@ public class RobotContainer {
         configureNamedCommands();
         configureAutoCommands();
         configureControlLoopChooser();
+        configureMonitors();
+    }
+
+    private void configureMonitors() {
+        HealthMonitor hm = HealthMonitor.getInstance();
+        fuelLine.registerWithHealthMonitor(hm);
+        intake.registerWithHealthMonitor(hm);
     }
 
     /* Bindings */

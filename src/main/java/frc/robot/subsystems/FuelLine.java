@@ -14,9 +14,11 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.telemetry.HealthMonitor;
+import frc.robot.telemetry.MonitoredSubsystem;
 
 @Logged
-public class FuelLine extends SubsystemBase {
+public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
     private final TalonFX conveyorBelt;
     private final VelocityVoltage conveyorBeltVelocityControl;
@@ -55,5 +57,10 @@ public class FuelLine extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
+    }
+
+    @Override
+    public void registerWithHealthMonitor(HealthMonitor monitor) {
+        monitor.addComponent(getSubsystem(), "Conveyor Belt", conveyorBelt);
     }
 }
