@@ -23,16 +23,19 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FuelLine;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
+import frc.robot.telemetry.HealthMonitor;
 
 @Logged
 public class RobotContainer {
 
     /* Subsystems */
-    public final CommandSwerveDrivetrain SwerveDriveState = TunerConstants.createDrivetrain();
-    private final FuelLine intake = new FuelLine();
+    private final CommandSwerveDrivetrain SwerveDriveState = TunerConstants.createDrivetrain();
+    private final FuelLine fuelLine = new FuelLine();
+    private final Intake intake = new Intake();
     private final Shooter shooter = new Shooter();
     private final Climber climber = new Climber();
     private final Limelight limelight = new Limelight();
@@ -40,6 +43,7 @@ public class RobotContainer {
 
     public final CommandFactory commandFactory = new CommandFactory(
             SwerveDriveState,
+            fuelLine,
             intake,
             shooter,
             climber,
@@ -68,6 +72,13 @@ public class RobotContainer {
         configureNamedCommands();
         configureAutoCommands();
         configureControlLoopChooser();
+        configureMonitors();
+    }
+
+    private void configureMonitors() {
+        HealthMonitor hm = HealthMonitor.getInstance();
+        fuelLine.registerWithHealthMonitor(hm);
+        intake.registerWithHealthMonitor(hm);
     }
 
     /* Bindings */
@@ -89,6 +100,7 @@ public class RobotContainer {
     }
 
     private void configureSinglePlayerBindings() {
+        SmartDashboard.putData(commandFactory.cmdSetIntakeVelocity(0));
 
         DriverJoystick.rightTrigger().whileTrue(Commands.none()); // Shoot
         DriverJoystick.leftTrigger().whileTrue(Commands.none()); // Tageting
