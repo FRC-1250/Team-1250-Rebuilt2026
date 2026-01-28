@@ -1,7 +1,6 @@
-// Copyright (c) FIRST and other WPILib contributors.
+// Copyright (c) FIRST and other WPILib contributors
 // Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
+// the WPILib BSD license file in the root directory of this project
 package frc.robot;
 
 import java.util.function.BooleanSupplier;
@@ -11,12 +10,15 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -56,6 +58,8 @@ public class RobotContainer {
 
     private final SlewRateLimiter xLimiter = new SlewRateLimiter(14, -18, 0);
     private final SlewRateLimiter yLimiter = new SlewRateLimiter(14, -18, 0);
+    private final CommandXboxController DriverJoystick = new CommandXboxController(0);
+    private final CommandXboxController DevJoystick = new CommandXboxController(1);
 
     /* Auto */
     private final SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -98,6 +102,14 @@ public class RobotContainer {
     private void configureSinglePlayerBindings() {
         SmartDashboard.putData(commandFactory.cmdSetIntakeVelocity(0));
 
+        DriverJoystick.rightTrigger().whileTrue(Commands.none()); // Shoot
+        DriverJoystick.leftTrigger().whileTrue(Commands.none()); // Tageting
+        DriverJoystick.rightBumper().onTrue(Commands.none()); // Intake out
+        DriverJoystick.leftBumper().onTrue(Commands.none()); // Intake in
+        DriverJoystick.y().onTrue(Commands.none()); // Climb foeward
+        DriverJoystick.b().onTrue(Commands.none()); // Climb back
+        DriverJoystick.x().onTrue(Commands.none()); // drive to tower position
+
     }
 
     private void configureTwoPlayerBindings() {
@@ -105,6 +117,13 @@ public class RobotContainer {
     }
 
     private void configureDevPlayerBindings() {
+        DevJoystick.rightTrigger().whileTrue(Commands.none()); // Shoot
+        DevJoystick.leftTrigger().whileTrue(Commands.none()); // Tageting
+        DevJoystick.rightBumper().onTrue(Commands.none()); // Intake out
+        DevJoystick.leftBumper().onTrue(Commands.none()); // Intake in
+        DevJoystick.y().onTrue(Commands.none()); // Climb foeward
+        DevJoystick.b().onTrue(Commands.none()); // Climb back
+        DevJoystick.x().onTrue(Commands.none()); // drive to tower position
 
     }
 
@@ -140,5 +159,4 @@ public class RobotContainer {
     private void configureNamedCommands() {
 
     }
-
 }
