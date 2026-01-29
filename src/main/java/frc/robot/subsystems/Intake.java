@@ -1,3 +1,7 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Hertz;
@@ -10,26 +14,27 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.telemetry.MonitoredSubsystem;
 
-@Logged
-public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
+public class Intake extends SubsystemBase implements MonitoredSubsystem {
+    private final Solenoid hopperExtension;
+    private final TalonFX intake;
+    private final VelocityVoltage intakeVelocityControl;
 
-    private final TalonFX conveyorBelt;
-    private final VelocityVoltage conveyorBeltVelocityControl;
-
-    public FuelLine() {
-        conveyorBelt = new TalonFX(30);
-        conveyorBeltVelocityControl = new VelocityVoltage(0);
+    public Intake() {
+        hopperExtension = new Solenoid(PneumaticsModuleType.REVPH, 1);
+        intake = new TalonFX(40);
+        intakeVelocityControl = new VelocityVoltage(0);
 
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
-        motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
+        motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
         motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
         Slot0Configs slot0Configs = new Slot0Configs();
@@ -39,19 +44,28 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         slot0Configs.kI = 0;
         slot0Configs.kD = 0;
 
-        conveyorBelt.getConfigurator().apply(talonFXConfiguration);
-        conveyorBelt.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
+        intake.getConfigurator().apply(talonFXConfiguration);
+        intake.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
+
     }
 
-    public void setConveyorVelocity(double rotationsPerSecond, Voltage feedForward) {
-        conveyorBelt.setControl(
-                conveyorBeltVelocityControl
+    public void setVelocity(double rotationsPerSecond, Voltage feedForward) {
+        intake.setControl(
+                intakeVelocityControl
                         .withVelocity(rotationsPerSecond)
                         .withFeedForward(feedForward));
     }
 
-    public double getConveyorBeltVelocity() {
-        return conveyorBelt.getVelocity().getValueAsDouble();
+    public double getIntakeVelocity() {
+        return intake.getVelocity().getValueAsDouble();
+    }
+
+    public void extend() {
+        hopperExtension.set(true);
+    }
+
+    public void retract() {
+        hopperExtension.set(false);
     }
 
     @Override
@@ -61,6 +75,6 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
     @Override
     public void registerWithHealthMonitor(HealthMonitor monitor) {
-        monitor.addComponent(getSubsystem(), "Conveyor Belt", conveyorBelt);
+        monitor.addComponent(getSubsystem(), "Intake", intake);
     }
 }
