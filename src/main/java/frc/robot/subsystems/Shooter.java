@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Hertz;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -14,9 +15,11 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import frc.robot.generated.TunerConstants;
 
 @Logged
 public class Shooter {
@@ -35,18 +38,23 @@ public class Shooter {
 
     Solenoid hoodSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 0);
 
-    void setloderCamPosition(double rotations) {
+    public void setLoderCamPosition(double rotations) {
         loderCamTalonFX.setControl(
                 loderCamPositionVoltage
                         .withPosition(rotations)
                         .withFeedForward(Volts.of(0)));
     }
 
-    void setloderCamVelocity(double rotations) {
+    public void setloderCamVelocity(double rotations) {
         loderCamTalonFX.setControl(
                 loderCamPositionVoltage
                         .withVelocity(rotations)
                         .withFeedForward(Volts.of(0)));
+    }
+
+    public void resetMotorPositionToPosition(double rotations) {
+        loderCamTalonFX.setPosition(rotations);
+
     }
 
     @Logged(name = "Position")
@@ -57,6 +65,10 @@ public class Shooter {
     @Logged(name = "velocity")
     public double loderCamPositionVoltage() {
         return loderCamTalonFX.getVelocity().getValueAsDouble();
+    }
+
+    public boolean isNearPositionAndTolerance(double position, double tolerance) {
+        return MathUtil.isNear(position, loderCamPositionVoltage(), tolerance);
     }
 
     public Shooter() {
@@ -81,6 +93,6 @@ public class Shooter {
         intakeTalonFXConfiguration.Slot1 = intakeVelocityPIDConfigs;
         intakeTalonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
         intakeTalonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
-
     }
+
 }

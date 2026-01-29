@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -96,4 +97,18 @@ public class CommandFactory {
                 () -> fuelLine.setConveyorVelocity(0, Voltage.ofBaseUnits(0, Units.Volts)),
                 fuelLine);
     }
+
+    /*
+     * shooter
+     */
+    public Command cmdSetLoderCamVelocity(double Velocity) {
+        return Commands.runOnce(
+                () -> shooter.setloderCamVelocity(Velocity));
+    }
+
+    public Command cmdSetLoderCamPosition(double Rotations) {
+        return Commands.runOnce(
+                () -> shooter.setLoderCamPosition(Rotations));
+    }
+
 }
