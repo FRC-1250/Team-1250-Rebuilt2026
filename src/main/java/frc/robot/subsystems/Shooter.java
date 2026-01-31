@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
@@ -12,10 +13,14 @@ import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
@@ -38,6 +43,26 @@ public class Shooter {
     TalonFX flyWheelLeader = new TalonFX(23);
     VelocityVoltage flyWheelVelocityControl = new VelocityVoltage(0).withSlot(0);
     TalonFX flyWheelFollower = new TalonFX(24);
+
+    TalonFX hood = new TalonFX(25);
+    PositionVoltage hoodPositionControl = new PositionVoltage(0).withSlot(0);
+    private CANcoder hoodAbsoluteEncoder = new CANcoder(24);
+    private final double encoderOffset = 0;
+
+    public void setHoodPosition(double rotations) {
+        hood.setControl(
+                hoodPositionControl
+                        .withPosition(rotations)
+                        .withFeedForward(Volts.of(0)));
+    }
+
+    public boolean isHoodNearPosition(double position, double tolerance) {
+        return MathUtil.isNear(position, getHoodPosition(), tolerance);
+    }
+
+    public double getHoodPosition() {
+        return loaderCam.getPosition().getValueAsDouble();
+    }
 
     public void setLoaderCamPosition(double rotations) {
         loaderCam.setControl(
@@ -76,6 +101,13 @@ public class Shooter {
                         .withFeedForward(Volts.of(0)));
     }
 
+    public void setFlywheelVelocity(double rotationsPerSecond) {
+        flyWheelLeader.setControl(
+                flyWheelVelocityControl
+                        .withVelocity(rotationsPerSecond)
+                        .withFeedForward(Volts.of(0)));
+    }
+
     public double getPreFlywheelVelocity() {
         return precursorFlyWheelLeader.getVelocity().getValueAsDouble();
     }
@@ -84,9 +116,19 @@ public class Shooter {
         return MathUtil.isNear(rotationsPerSecond, getPreFlywheelVelocity(), tolerance);
     }
 
+    public double getFlywheelVelocity() {
+        return flyWheelLeader.getVelocity().getValueAsDouble();
+    }
+
+    public boolean isFlywheelNearRotationsPerSecond(double rotationsPerSecond, double tolerance) {
+        return MathUtil.isNear(rotationsPerSecond, getFlywheelVelocity(), tolerance);
+    }
+
     public Shooter() {
         configureLoaderCam();
         configurePreFlywheel();
+        configureFlywheel();
+        configureEncoder();
     }
 
     private void configureLoaderCam() {
@@ -143,4 +185,56 @@ public class Shooter {
                 .setControl(new Follower(precursorFlyWheelLeader.getDeviceID(), MotorAlignmentValue.Opposed));
     }
 
+    private void configureFlywheel() {
+        MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
+        motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
+        motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
+
+        flyWheelLeader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
+
+        Slot1Configs velocityPIDConfigs = new Slot1Configs()
+                .withKS(0)
+                .withKV(0)
+                .withKP(0)
+                .withKI(0)
+                .withKD(0);
+
+        TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
+        talonFXConfiguration.Slot1 = velocityPIDConfigs;
+        talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
+        talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+        talonFXConfiguration.MotorOutput = motorOutputConfigs;
+        flyWheelLeader.getConfigurator().apply(talonFXConfiguration);
+        flyWheelFollower.getConfigurator().apply(talonFXConfiguration);
+
+        flyWheelFollower
+                .setControl(new Follower(flyWheelLeader.getDeviceID(), MotorAlignmentValue.Opposed));
+    }
+
+    private void configureEncoder() {
+        CANcoderConfiguration hoodAbsoluteEncoderConfiguration = new CANcoderConfiguration();
+        // Set encoder to provide a value between 0 and 1
+        hoodAbsoluteEncoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
+        hoodAbsoluteEncoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+        hoodAbsoluteEncoderConfiguration.MagnetSensor.MagnetOffset = encoderOffset;
+        hoodAbsoluteEncoder.getConfigurator().apply(hoodAbsoluteEncoderConfiguration);
+        hoodAbsoluteEncoder.getAbsolutePosition().setUpdateFrequency(200);
+
+        Slot0Configs hoodPositionPIDConfigs = new Slot0Configs()
+                .withGravityType(GravityTypeValue.Arm_Cosine)
+                .withKG(0)
+                .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
+                .withKS(0)
+                .withKP(0)
+                .withKI(0)
+                .withKD(0);
+
+        TalonFXConfiguration hoodConfiguration = new TalonFXConfiguration();
+        hoodConfiguration.Slot0 = hoodPositionPIDConfigs;
+        hoodConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
+        hoodConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+        hoodConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        hoodConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        hood.getConfigurator().apply(hoodConfiguration);
+    }
 }
