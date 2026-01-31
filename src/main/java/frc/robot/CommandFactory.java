@@ -1,9 +1,14 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.CommandFactory.NetworkTableWidget;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.SwerveVisionLogic;
 import frc.robot.subsystems.Climber;
@@ -13,6 +18,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.TunerConstants;
 
 public class CommandFactory {
 
@@ -26,6 +32,18 @@ public class CommandFactory {
 
     public Command cmdSwerveVisionLogic() {
         return new SwerveVisionLogic(cmdLimelight, cmdSwerveDriveState);
+    }
+
+    public Rotation2d determineHeading(Translation2d feildHeading) {
+        {
+            return Rotation2d.fromRadians(
+                    Math.atan2(
+                            feildHeading.getY() - cmdSwerveDriveState.getState().Pose.getY(),
+                            feildHeading.getX() - cmdSwerveDriveState.getState().Pose.getX()))
+                    .plus(cmdSwerveDriveState.getOperatorForwardDirection());
+
+        }
+
     }
 
     public CommandFactory(

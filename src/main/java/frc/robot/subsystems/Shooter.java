@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Hertz;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -15,6 +16,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Frequency;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -83,4 +85,7 @@ public class Shooter {
         intakeTalonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     }
+
+    private double MaxSpeed = TunerConstants.kSpeedAt12Voltss.in(MetersPerSecond);
+
 }
