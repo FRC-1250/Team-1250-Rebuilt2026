@@ -3,12 +3,20 @@
 // the WPILib BSD license file in the root directory of this project
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import java.util.function.BooleanSupplier;
 
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentricFacingAngle;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.event.EventLoop;
@@ -50,6 +58,22 @@ public class RobotContainer {
             limelight,
             leds);
 
+    private final Telemetry logger = new Telemetry();
+
+    // kSpeedAt12Volts desired top speed
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+
+    // 3/4 of a rotation per second, max angular velocity
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+
+    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
+    private final SwerveRequest.FieldCentricFacingAngle driveWithAngle = new FieldCentricFacingAngle()
+            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
     /* Bindings */
     private final SendableChooser<EventLoop> controllerModeChooser = new SendableChooser<>();
     private final EventLoop singlePlayer = new EventLoop();
@@ -73,6 +97,8 @@ public class RobotContainer {
         configureAutoCommands();
         configureControlLoopChooser();
         configureMonitors();
+        SwerveDriveState.registerTelemetry(logger::telemeterize);
+
     }
 
     private void configureMonitors() {
@@ -102,6 +128,13 @@ public class RobotContainer {
     private void configureSinglePlayerBindings() {
         SmartDashboard.putData(commandFactory.cmdSetIntakeVelocity(0));
 
+        SwerveDriveState.setDefaultCommand(
+                SwerveDriveState.applyRequest(() -> drive
+                        .withVelocityX(yLimiter.calculate(-DriverJoystick.getLeftY() * MaxSpeed))
+                        .withVelocityY(xLimiter.calculate(-DriverJoystick.getLeftX() * MaxSpeed))
+                        .withRotationalRate(-DriverJoystick.getRightX() * MaxAngularRate))
+                        .withName("Field centric swerve"));
+
         DriverJoystick.rightTrigger().whileTrue(Commands.none()); // Shoot
         DriverJoystick.leftTrigger().whileTrue(Commands.none()); // Tageting
         DriverJoystick.rightBumper().onTrue(Commands.none()); // Intake out
@@ -109,6 +142,12 @@ public class RobotContainer {
         DriverJoystick.y().onTrue(Commands.none()); // Climb foeward
         DriverJoystick.b().onTrue(Commands.none()); // Climb back
         DriverJoystick.x().onTrue(Commands.none()); // drive to tower position
+        DriverJoystick.a(singlePlayer).whileTrue(SwerveDriveState.applyRequest(() -> driveWithAngle
+                .withVelocityX(yLimiter.calculate(-DriverJoystick.getLeftY() * MaxSpeed))
+                .withVelocityY(xLimiter.calculate(-DriverJoystick.getLeftX() * MaxSpeed))
+                .withHeadingPID(8, 0, 0)
+                .withTargetDirection(commandFactory.determineHeading(new Translation2d(4.791, 3.978))))
+                .withName("Point centric swerve")); // Toggle auto heading
 
     }
 
