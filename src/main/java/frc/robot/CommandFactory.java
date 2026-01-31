@@ -103,12 +103,12 @@ public class CommandFactory {
      */
     public Command cmdSetLoderCamVelocity(double Velocity) {
         return Commands.runOnce(
-                () -> shooter.setloderCamVelocity(Velocity));
+                () -> shooter.setLoaderCamVelocity(Velocity));
     }
 
     public Command cmdSetLoderCamPosition(double Rotations) {
         return Commands.runOnce(
-                () -> shooter.setLoderCamPosition(Rotations));
+                () -> shooter.setLoaderCamPosition(Rotations));
     }
 
 }
