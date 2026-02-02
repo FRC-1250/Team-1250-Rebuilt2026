@@ -48,7 +48,12 @@ public class RobotContainer {
     private final Climber climber = new Climber();
     private final Limelight limelight = new Limelight();
     private final Leds leds = new Leds();
-
+    public Translation2d blueHub = new Translation2d(4.791, 3.978);
+    public Translation2d redHub = new Translation2d(12, 4.155);
+    public Translation2d blueDepotSide = new Translation2d(1.45, 6.7);
+    public Translation2d blueOutpostSide = new Translation2d(1.45, 1.48);
+    public Translation2d redDepotSide = new Translation2d(14.596, 1.48);
+    public Translation2d redOutpostSide = new Translation2d(14.596, 6.801);
     public final CommandFactory commandFactory = new CommandFactory(
             SwerveDriveState,
             fuelLine,
