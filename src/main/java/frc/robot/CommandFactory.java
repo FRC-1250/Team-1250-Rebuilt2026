@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.CommandFactory.NetworkTableWidget;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.commands.SwerveVisionLogic;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -90,20 +91,15 @@ public class CommandFactory {
 
     public Command cmdSetIntakeVelocity(double rotationsPerSecond) {
         return Commands.runOnce(
-                () -> intake.setVelocity(rotationsPerSecond, Voltage.ofBaseUnits(0, Units.Volts)),
+                () -> intake.setIntakeVelocity(rotationsPerSecond, Voltage.ofBaseUnits(0, Units.Volts)),
                 intake);
     }
 
-    public Command cmdExtendIntake() {
+    public Command cmdSetHopperPosition(double rotations) {
         return Commands.runOnce(
-                () -> intake.extend(),
-                intake);
-    }
-
-    public Command cmdRetractIntake() {
-        return Commands.runOnce(
-                () -> intake.retract(),
-                intake);
+                () -> intake.setHopperPosition(rotations, Voltage.ofBaseUnits(0, Units.Volts)), intake)
+                .andThen(Commands.waitUntil(
+                        () -> intake.isHopperNearPosition(rotations, 1)));
     }
 
     /*
