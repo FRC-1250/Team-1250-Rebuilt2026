@@ -128,4 +128,8 @@ public class CommandFactory {
                 () -> shooter.setLoaderCamPosition(Rotations));
     }
 
+    public Command cmdSetprecursorFlywheelVelocity(double rotationsPerSecond) {
+        return Commands.runOnce(
+                () -> shooter.setPrecursorFlywheelVelocity(rotationsPerSecond));
+    }
 }
