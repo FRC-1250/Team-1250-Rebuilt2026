@@ -86,28 +86,22 @@ public class CommandFactory {
      * Intake
      */
 
-    public Command cmdSetIntakeVelocityNT() {
-        double velocity = SmartDashboard.getNumber(NetworkTableWidget.IntakeVelocity.name(), 0);
-        return cmdSetIntakeVelocity(velocity);
-    }
-
-    public Command cmdSetIntakeVelocity(double rotationsPerSecond) {
+    public Command cmdSetIntakeVelocity(Supplier<Double> suppler) {
         return Commands.runOnce(
-                () -> intake.setIntakeVelocity(rotationsPerSecond, Voltage.ofBaseUnits(0, Units.Volts)),
+                () -> intake.setIntakeVelocity(suppler.get(), Voltage.ofBaseUnits(0, Units.Volts)),
                 intake);
     }
 
-    public Command cmdSetHopperPosition(double rotations) {
+    public Command cmdSetHopperPosition(Supplier<Double> suppler) {
         return Commands.runOnce(
-                () -> intake.setHopperPosition(rotations, Voltage.ofBaseUnits(0, Units.Volts)), intake)
-                .andThen(Commands.waitUntil(
-                        () -> intake.isHopperNearPosition(rotations, 1)));
+                () -> intake.setIntakeVelocity(suppler.get(), Voltage.ofBaseUnits(0, Units.Volts)),
+                intake);
     }
 
     /*
      * FuelLine
      */
-    public Command cmdSetConveyorBeltVelocity() {
+    public Command cmdSetConveyorBeltVelocity(Supplier<Double> suppler) {
         return Commands.runOnce(
                 () -> fuelLine.setConveyorVelocity(0, Voltage.ofBaseUnits(0, Units.Volts)),
                 fuelLine);
@@ -129,9 +123,12 @@ public class CommandFactory {
     public Command cmdSetprecursorFlywheelVelocity(double rotationsPerSecond) {
         return Commands.runOnce(
                 () -> shooter.setPrecursorFlywheelVelocity(rotationsPerSecond));
+
+    }
+
     public Command cmdSetIntakeVeloctiy(Supplier<Double> suppler) {
         return Commands.runOnce(
-                () -> intake.setVelocity(suppler.get(), Voltage.ofBaseUnits(0, Units.Volts)),
+                () -> intake.setIntakeVelocity(suppler.get(), Voltage.ofBaseUnits(0, Units.Volts)),
                 intake);
 
     }
