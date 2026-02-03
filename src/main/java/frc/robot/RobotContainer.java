@@ -17,6 +17,10 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.event.EventLoop;
@@ -90,6 +94,24 @@ public class RobotContainer {
     private final CommandXboxController DriverJoystick = new CommandXboxController(0);
     private final CommandXboxController DevJoystick = new CommandXboxController(1);
 
+    private DoubleSubscriber intakeVelocity;
+    private DoubleSubscriber conveyorBeltVelocity;
+    private DoubleSubscriber camVelocity;
+    private DoubleSubscriber preShooterVelocity;
+    private DoubleSubscriber shooterVelocity;
+    private DoubleSubscriber climbPosition;
+
+    private void initilizeNetworkTableWidgets() {
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        NetworkTable datatable = inst.getTable("commands");
+        intakeVelocity = datatable.getDoubleTopic("intakeVelocity").subscribe(0.0);
+        conveyorBeltVelocity = datatable.getDoubleTopic("conveyorBeltVelocity").subscribe(0.0);
+        camVelocity = datatable.getDoubleTopic("camVelocity").subscribe(0.0);
+        preShooterVelocity = datatable.getDoubleTopic("preShooterVelocity").subscribe(0.0);
+        shooterVelocity = datatable.getDoubleTopic("shooterVelocity").subscribe(0.0);
+        climbPosition = datatable.getDoubleTopic("climbPosition").subscribe(0.0);
+    }
+
     /* Auto */
     private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
@@ -103,7 +125,7 @@ public class RobotContainer {
         configureControlLoopChooser();
         configureMonitors();
         SwerveDriveState.registerTelemetry(logger::telemeterize);
-
+        initilizeNetworkTableWidgets();
     }
 
     private void configureMonitors() {

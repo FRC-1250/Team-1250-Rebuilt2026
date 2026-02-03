@@ -11,7 +11,6 @@ import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.CommandFactory.NetworkTableWidget;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.commands.SwerveVisionLogic;
@@ -64,22 +63,6 @@ public class CommandFactory {
         this.climber = climber;
         this.cmdLimelight = limelight;
         this.leds = leds;
-        initilizeNetworkTableWidgets();
-    }
-
-    public enum NetworkTableWidget {
-        IntakeVelocity,
-        ConveyorBeltVelocity,
-        CamVelocity,
-        PreShooterVelocity,
-        ShooterVelocity,
-        ClimbPosition;
-    }
-
-    private void initilizeNetworkTableWidgets() {
-        for (NetworkTableWidget widget : NetworkTableWidget.values()) {
-            SmartDashboard.putNumber(widget.name(), 0);
-        }
     }
 
     /*
