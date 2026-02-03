@@ -28,10 +28,11 @@ import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.generated.TunerConstants;
 
 @Logged
-public class Shooter {
+public class Shooter extends SubsystemBase {
 
     TalonFX loaderCam = new TalonFX(20);
     VelocityVoltage loaderCamVelocityControl = new VelocityVoltage(0).withSlot(0);

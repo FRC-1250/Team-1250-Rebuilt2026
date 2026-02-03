@@ -4,6 +4,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -114,18 +116,23 @@ public class CommandFactory {
     /*
      * shooter
      */
-    public Command cmdSetLoderCamVelocity(double Velocity) {
+    public Command cmdSetLoaderCamVelocity(Supplier<Double> suppler) {
         return Commands.runOnce(
-                () -> shooter.setLoaderCamVelocity(Velocity));
+                () -> shooter.setLoaderCamPosition(suppler.get()), shooter);
     }
 
-    public Command cmdSetLoderCamPosition(double Rotations) {
+    public Command cmdSetLoaderCamPosition(Supplier<Double> suppler) {
         return Commands.runOnce(
-                () -> shooter.setLoaderCamPosition(Rotations));
+                () -> shooter.setLoaderCamPosition(suppler.get()), shooter);
     }
 
     public Command cmdSetprecursorFlywheelVelocity(double rotationsPerSecond) {
         return Commands.runOnce(
                 () -> shooter.setPrecursorFlywheelVelocity(rotationsPerSecond));
+    public Command cmdSetIntakeVeloctiy(Supplier<Double> suppler) {
+        return Commands.runOnce(
+                () -> intake.setVelocity(suppler.get(), Voltage.ofBaseUnits(0, Units.Volts)),
+                intake);
+
     }
 }
