@@ -11,6 +11,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -43,11 +44,11 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         conveyorBelt.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
     }
 
-    public void setConveyorVelocity(double rotationsPerSecond, Voltage feedForward) {
+    public void setConveyorVelocity(double rotationsPerSecond) {
         conveyorBelt.setControl(
                 conveyorBeltVelocityControl
                         .withVelocity(rotationsPerSecond)
-                        .withFeedForward(feedForward));
+                        .withFeedForward(Voltage.ofBaseUnits(0, Units.Volts)));
     }
 
     public double getConveyorBeltVelocity() {

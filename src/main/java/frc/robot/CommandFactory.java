@@ -2,17 +2,11 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Velocity;
-import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.commands.SwerveVisionLogic;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -68,51 +62,84 @@ public class CommandFactory {
     /*
      * Intake
      */
+    public Command cmdSetIntakeVeloctiy(double rotationsPerSecond) {
+        return cmdSetIntakeVelocity(() -> rotationsPerSecond);
+    }
 
-    public Command cmdSetIntakeVelocity(Supplier<Double> suppler) {
+    public Command cmdSetIntakeVelocity(Supplier<Double> supplier) {
         return Commands.runOnce(
-                () -> intake.setIntakeVelocity(suppler.get(), Voltage.ofBaseUnits(0, Units.Volts)),
+                () -> intake.setIntakeVelocity(supplier.get()),
                 intake);
     }
 
-    public Command cmdSetHopperPosition(Supplier<Double> suppler) {
+    public Command cmdSetHopperPosition(double rotations) {
+        return cmdSetHopperPosition(() -> rotations);
+    }
+
+    public Command cmdSetHopperPosition(Supplier<Double> supplier) {
         return Commands.runOnce(
-                () -> intake.setIntakeVelocity(suppler.get(), Voltage.ofBaseUnits(0, Units.Volts)),
-                intake);
+                () -> intake.setHopperPosition(supplier.get()), intake)
+                .andThen(
+                        Commands.waitUntil((() -> intake.isHopperNearPosition(supplier.get(), 1))));
     }
 
     /*
      * FuelLine
      */
-    public Command cmdSetConveyorBeltVelocity(Supplier<Double> suppler) {
+
+    public Command cmdSetRollerVelocity(double rotationsPerSecond) {
+        return cmdSetRollerVelocity(() -> rotationsPerSecond);
+    }
+
+    public Command cmdSetRollerVelocity(Supplier<Double> supplier) {
         return Commands.runOnce(
-                () -> fuelLine.setConveyorVelocity(0, Voltage.ofBaseUnits(0, Units.Volts)),
+                () -> fuelLine.setConveyorVelocity(supplier.get()),
                 fuelLine);
     }
 
     /*
      * shooter
      */
-    public Command cmdSetLoaderCamVelocity(Supplier<Double> suppler) {
-        return Commands.runOnce(
-                () -> shooter.setLoaderCamPosition(suppler.get()), shooter);
+
+    public Command cmdSetLoaderCamPosition(double rotations) {
+        return cmdSetLoaderCamPosition(() -> rotations);
     }
 
-    public Command cmdSetLoaderCamPosition(Supplier<Double> suppler) {
+    public Command cmdSetLoaderCamPosition(Supplier<Double> supplier) {
         return Commands.runOnce(
-                () -> shooter.setLoaderCamPosition(suppler.get()), shooter);
+                () -> shooter.setLoaderCamPosition(supplier.get()), shooter)
+                .andThen(Commands.waitUntil(() -> shooter.isLoaderCamNearPosition(supplier.get(), 1)));
     }
 
-    public Command cmdSetprecursorFlywheelVelocity(double rotationsPerSecond) {
+    public Command cmdSetLoaderCamVelocity(double rotationsPerSecond) {
+        return cmdSetLoaderCamVelocity(() -> rotationsPerSecond);
+    }
+
+    public Command cmdSetLoaderCamVelocity(Supplier<Double> supplier) {
         return Commands.runOnce(
-                () -> shooter.setPrecursorFlywheelVelocity(rotationsPerSecond));
+                () -> shooter.setLoaderCamVelocity(supplier.get()), shooter);
+    }
+
+    public Command cmdSetFuelAcceleratorVelocity(double rotationsPerSecond) {
+        return cmdSetFuelAcceleratorVelocity(() -> rotationsPerSecond);
 
     }
 
-    public Command cmdSetIntakeVeloctiy(Supplier<Double> suppler) {
+    public Command cmdSetFuelAcceleratorVelocity(Supplier<Double> supplier) {
         return Commands.runOnce(
-                () -> intake.setIntakeVelocity(suppler.get(), Voltage.ofBaseUnits(0, Units.Volts)),
-                intake);
+                () -> shooter.setPrecursorFlywheelVelocity(supplier.get()));
 
     }
+
+    public Command cmdSetFuelShooterVelocity(double rotationsPerSecond) {
+        return cmdSetFuelShooterVelocity(() -> rotationsPerSecond);
+
+    }
+
+    public Command cmdSetFuelShooterVelocity(Supplier<Double> supplier) {
+        return Commands.runOnce(
+                () -> shooter.setPrecursorFlywheelVelocity(supplier.get()));
+
+    }
+
 }

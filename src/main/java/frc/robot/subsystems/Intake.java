@@ -16,6 +16,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -34,22 +35,22 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         configureIntakeTalonFX();
     }
 
-    public void setIntakeVelocity(double rotationsPerSecond, Voltage feedForward) {
+    public void setIntakeVelocity(double rotationsPerSecond) {
         intake.setControl(
                 intakeVelocityControl
                         .withVelocity(rotationsPerSecond)
-                        .withFeedForward(feedForward));
+                        .withFeedForward(Voltage.ofBaseUnits(0, Units.Volts)));
     }
 
     public double getIntakeVelocity() {
         return intake.getVelocity().getValueAsDouble();
     }
 
-    public void setHopperPosition(double rotations, Voltage feedForward) {
+    public void setHopperPosition(double rotations) {
         hopper.setControl(
                 hopperPositionVoltage
                         .withPosition(rotations)
-                        .withFeedForward(feedForward));
+                        .withFeedForward(Voltage.ofBaseUnits(0, Units.Volts)));
     }
 
     public double getHopperPosition() {
