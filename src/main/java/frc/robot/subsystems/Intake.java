@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Hertz;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -16,19 +17,20 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Frequency;
-import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.telemetry.MonitoredSubsystem;
 
 public class Intake extends SubsystemBase implements MonitoredSubsystem {
-    private TalonFX hopper;
-    private PositionVoltage hopperPositionVoltage;
+    private final TalonFX hopper = new TalonFX(41);
+    private final PositionVoltage hopperPositionVoltage = new PositionVoltage(0);
 
-    private TalonFX intake;
-    private VelocityVoltage intakeVelocityControl;
+    private final TalonFX intake = new TalonFX(40);
+    private final VelocityVoltage intakeVelocityControl = new VelocityVoltage(0);
+
+    private final Color systemColor = new Color(0, 0, 0);
 
     public Intake() {
         configureHopperTalonFX();
@@ -39,7 +41,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         intake.setControl(
                 intakeVelocityControl
                         .withVelocity(rotationsPerSecond)
-                        .withFeedForward(Voltage.ofBaseUnits(0, Units.Volts)));
+                        .withFeedForward(Volts.of(0)));
     }
 
     public double getIntakeVelocity() {
@@ -50,7 +52,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         hopper.setControl(
                 hopperPositionVoltage
                         .withPosition(rotations)
-                        .withFeedForward(Voltage.ofBaseUnits(0, Units.Volts)));
+                        .withFeedForward(Volts.of(0)));
     }
 
     public double getHopperPosition() {
@@ -69,13 +71,15 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     @Override
     public void registerWithHealthMonitor(HealthMonitor monitor) {
         monitor.addComponent(getSubsystem(), "Intake", intake);
+        monitor.addComponent(getSubsystem(), "hopper", hopper);
+    }
+
+    @Override
+    public Color getSubsystemColor() {
+        return systemColor;
     }
 
     private void configureIntakeTalonFX() {
-        intake = new TalonFX(40);
-        intakeVelocityControl = new VelocityVoltage(0);
-
-        TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
         motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
         motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
@@ -86,16 +90,18 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         slot0Configs.kP = 0;
         slot0Configs.kI = 0;
         slot0Configs.kD = 0;
+
+        TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
+        talonFXConfiguration.Slot0 = slot0Configs;
+        talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
+        talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+        talonFXConfiguration.MotorOutput = motorOutputConfigs;
 
         intake.getConfigurator().apply(talonFXConfiguration);
         intake.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
     }
 
     private void configureHopperTalonFX() {
-        hopper = new TalonFX(41);
-        hopperPositionVoltage = new PositionVoltage(0);
-
-        TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
         motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
         motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
@@ -107,9 +113,14 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         slot0Configs.kI = 0;
         slot0Configs.kD = 0;
 
+        TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
+        talonFXConfiguration.Slot0 = slot0Configs;
+        talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
+        talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+        talonFXConfiguration.MotorOutput = motorOutputConfigs;
+
         hopper.getConfigurator().apply(talonFXConfiguration);
         hopper.getPosition().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
-
     }
 
 }

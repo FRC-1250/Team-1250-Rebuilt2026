@@ -93,13 +93,9 @@ public class CommandFactory {
 
     public Command cmdSetRollerVelocity(Supplier<Double> supplier) {
         return Commands.runOnce(
-                () -> fuelLine.setConveyorVelocity(supplier.get()),
+                () -> fuelLine.setRollerVelocity(supplier.get()),
                 fuelLine);
     }
-
-    /*
-     * shooter
-     */
 
     public Command cmdSetLoaderCamPosition(double rotations) {
         return cmdSetLoaderCamPosition(() -> rotations);
@@ -107,8 +103,8 @@ public class CommandFactory {
 
     public Command cmdSetLoaderCamPosition(Supplier<Double> supplier) {
         return Commands.runOnce(
-                () -> shooter.setLoaderCamPosition(supplier.get()), shooter)
-                .andThen(Commands.waitUntil(() -> shooter.isLoaderCamNearPosition(supplier.get(), 1)));
+                () -> fuelLine.setLoaderCamPosition(supplier.get()), fuelLine)
+                .andThen(Commands.waitUntil(() -> fuelLine.isLoaderCamNearPosition(supplier.get(), 1)));
     }
 
     public Command cmdSetLoaderCamVelocity(double rotationsPerSecond) {
@@ -117,8 +113,12 @@ public class CommandFactory {
 
     public Command cmdSetLoaderCamVelocity(Supplier<Double> supplier) {
         return Commands.runOnce(
-                () -> shooter.setLoaderCamVelocity(supplier.get()), shooter);
+                () -> fuelLine.setLoaderCamVelocity(supplier.get()), fuelLine);
     }
+
+    /*
+     * shooter
+     */
 
     public Command cmdSetFuelAcceleratorVelocity(double rotationsPerSecond) {
         return cmdSetFuelAcceleratorVelocity(() -> rotationsPerSecond);
@@ -127,7 +127,7 @@ public class CommandFactory {
 
     public Command cmdSetFuelAcceleratorVelocity(Supplier<Double> supplier) {
         return Commands.runOnce(
-                () -> shooter.setPrecursorFlywheelVelocity(supplier.get()));
+                () -> shooter.setAcceleratorVelocity(supplier.get()));
 
     }
 
@@ -138,7 +138,7 @@ public class CommandFactory {
 
     public Command cmdSetFuelShooterVelocity(Supplier<Double> supplier) {
         return Commands.runOnce(
-                () -> shooter.setPrecursorFlywheelVelocity(supplier.get()));
+                () -> shooter.setAcceleratorVelocity(supplier.get()));
 
     }
 
