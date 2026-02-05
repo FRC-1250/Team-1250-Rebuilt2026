@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.telemetry.HealthMonitor;
+import frc.robot.utility.LimelightHelpers;
 
 @Logged
 public class Robot extends TimedRobot {
@@ -33,7 +34,6 @@ public class Robot extends TimedRobot {
     private final Command visionCommand;
 
     public Robot() {
-
         robotContainer = new RobotContainer();
         visionCommand = Commands.sequence(
                 Commands.waitSeconds(1),
@@ -61,11 +61,9 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         HealthMonitor.getInstance().start();
-        FollowPathCommand.warmupCommand().schedule();
+        CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
         Pathfinding.setPathfinder(new LocalADStar());
-        for (int port = 5800; port <= 5809; port++) {
-            PortForwarder.add(port, "limelight.local", port);
-        }
+        LimelightHelpers.setupPortForwardingUSB(0);
     }
 
     @Override
@@ -95,6 +93,10 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null) {
             CommandScheduler.getInstance().schedule(autonomousCommand);
         }
+
+        if (!visionCommand.isScheduled()) {
+            CommandScheduler.getInstance().schedule(visionCommand);
+        }
     }
 
     @Override
@@ -109,6 +111,10 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
+        }
+
+        if (!visionCommand.isScheduled()) {
+            CommandScheduler.getInstance().schedule(visionCommand);
         }
     }
 

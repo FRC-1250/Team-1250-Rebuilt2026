@@ -44,7 +44,7 @@ import frc.robot.telemetry.HealthMonitor;
 public class RobotContainer {
 
     /* Subsystems */
-    private final CommandSwerveDrivetrain SwerveDriveState = TunerConstants.createDrivetrain();
+    private final CommandSwerveDrivetrain swerve = TunerConstants.createDrivetrain();
     private final FuelLine fuelLine = new FuelLine();
     private final Intake intake = new Intake();
     private final Shooter shooter = new Shooter();
@@ -52,7 +52,7 @@ public class RobotContainer {
     private final Limelight limelight = new Limelight();
     private final Leds leds = new Leds();
     public final CommandFactory commandFactory = new CommandFactory(
-            SwerveDriveState,
+            swerve,
             fuelLine,
             intake,
             shooter,
@@ -94,13 +94,6 @@ public class RobotContainer {
     private final DoubleEntry fuelShooterVelocity = commandInputs.getDoubleTopic("fuelShooterVelocity").getEntry(0.0);
     private final DoubleEntry climberPosition = commandInputs.getDoubleTopic("climberPosition").getEntry(0.0);
 
-    private final Translation2d blueHub = new Translation2d(4.791, 3.978);
-    private final Translation2d redHub = new Translation2d(12, 4.155);
-    private final Translation2d blueDepotSide = new Translation2d(1.45, 6.7);
-    private final Translation2d blueOutpostSide = new Translation2d(1.45, 1.48);
-    private final Translation2d redDepotSide = new Translation2d(14.596, 1.48);
-    private final Translation2d redOutpostSide = new Translation2d(14.596, 6.801);
-
     private final Trigger blueAlliance = new Trigger(() -> DriverStation.getAlliance().get() == Alliance.Blue);
 
     /* Auto */
@@ -126,7 +119,7 @@ public class RobotContainer {
         fuelLine.registerWithHealthMonitor(hm);
         intake.registerWithHealthMonitor(hm);
 
-        SwerveDriveState.registerTelemetry(logger::telemeterize);
+        swerve.registerTelemetry(logger::telemeterize);
     }
 
     private void changeEventLoop(EventLoop loop) {
@@ -150,7 +143,7 @@ public class RobotContainer {
         primary.y(singlePlayer).onTrue(Commands.none()); // Climb foeward
         primary.b(singlePlayer).onTrue(Commands.none()); // Climb back
         primary.x(singlePlayer).onTrue(Commands.none()); // drive to tower position
-        primary.a(singlePlayer).whileTrue(SwerveDriveState.applyRequest(() -> driveWithAngle
+        primary.a(singlePlayer).whileTrue(swerve.applyRequest(() -> driveWithAngle
                 .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
                 .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
                 .withHeadingPID(8, 0, 0)
@@ -189,8 +182,8 @@ public class RobotContainer {
     }
 
     private void configureCommonBindings(EventLoop loop) {
-        SwerveDriveState.setDefaultCommand(
-                SwerveDriveState.applyRequest(() -> drive
+        swerve.setDefaultCommand(
+                swerve.applyRequest(() -> drive
                         .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
                         .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
                         .withRotationalRate(-primary.getRightX() * MaxAngularRate))
