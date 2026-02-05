@@ -13,6 +13,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentricFacingAngle;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoubleEntry;
@@ -94,6 +95,7 @@ public class RobotContainer {
     private final DoubleEntry fuelShooterVelocity = commandInputs.getDoubleTopic("fuelShooterVelocity").getEntry(0.0);
     private final DoubleEntry climberPosition = commandInputs.getDoubleTopic("climberPosition").getEntry(0.0);
 
+    @NotLogged
     private final Trigger blueAlliance = new Trigger(() -> DriverStation.getAlliance().get() == Alliance.Blue);
 
     /* Auto */
