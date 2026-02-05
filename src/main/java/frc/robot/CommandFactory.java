@@ -3,6 +3,8 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -138,8 +140,24 @@ public class CommandFactory {
 
     public Command cmdSetFuelShooterVelocity(Supplier<Double> supplier) {
         return Commands.runOnce(
-                () -> shooter.setAcceleratorVelocity(supplier.get()));
+                () -> shooter.setShooterVelocity(supplier.get()));
 
     }
 
+    public Command cmdFireFuel() {
+        return Commands.runEnd(
+                () -> {
+                    shooter.setAcceleratorVelocity(50);
+                    shooter.setShooterVelocity(10);
+                    if (shooter.isAcceleratorNearRotationsPerSecond(50, 2)
+                            && shooter.isShooterNearRotationsPerSecond(10, 2)) {
+                        fuelLine.setLoaderCamVelocity(50);
+                    }
+                },
+                () -> {
+                    shooter.setAcceleratorVelocity(0);
+                    shooter.setShooterVelocity(0);
+                    fuelLine.setLoaderCamVelocity(0);
+                }, shooter, fuelLine, intake);
+    }
 }
