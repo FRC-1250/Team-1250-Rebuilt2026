@@ -40,6 +40,7 @@ import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
 import frc.robot.telemetry.HealthMonitor;
+import frc.robot.utility.FieldZones;
 
 @Logged
 public class RobotContainer {
@@ -97,7 +98,17 @@ public class RobotContainer {
 
     @NotLogged
     private final Trigger blueAlliance = new Trigger(() -> DriverStation.getAlliance().get() == Alliance.Blue);
-
+    private final Trigger redAlliance = new Trigger(() -> DriverStation.getAlliance().get() == Alliance.Red);
+    private final Trigger isInBlueSide = new Trigger(() -> FieldZones.blueSide.isRobotInZone(swerve.getState().Pose));
+    private final Trigger isInRedSide = new Trigger(() -> FieldZones.redSide.isRobotInZone(swerve.getState().Pose));
+    private final Trigger isInCenterRedOutpostZone = new Trigger(
+            () -> FieldZones.centerRedOutpost.isRobotInZone(swerve.getState().Pose));
+    private final Trigger isInCenterRedDepotZone = new Trigger(
+            () -> FieldZones.centerRedDepot.isRobotInZone(swerve.getState().Pose));
+    private final Trigger isInCenterBlueDepotZone = new Trigger(
+            () -> FieldZones.centerBlueDepot.isRobotInZone(swerve.getState().Pose));
+    private final Trigger isInCenterBlueOutpostZone = new Trigger(
+            () -> FieldZones.centerBlueOutpost.isRobotInZone(swerve.getState().Pose));
     /* Auto */
     private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
@@ -145,13 +156,42 @@ public class RobotContainer {
         primary.y(singlePlayer).onTrue(Commands.none()); // Climb foeward
         primary.b(singlePlayer).onTrue(Commands.none()); // Climb back
         primary.x(singlePlayer).onTrue(Commands.none()); // drive to tower position
-        primary.a(singlePlayer).whileTrue(swerve.applyRequest(() -> driveWithAngle
+        primary.a(singlePlayer).and(isInBlueSide).whileTrue(swerve.applyRequest(() -> driveWithAngle
                 .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
                 .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
                 .withHeadingPID(8, 0, 0)
-                .withTargetDirection(commandFactory.determineHeading(new Translation2d(4.791, 3.978))))
+                .withTargetDirection(commandFactory.determineHeading(FieldPositions.blueHub)))
                 .withName("Point centric swerve")); // Toggle auto heading
-
+        primary.a(singlePlayer).and(isInCenterBlueDepotZone).whileTrue(swerve.applyRequest(() -> driveWithAngle
+                .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
+                .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
+                .withHeadingPID(8, 0, 0)
+                .withTargetDirection(commandFactory.determineHeading(FieldPositions.blueDepotSide)))
+                .withName("Point centric swerve")); // Toggle auto heading
+        primary.a(singlePlayer).and(isInCenterBlueOutpostZone).whileTrue(swerve.applyRequest(() -> driveWithAngle
+                .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
+                .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
+                .withHeadingPID(8, 0, 0)
+                .withTargetDirection(commandFactory.determineHeading(FieldPositions.blueOutpostSide)))
+                .withName("Point centric swerve")); // Toggle auto heading
+        primary.a(singlePlayer).and(isInRedSide).whileTrue(swerve.applyRequest(() -> driveWithAngle
+                .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
+                .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
+                .withHeadingPID(8, 0, 0)
+                .withTargetDirection(commandFactory.determineHeading(FieldPositions.redHub)))
+                .withName("Point centric swerve")); // Toggle auto heading
+        primary.a(singlePlayer).and(isInCenterRedDepotZone).whileTrue(swerve.applyRequest(() -> driveWithAngle
+                .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
+                .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
+                .withHeadingPID(8, 0, 0)
+                .withTargetDirection(commandFactory.determineHeading(FieldPositions.redDepotSide)))
+                .withName("Point centric swerve")); // Toggle auto heading
+        primary.a(singlePlayer).and(isInCenterRedOutpostZone).whileTrue(swerve.applyRequest(() -> driveWithAngle
+                .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
+                .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
+                .withHeadingPID(8, 0, 0)
+                .withTargetDirection(commandFactory.determineHeading(FieldPositions.redOutpostSide)))
+                .withName("Point centric swerve")); // Toggle auto heading
     }
 
     private void configureTwoPlayerBindings() {
