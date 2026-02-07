@@ -5,7 +5,12 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Hertz;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -18,23 +23,65 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Frequency;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.telemetry.MonitoredSubsystem;
 
 public class Intake extends SubsystemBase implements MonitoredSubsystem {
-    private final TalonFX hopper = new TalonFX(41);
-    private final PositionVoltage hopperPositionVoltage = new PositionVoltage(0);
+    enum intakePositions {
+        Retract(0),
+        Phase1(2),
+        Phase2(3),
+        Phase3(4),
+        Extend(10);
 
+        public double rotations;
+
+        private intakePositions(double rotations) {
+            this.rotations = rotations;
+        }
+
+    }
+
+    private final TalonFX hopper = new TalonFX(41);
+
+    private final PositionVoltage hopperPositionVoltage = new PositionVoltage(0);
     private final TalonFX intake = new TalonFX(40);
+
     private final VelocityVoltage intakeVelocityControl = new VelocityVoltage(0);
 
     private final Color systemColor = new Color(0, 0, 0);
 
+    public Timer timerT = new Timer();
+
+    double interval = 0;
+
+    int index = 0;
+
+    List<intakePositions> hopperAgitationOrder = new ArrayList<>();
+
     public Intake() {
         configureHopperTalonFX();
         configureIntakeTalonFX();
+        configureHopperAgitation();
+    }
+
+    private void configureHopperAgitation() {
+        hopperAgitationOrder.add(intakePositions.Phase3);
+        hopperAgitationOrder.add(intakePositions.Phase2);
+        hopperAgitationOrder.add(intakePositions.Phase1);
+        hopperAgitationOrder.add(intakePositions.Phase2);
+        hopperAgitationOrder.add(intakePositions.Phase3);
+    }
+
+    public void shift() {
+        if (timerT.advanceIfElapsed(interval)) {
+            setHopperPosition(hopperAgitationOrder.get(index % hopperAgitationOrder.size()).rotations);
+            index = index + 1;
+            timerT.reset();
+        }
     }
 
     public void setIntakeVelocity(double rotationsPerSecond) {
@@ -77,6 +124,10 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     @Override
     public Color getSubsystemColor() {
         return systemColor;
+    }
+
+    public void setInterval(double imput) {
+        interval = imput;
     }
 
     private void configureIntakeTalonFX() {

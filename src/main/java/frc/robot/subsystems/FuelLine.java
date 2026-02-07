@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Hertz;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -146,5 +147,32 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
         roller.getConfigurator().apply(talonFXConfiguration);
         roller.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
+    }
+
+    public enum RollerVelocityControl {
+        Stop(0),
+        Warn(35),
+        Hup_close(75),
+        Hup_Far(90),
+        Max(100);
+
+        public double rotations;
+
+        private RollerVelocityControl(double rotations) {
+            this.rotations = rotations;
+        }
+    }
+
+    enum loaderCamVelocityControl {
+        three_bps(1),
+        six_bps(2),
+        nine_bps(3),
+        twelve_bps(4);
+
+        public double rotations;
+
+        private loaderCamVelocityControl(double rotations) {
+            this.rotations = rotations;
+        }
     }
 }
