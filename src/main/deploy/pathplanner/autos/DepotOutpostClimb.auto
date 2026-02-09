@@ -7,25 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot p1"
+            "pathName": "DepotPrep"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Depot p2"
+            "pathName": "DepotCollect"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Depot p3"
+            "pathName": "DepotToOutpost"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Depot p4"
+            "pathName": "OutpostShoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "OutpostClimbPrep"
           }
         }
       ]

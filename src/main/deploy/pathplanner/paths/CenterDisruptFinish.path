@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.34941225165562917,
-        "y": 5.123990066225165
+        "x": 7.495338078291816,
+        "y": 6.816251482799526
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.3067451062169621,
-        "y": 5.660387203814274
+        "x": 7.544725743050936,
+        "y": 5.743296973969672
       },
       "isLocked": false,
-      "linkedName": "Depot p2"
+      "linkedName": "SuperDisruptStart"
     },
     {
       "anchor": {
-        "x": 0.34941225165562917,
-        "y": 6.104081125827815
+        "x": 7.495338078291816,
+        "y": 2.3511862396204037
       },
       "prevControl": {
-        "x": 0.35245635733373476,
-        "y": 5.755615417308636
+        "x": 7.461145816600255,
+        "y": 3.40149969776222
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "SuperDisruptFinish"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 91.13119029882326
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

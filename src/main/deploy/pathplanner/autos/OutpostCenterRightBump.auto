@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Outpost p1"
+            "pathName": "Outpost"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Outpost p4"
+            "pathName": "OutpostCenterRightBump"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterRightShoot"
           }
         }
       ]
