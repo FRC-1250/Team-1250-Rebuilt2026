@@ -31,7 +31,7 @@ import frc.robot.telemetry.MonitoredSubsystem;
 
 public class Intake extends SubsystemBase implements MonitoredSubsystem {
     enum intakePositions {
-        Retract(0),
+        RETRACT(0),
         Phase1(2),
         Phase2(3),
         Phase3(4),
@@ -43,6 +43,17 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
             this.rotations = rotations;
         }
 
+    }
+
+    enum intakeVelocityControl {
+        STOP(0),
+        GO(75);
+
+        public double rotationsPerSecond;
+
+        private intakeVelocityControl(double rotationsPerSecond) {
+            this.rotationsPerSecond = rotationsPerSecond;
+        }
     }
 
     private final TalonFX hopper = new TalonFX(41);
