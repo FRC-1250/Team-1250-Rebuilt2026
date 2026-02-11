@@ -163,7 +163,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         }
     }
 
-    enum loaderCamVelocityControl {
+    public enum LoaderCamVelocityControl {
         three_bps(1),
         six_bps(2),
         nine_bps(3),
@@ -171,7 +171,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
         public double rotations;
 
-        private loaderCamVelocityControl(double rotations) {
+        private LoaderCamVelocityControl(double rotations) {
             this.rotations = rotations;
         }
     }

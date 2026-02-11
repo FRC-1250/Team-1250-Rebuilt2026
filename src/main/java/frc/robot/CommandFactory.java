@@ -13,7 +13,9 @@ import frc.robot.commands.SwerveVisionLogic;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FuelLine;
+import frc.robot.subsystems.FuelLine.LoaderCamVelocityControl;
 import frc.robot.subsystems.FuelLine.RollerVelocityControl;
+import frc.robot.subsystems.Shooter.ShooterVelocity;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
@@ -149,7 +151,7 @@ public class CommandFactory {
 
     }
 
-    public Command cmdFireFuel() {
+    public Command cmdFireFuel(double shooterVelocity, double acceleratorVelocity, double loaderCamVelocity) {
         return Commands.sequence(
                 Commands.runOnce(() -> {
                     intake.timerT.reset();
@@ -157,11 +159,11 @@ public class CommandFactory {
                 }, intake),
                 Commands.runEnd(
                         () -> {
-                            shooter.setAcceleratorVelocity(50);
-                            shooter.setShooterVelocity(10);
-                            if (shooter.isAcceleratorNearRotationsPerSecond(50, 2)
-                                    && shooter.isShooterNearRotationsPerSecond(10, 2)) {
-                                fuelLine.setLoaderCamVelocity(50);
+                            shooter.setAcceleratorVelocity(acceleratorVelocity);
+                            shooter.setShooterVelocity(shooterVelocity);
+                            if (shooter.isAcceleratorNearRotationsPerSecond(acceleratorVelocity, 2)
+                                    && shooter.isShooterNearRotationsPerSecond(shooterVelocity, 2)) {
+                                fuelLine.setLoaderCamVelocity(loaderCamVelocity);
                                 intake.shift();
                             }
                         },
@@ -170,6 +172,11 @@ public class CommandFactory {
                             shooter.setShooterVelocity(0);
                             fuelLine.setLoaderCamVelocity(0);
                         }, shooter, fuelLine, intake));
+    }
+
+    public Command cmdFireFuel(ShooterVelocity shooterVelocity, LoaderCamVelocityControl loaderVelocity) {
+        return cmdFireFuel(shooterVelocity.shooterRotationsPerSecond, shooterVelocity.acceleratorRotationsPerSecond,
+                loaderVelocity.rotations);
     }
 
     public Command cmdSetHoodPosition(Supplier<Double> supplier) {

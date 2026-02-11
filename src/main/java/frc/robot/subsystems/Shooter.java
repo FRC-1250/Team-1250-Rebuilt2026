@@ -48,24 +48,13 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
         HUB(20),
         MAX(40);
 
-        public double rotationsPerSecond;
-
-        ShooterVelocity(double rotationsPerSecond) {
-            this.rotationsPerSecond = rotationsPerSecond;
-        }
-    }
-
-    public enum AcceleratorVelocity {
-        STOP(0),
-        WARM(ShooterVelocity.WARM.rotationsPerSecond),
-        HUB(ShooterVelocity.HUB.rotationsPerSecond),
-        MAX(ShooterVelocity.MAX.rotationsPerSecond);
-
-        public double rotationsPerSecond;
+        public double shooterRotationsPerSecond;
+        public double acceleratorRotationsPerSecond;
         private double feedForwardPercentage = 0.10;
 
-        AcceleratorVelocity(double rotationsPerSecond) {
-            this.rotationsPerSecond = rotationsPerSecond + (rotationsPerSecond * feedForwardPercentage);
+        ShooterVelocity(double rotationsPerSecond) {
+            this.shooterRotationsPerSecond = rotationsPerSecond;
+            this.acceleratorRotationsPerSecond = rotationsPerSecond + (rotationsPerSecond * feedForwardPercentage);
         }
     }
 

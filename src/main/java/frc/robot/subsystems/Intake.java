@@ -30,7 +30,7 @@ import frc.robot.telemetry.HealthMonitor;
 import frc.robot.telemetry.MonitoredSubsystem;
 
 public class Intake extends SubsystemBase implements MonitoredSubsystem {
-    enum intakePositions {
+    public enum intakePositions {
         RETRACT(0),
         Phase1(2),
         Phase2(3),
@@ -45,7 +45,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
     }
 
-    enum intakeVelocityControl {
+    public enum intakeVelocityControl {
         STOP(0),
         GO(75);
 

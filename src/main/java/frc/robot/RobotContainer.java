@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentricFacingAngle;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.epilogue.Logged;
@@ -36,9 +37,12 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FuelLine;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Intake.intakePositions;
+import frc.robot.subsystems.Shooter.ShooterVelocity;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.FuelLine.LoaderCamVelocityControl;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.utility.FieldZones;
 
@@ -258,6 +262,20 @@ public class RobotContainer {
     }
 
     private void configureNamedCommands() {
+        final double fireTimeout = 3;
 
+        NamedCommands.registerCommand("extend_hopper",
+                commandFactory.cmdSetHopperPosition(intakePositions.Extend.rotations));
+
+        /*
+         * Make into one command
+         * - Extend hopper
+         * - Turn on intake wheels
+         * - Turn on fuelline rollers
+         */
+
+        NamedCommands.registerCommand("fire_fuel_with_timeout",
+                commandFactory.cmdFireFuel(ShooterVelocity.HUB, LoaderCamVelocityControl.three_bps)
+                        .withTimeout(fireTimeout));
     }
 }
