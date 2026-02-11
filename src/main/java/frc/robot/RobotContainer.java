@@ -98,6 +98,8 @@ public class RobotContainer {
 
     @NotLogged
     private final Trigger blueAlliance = new Trigger(() -> DriverStation.getAlliance().get() == Alliance.Blue);
+
+    @NotLogged
     private final Trigger redAlliance = new Trigger(() -> DriverStation.getAlliance().get() == Alliance.Red);
     private final Trigger isInBlueSide = new Trigger(() -> FieldZones.blueSide.isRobotInZone(swerve.getState().Pose));
     private final Trigger isInRedSide = new Trigger(() -> FieldZones.redSide.isRobotInZone(swerve.getState().Pose));
