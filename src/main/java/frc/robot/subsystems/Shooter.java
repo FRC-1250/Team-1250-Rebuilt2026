@@ -31,6 +31,44 @@ import frc.robot.telemetry.MonitoredSubsystem;
 @Logged
 public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
+    public enum HoodPosition {
+        HOME(0.01),
+        MAX(1);
+
+        public double rotations;
+
+        HoodPosition(double rotations) {
+            this.rotations = rotations;
+        }
+    }
+
+    public enum ShooterVelocity {
+        STOP(0),
+        WARM(10),
+        HUB(20),
+        MAX(40);
+
+        public double rotationsPerSecond;
+
+        ShooterVelocity(double rotationsPerSecond) {
+            this.rotationsPerSecond = rotationsPerSecond;
+        }
+    }
+
+    public enum AcceleratorVelocity {
+        STOP(0),
+        WARM(ShooterVelocity.WARM.rotationsPerSecond),
+        HUB(ShooterVelocity.HUB.rotationsPerSecond),
+        MAX(ShooterVelocity.MAX.rotationsPerSecond);
+
+        public double rotationsPerSecond;
+        private double feedForwardPercentage = 0.10;
+
+        AcceleratorVelocity(double rotationsPerSecond) {
+            this.rotationsPerSecond = rotationsPerSecond + (rotationsPerSecond * feedForwardPercentage);
+        }
+    }
+
     private final TalonFX acceleratorLeader = new TalonFX(21);
     private final TalonFX acceleratorFollower = new TalonFX(22);
     private final VelocityVoltage acceleratorVelocityControl = new VelocityVoltage(0).withSlot(0);
