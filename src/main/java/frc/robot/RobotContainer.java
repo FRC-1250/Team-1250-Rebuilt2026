@@ -43,6 +43,7 @@ import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.FuelLine.LoaderCamVelocityControl;
+import frc.robot.subsystems.FuelLine.RollerVelocityControl;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.utility.FieldZones;
 
@@ -277,5 +278,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("fire_fuel_with_timeout",
                 commandFactory.cmdFireFuel(ShooterVelocity.HUB, LoaderCamVelocityControl.three_bps)
                         .withTimeout(fireTimeout));
+
+        commandFactory.cmdSetHopperPosition(intakePositions.Extend.rotations)
+                .andThen(commandFactory.cmdSetRollerVelocity(RollerVelocityControl.Warn.rotations));
     }
 }
