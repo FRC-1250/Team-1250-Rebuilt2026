@@ -5,8 +5,6 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Hertz;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.ArrayList;
@@ -30,69 +28,103 @@ import frc.robot.telemetry.HealthMonitor;
 import frc.robot.telemetry.MonitoredSubsystem;
 
 public class Intake extends SubsystemBase implements MonitoredSubsystem {
-    public enum intakePositions {
-        RETRACT(0),
-        Phase1(2),
-        Phase2(3),
-        Phase3(4),
-        Extend(10);
+    public enum HopperPosition {
+        RETRACTED(0),
+        PHASE_1(2),
+        PHASE_2(3),
+        PHASE_3(4),
+        EXTENDED(10);
 
         public double rotations;
 
-        private intakePositions(double rotations) {
+        private HopperPosition(double rotations) {
             this.rotations = rotations;
         }
 
     }
 
-    public enum intakeVelocityControl {
+    public enum IntakeVelocity {
         STOP(0),
         GO(75);
 
         public double rotationsPerSecond;
 
-        private intakeVelocityControl(double rotationsPerSecond) {
+        private IntakeVelocity(double rotationsPerSecond) {
             this.rotationsPerSecond = rotationsPerSecond;
         }
     }
 
-    private final TalonFX hopper = new TalonFX(41);
+    private class HopperAgitationStep {
+        HopperPosition hopperPosition;
+        double interval;
 
+        public HopperAgitationStep(HopperPosition hopperPosition, double interval) {
+            this.hopperPosition = hopperPosition;
+            this.interval = interval;
+        }
+    }
+
+    private class HopperAgitationProfile {
+        private Timer timer;
+        private List<HopperAgitationStep> steps;
+        private int index;
+
+        public HopperAgitationProfile() {
+            this.steps = new ArrayList<>();
+            this.timer = new Timer();
+            index = 0;
+        }
+
+        public void addStep(HopperAgitationStep has) {
+            if (has.interval > 0)
+                this.steps.add(has);
+        }
+
+        public void reset() {
+            timer.stop();
+            timer.reset();
+            index = 0;
+        }
+
+        public HopperPosition shift() {
+            if (!timer.isRunning()) {
+                timer.start();
+            }
+
+            var currentStep = steps.get(index % steps.size());
+
+            if (timer.advanceIfElapsed(currentStep.interval)) {
+                index++;
+                currentStep = steps.get(index % steps.size());
+                timer.reset();
+            }
+
+            return currentStep.hopperPosition;
+        }
+    }
+
+    private final TalonFX hopper = new TalonFX(41);
     private final PositionVoltage hopperPositionVoltage = new PositionVoltage(0);
     private final TalonFX intake = new TalonFX(40);
-
     private final VelocityVoltage intakeVelocityControl = new VelocityVoltage(0);
-
     private final Color systemColor = new Color(0, 0, 0);
 
-    public Timer timerT = new Timer();
-
-    double interval = 0;
-
-    int index = 0;
-
-    List<intakePositions> hopperAgitationOrder = new ArrayList<>();
+    private HopperAgitationProfile activeAgitiationProfile;
+    private HopperAgitationProfile wave;
 
     public Intake() {
         configureHopperTalonFX();
         configureIntakeTalonFX();
         configureHopperAgitation();
+        activeAgitiationProfile = wave;
     }
 
-    private void configureHopperAgitation() {
-        hopperAgitationOrder.add(intakePositions.Phase3);
-        hopperAgitationOrder.add(intakePositions.Phase2);
-        hopperAgitationOrder.add(intakePositions.Phase1);
-        hopperAgitationOrder.add(intakePositions.Phase2);
-        hopperAgitationOrder.add(intakePositions.Phase3);
+    public void agitateHopper() {
+        activeAgitiationProfile.shift();
     }
 
-    public void shift() {
-        if (timerT.advanceIfElapsed(interval)) {
-            setHopperPosition(hopperAgitationOrder.get(index % hopperAgitationOrder.size()).rotations);
-            index = index + 1;
-            timerT.reset();
-        }
+    public void resetAgitation() {
+        activeAgitiationProfile.reset();
     }
 
     public void setIntakeVelocity(double rotationsPerSecond) {
@@ -137,8 +169,13 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         return systemColor;
     }
 
-    public void setInterval(double imput) {
-        interval = imput;
+    private void configureHopperAgitation() {
+        wave = new HopperAgitationProfile();
+        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_3, 1));
+        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_2, 1));
+        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_1, 1));
+        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_2, 1));
+        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_3, 1));
     }
 
     private void configureIntakeTalonFX() {

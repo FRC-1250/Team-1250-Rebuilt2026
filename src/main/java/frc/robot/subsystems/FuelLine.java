@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Hertz;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -24,11 +23,36 @@ import frc.robot.telemetry.MonitoredSubsystem;
 
 @Logged
 public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
-    private final TalonFX roller = new TalonFX(31);
-    private final VelocityVoltage rollerVelocityControl = new VelocityVoltage(0);
+    public enum RollerVelocity {
+        STOP(0),
+        GO(35);
 
+        public double rotationsPerSecond;
+
+        private RollerVelocity(double rotationsPerSecond) {
+            this.rotationsPerSecond = rotationsPerSecond;
+        }
+    }
+
+    public enum LoaderCamVelocity {
+        THREE_BPS(1),
+        SIX_BPS(2),
+        NINE_BPS(3),
+        TWELVE_BPS(4);
+
+        public double rotationsPerSecond;
+
+        private LoaderCamVelocity(double rotationsPerSecond) {
+            this.rotationsPerSecond = rotationsPerSecond;
+        }
+    }
+
+    private final TalonFX roller = new TalonFX(31);
+    private final VelocityVoltage rollerVelocityControl = new VelocityVoltage(0);;
     private final TalonFX loaderCam = new TalonFX(30);
-    private final VelocityVoltage loaderCamVelocityControl = new VelocityVoltage(0).withSlot(0);;
+
+    private final VelocityVoltage loaderCamVelocityControl = new VelocityVoltage(0).withSlot(0);
+
     private final PositionVoltage loaderCamPositionControl = new PositionVoltage(0).withSlot(1);
 
     private final Color systemColor = new Color(0, 0, 0);
@@ -147,32 +171,5 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
         roller.getConfigurator().apply(talonFXConfiguration);
         roller.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
-    }
-
-    public enum RollerVelocityControl {
-        Stop(0),
-        Warn(35),
-        Hup_close(75),
-        Hup_Far(90),
-        Max(100);
-
-        public double rotations;
-
-        private RollerVelocityControl(double rotations) {
-            this.rotations = rotations;
-        }
-    }
-
-    public enum LoaderCamVelocityControl {
-        three_bps(1),
-        six_bps(2),
-        nine_bps(3),
-        twelve_bps(4);
-
-        public double rotations;
-
-        private LoaderCamVelocityControl(double rotations) {
-            this.rotations = rotations;
-        }
     }
 }

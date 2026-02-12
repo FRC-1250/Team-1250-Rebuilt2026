@@ -3,8 +3,6 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -13,8 +11,8 @@ import frc.robot.commands.SwerveVisionLogic;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FuelLine;
-import frc.robot.subsystems.FuelLine.LoaderCamVelocityControl;
-import frc.robot.subsystems.FuelLine.RollerVelocityControl;
+import frc.robot.subsystems.FuelLine.LoaderCamVelocity;
+import frc.robot.subsystems.FuelLine.RollerVelocity;
 import frc.robot.subsystems.Shooter.ShooterVelocity;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Leds;
@@ -92,8 +90,8 @@ public class CommandFactory {
      * FuelLine
      */
 
-    public Command cmdSetRollerVelocity(RollerVelocityControl control) {
-        return cmdSetRollerVelocity(() -> control.rotations);
+    public Command cmdSetRollerVelocity(RollerVelocity control) {
+        return cmdSetRollerVelocity(() -> control.rotationsPerSecond);
     }
 
     public Command cmdSetRollerVelocity(double rotationsPerSecond) {
@@ -151,32 +149,36 @@ public class CommandFactory {
 
     }
 
-    public Command cmdFireFuel(double shooterVelocity, double acceleratorVelocity, double loaderCamVelocity) {
-        return Commands.sequence(
-                Commands.runOnce(() -> {
-                    intake.timerT.reset();
-                    intake.timerT.start();
-                }, intake),
-                Commands.runEnd(
-                        () -> {
-                            shooter.setAcceleratorVelocity(acceleratorVelocity);
-                            shooter.setShooterVelocity(shooterVelocity);
-                            if (shooter.isAcceleratorNearRotationsPerSecond(acceleratorVelocity, 2)
-                                    && shooter.isShooterNearRotationsPerSecond(shooterVelocity, 2)) {
-                                fuelLine.setLoaderCamVelocity(loaderCamVelocity);
-                                intake.shift();
-                            }
-                        },
-                        () -> {
-                            shooter.setAcceleratorVelocity(0);
-                            shooter.setShooterVelocity(0);
-                            fuelLine.setLoaderCamVelocity(0);
-                        }, shooter, fuelLine, intake));
+    public Command cmdFireFuel(Supplier<Double> shooterVelocitySupplier, Supplier<Double> acceleratorVelocitySupplier,
+            Supplier<Double> loaderCamVelocitySupplier) {
+        return Commands.runEnd(
+                () -> {
+                    shooter.setAcceleratorVelocity(acceleratorVelocitySupplier.get());
+                    shooter.setShooterVelocity(shooterVelocitySupplier.get());
+                    if (shooter.isAcceleratorNearRotationsPerSecond(acceleratorVelocitySupplier.get(), 2)
+                            && shooter.isShooterNearRotationsPerSecond(shooterVelocitySupplier.get(), 2)) {
+                        fuelLine.setLoaderCamVelocity(loaderCamVelocitySupplier.get());
+                        intake.agitateHopper();
+                    }
+                },
+                () -> {
+                    shooter.setAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond);
+                    shooter.setShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond);
+                    fuelLine.setLoaderCamVelocity(0);
+                    intake.resetAgitation();
+                }, shooter, fuelLine, intake);
     }
 
-    public Command cmdFireFuel(ShooterVelocity shooterVelocity, LoaderCamVelocityControl loaderVelocity) {
-        return cmdFireFuel(shooterVelocity.shooterRotationsPerSecond, shooterVelocity.acceleratorRotationsPerSecond,
-                loaderVelocity.rotations);
+    public Command cmdFireFuel(double shooterVelocity, double acceleratorVelocity, double loaderCamVelocity) {
+        return cmdFireFuel(() -> shooterVelocity,
+                () -> acceleratorVelocity,
+                () -> loaderCamVelocity);
+    }
+
+    public Command cmdFireFuel(ShooterVelocity shooterVelocity, LoaderCamVelocity loaderVelocity) {
+        return cmdFireFuel(() -> shooterVelocity.shooterRotationsPerSecond,
+                () -> shooterVelocity.acceleratorRotationsPerSecond,
+                () -> loaderVelocity.rotationsPerSecond);
     }
 
     public Command cmdSetHoodPosition(Supplier<Double> supplier) {
