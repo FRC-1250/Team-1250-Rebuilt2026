@@ -7,31 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DepotPrep"
+            "pathName": "DepotSideCenterStart"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "DepotCollect"
+            "pathName": "DepotSideCenterCollect"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "DepotToOutpost"
+            "pathName": "DepotSideCenterFinish"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "OutpostShoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "OutpostClimbPrep"
+            "pathName": "DepotClimbPrep"
           }
         }
       ]

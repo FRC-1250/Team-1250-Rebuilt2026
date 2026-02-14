@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.589750889679717,
-        "y": 4.061897983392646
+        "x": 3.633980895825455,
+        "y": 2.9153988513636717
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7612930011862415,
-        "y": 3.7929181494661925
+        "x": 5.504887307236062,
+        "y": 2.953701067615658
       },
       "isLocked": false,
-      "linkedName": "DepotSideStart"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.0613404507710564,
-        "y": 5.944756820877817
+        "x": 7.732040332147095,
+        "y": 1.361340450771056
       },
       "prevControl": {
-        "x": 2.3094068801897962,
-        "y": 6.332087781731911
+        "x": 6.732040332147095,
+        "y": 1.361340450771056
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "DepotIntake"
+      "linkedName": "OutpostSideCenterStart"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 90.0
   },
   "reversed": false,
   "folder": null,
