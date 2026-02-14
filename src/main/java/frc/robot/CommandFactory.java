@@ -65,7 +65,7 @@ public class CommandFactory {
     /*
      * Intake
      */
-    public Command cmdSetIntakeVeloctiy(double rotationsPerSecond) {
+    public Command cmdSetIntakeVelocity(double rotationsPerSecond) {
         return cmdSetIntakeVelocity(() -> rotationsPerSecond);
     }
 
