@@ -184,9 +184,9 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
         Slot0Configs slot0Configs = new Slot0Configs();
-        slot0Configs.kS = 0;
+        slot0Configs.kS = 0.1;
         slot0Configs.kV = 0;
-        slot0Configs.kP = 0;
+        slot0Configs.kP = 0.1;
         slot0Configs.kI = 0;
         slot0Configs.kD = 0;
 
@@ -206,9 +206,9 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
         Slot0Configs slot0Configs = new Slot0Configs();
-        slot0Configs.kS = 0;
+        slot0Configs.kS = 0.1;
         slot0Configs.kV = 0;
-        slot0Configs.kP = 0;
+        slot0Configs.kP = 0.1;
         slot0Configs.kI = 0;
         slot0Configs.kD = 0;
 

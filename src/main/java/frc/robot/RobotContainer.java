@@ -227,10 +227,16 @@ public class RobotContainer {
         SmartDashboard.putData("Commands/Fuel line/Set cam position",
                 commandFactory.cmdSetLoaderCamPosition(() -> loaderCamPosition.get()));
 
-        SmartDashboard.putData("Commands/Shooter/Set fuel accel velocity",
+        SmartDashboard.putData("Commands/Shooter/Set accel velocity",
                 commandFactory.cmdSetFuelAcceleratorVelocity(() -> acceleratorVelocity.get()));
-        SmartDashboard.putData("Commands/Shooter/Set full shoot velocity",
+        SmartDashboard.putData("Commands/Shooter/Set shoot velocity",
                 commandFactory.cmdSetFuelShooterVelocity(() -> shooterVelocity.get()));
+
+        SmartDashboard.putData("Commands/Shooter/Stop accel",
+                commandFactory.cmdSetFuelAcceleratorVelocity(0));
+
+        SmartDashboard.putData("Commands/Shooter/Stop shooter",
+                commandFactory.cmdSetFuelShooterVelocity(0));
 
         SmartDashboard.putData("Commands/Shared/Fire fuel",
                 commandFactory.cmdFireFuel(shooterVelocity.get(),
@@ -297,6 +303,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("shooter_prep", commandFactory
                 .cmdSetFuelShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond)
-                .andThen(commandFactory.cmdSetFuelAcceleratorVelocity(acceleratorVelocity.GO.rotationsPerSecond)));
+                .andThen(commandFactory
+                        .cmdSetFuelAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond)));
     }
 }
