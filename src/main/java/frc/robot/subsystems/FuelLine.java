@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Hertz;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -10,6 +9,7 @@ import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -24,12 +24,37 @@ import frc.robot.telemetry.MonitoredSubsystem;
 
 @Logged
 public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
-    private final TalonFX roller = new TalonFX(31);
-    private final VelocityVoltage rollerVelocityControl = new VelocityVoltage(0);
+    public enum RollerVelocity {
+        STOP(0),
+        GO(35);
 
+        public double rotationsPerSecond;
+
+        private RollerVelocity(double rotationsPerSecond) {
+            this.rotationsPerSecond = rotationsPerSecond;
+        }
+    }
+
+    public enum LoaderCamVelocity {
+        THREE_BPS(1),
+        SIX_BPS(2),
+        NINE_BPS(3),
+        TWELVE_BPS(4);
+
+        public double rotationsPerSecond;
+
+        private LoaderCamVelocity(double rotationsPerSecond) {
+            this.rotationsPerSecond = rotationsPerSecond;
+        }
+    }
+
+    private final TalonFX roller = new TalonFX(31);
+    private final VelocityVoltage rollerVelocityControl = new VelocityVoltage(0);;
     private final TalonFX loaderCam = new TalonFX(30);
-    private final VelocityVoltage loaderCamVelocityControl = new VelocityVoltage(0).withSlot(0);;
-    private final PositionVoltage loaderCamPositionControl = new PositionVoltage(0).withSlot(1);
+    private final CANcoder canCoder = new CANcoder(32);
+    private final VelocityVoltage loaderCamVelocityControl = new VelocityVoltage(0).withSlot(1);
+
+    private final PositionVoltage loaderCamPositionControl = new PositionVoltage(0).withSlot(0);
 
     private final Color systemColor = new Color(0, 0, 0);
 
@@ -102,15 +127,15 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     private void configureLoaderCam() {
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
         motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
-        motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
+        motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
         Slot0Configs positionPIDConfigs = new Slot0Configs()
-                .withKP(0)
+                .withKP(0.1)
                 .withKI(0)
                 .withKD(0);
 
         Slot1Configs velocityPIDConfigs = new Slot1Configs()
-                .withKS(0)
+                .withKS(0.1)
                 .withKV(0)
                 .withKP(0)
                 .withKI(0)
@@ -133,9 +158,9 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
         Slot0Configs slot0Configs = new Slot0Configs();
-        slot0Configs.kS = 0;
+        slot0Configs.kS = 0.1;
         slot0Configs.kV = 0;
-        slot0Configs.kP = 0;
+        slot0Configs.kP = 0.1;
         slot0Configs.kI = 0;
         slot0Configs.kD = 0;
 
@@ -147,32 +172,5 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
         roller.getConfigurator().apply(talonFXConfiguration);
         roller.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
-    }
-
-    public enum RollerVelocityControl {
-        Stop(0),
-        Warn(35),
-        Hup_close(75),
-        Hup_Far(90),
-        Max(100);
-
-        public double rotations;
-
-        private RollerVelocityControl(double rotations) {
-            this.rotations = rotations;
-        }
-    }
-
-    enum loaderCamVelocityControl {
-        three_bps(1),
-        six_bps(2),
-        nine_bps(3),
-        twelve_bps(4);
-
-        public double rotations;
-
-        private loaderCamVelocityControl(double rotations) {
-            this.rotations = rotations;
-        }
     }
 }

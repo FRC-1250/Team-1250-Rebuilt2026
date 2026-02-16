@@ -48,24 +48,13 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
         HUB(20),
         MAX(40);
 
-        public double rotationsPerSecond;
-
-        ShooterVelocity(double rotationsPerSecond) {
-            this.rotationsPerSecond = rotationsPerSecond;
-        }
-    }
-
-    public enum AcceleratorVelocity {
-        STOP(0),
-        WARM(ShooterVelocity.WARM.rotationsPerSecond),
-        HUB(ShooterVelocity.HUB.rotationsPerSecond),
-        MAX(ShooterVelocity.MAX.rotationsPerSecond);
-
-        public double rotationsPerSecond;
+        public double shooterRotationsPerSecond;
+        public double acceleratorRotationsPerSecond;
         private double feedForwardPercentage = 0.10;
 
-        AcceleratorVelocity(double rotationsPerSecond) {
-            this.rotationsPerSecond = rotationsPerSecond + (rotationsPerSecond * feedForwardPercentage);
+        ShooterVelocity(double rotationsPerSecond) {
+            this.shooterRotationsPerSecond = rotationsPerSecond;
+            this.acceleratorRotationsPerSecond = rotationsPerSecond + (rotationsPerSecond * feedForwardPercentage);
         }
     }
 
@@ -138,14 +127,14 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
     private void configureAccelerator() {
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
         motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
-        motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
+        motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
         acceleratorLeader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
 
         Slot1Configs velocityPIDConfigs = new Slot1Configs()
-                .withKS(0)
+                .withKS(0.1)
                 .withKV(0)
-                .withKP(0)
+                .withKP(0.1)
                 .withKI(0)
                 .withKD(0);
 
@@ -164,19 +153,19 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
     private void configureShooter() {
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
         motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
-        motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
+        motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
         shooterLeader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
 
-        Slot1Configs velocityPIDConfigs = new Slot1Configs()
-                .withKS(0)
+        Slot0Configs velocityPIDConfigs = new Slot0Configs()
+                .withKS(0.1)
                 .withKV(0)
-                .withKP(0)
+                .withKP(0.1)
                 .withKI(0)
                 .withKD(0);
 
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
-        talonFXConfiguration.Slot1 = velocityPIDConfigs;
+        talonFXConfiguration.Slot0 = velocityPIDConfigs;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
@@ -200,8 +189,8 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
                 .withGravityType(GravityTypeValue.Arm_Cosine)
                 .withKG(0)
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
-                .withKS(0)
-                .withKP(0)
+                .withKS(0.1)
+                .withKP(0.1)
                 .withKI(0)
                 .withKD(0);
 

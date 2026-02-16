@@ -10,12 +10,12 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentricFacingAngle;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -36,9 +36,15 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FuelLine;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Intake.HopperPosition;
+import frc.robot.subsystems.Intake.IntakeVelocity;
+import frc.robot.subsystems.Shooter.ShooterVelocity;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterLogger;
+import frc.robot.subsystems.FuelLine.LoaderCamVelocity;
+import frc.robot.subsystems.FuelLine.RollerVelocity;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.utility.FieldZones;
 
@@ -91,9 +97,9 @@ public class RobotContainer {
     private final DoubleEntry rollerVelocity = commandInputs.getDoubleTopic("rollerVelocity").getEntry(0.0);
     private final DoubleEntry loaderCamVelocity = commandInputs.getDoubleTopic("loaderCamVelocity").getEntry(0.0);
     private final DoubleEntry loaderCamPosition = commandInputs.getDoubleTopic("loaderCamPosition").getEntry(0.0);;
-    private final DoubleEntry fuelAcceleratorVelocity = commandInputs.getDoubleTopic("fuelAcceleratorVelocity")
+    private final DoubleEntry acceleratorVelocity = commandInputs.getDoubleTopic("acceleratorVelocity")
             .getEntry(0.0);
-    private final DoubleEntry fuelShooterVelocity = commandInputs.getDoubleTopic("fuelShooterVelocity").getEntry(0.0);
+    private final DoubleEntry shooterVelocity = commandInputs.getDoubleTopic("shooterVelocity").getEntry(0.0);
     private final DoubleEntry climberPosition = commandInputs.getDoubleTopic("climberPosition").getEntry(0.0);
 
     @NotLogged
@@ -207,8 +213,8 @@ public class RobotContainer {
         rollerVelocity.set(0);
         loaderCamVelocity.set(0);
         loaderCamPosition.set(0);
-        fuelAcceleratorVelocity.set(0);
-        fuelShooterVelocity.set(0);
+        acceleratorVelocity.set(0);
+        shooterVelocity.set(0);
         climberPosition.set(0);
 
         SmartDashboard.putData("Commands/Intake/Set intake velocity",
@@ -221,10 +227,21 @@ public class RobotContainer {
         SmartDashboard.putData("Commands/Fuel line/Set cam position",
                 commandFactory.cmdSetLoaderCamPosition(() -> loaderCamPosition.get()));
 
-        SmartDashboard.putData("Commands/Shooter/Set fuel accel velocity",
-                commandFactory.cmdSetFuelAcceleratorVelocity(() -> fuelAcceleratorVelocity.get()));
-        SmartDashboard.putData("Commands/Shooter/Set full shoot velocity",
-                commandFactory.cmdSetFuelShooterVelocity(() -> fuelShooterVelocity.get()));
+        SmartDashboard.putData("Commands/Shooter/Set accel velocity",
+                commandFactory.cmdSetFuelAcceleratorVelocity(() -> acceleratorVelocity.get()));
+        SmartDashboard.putData("Commands/Shooter/Set shoot velocity",
+                commandFactory.cmdSetFuelShooterVelocity(() -> shooterVelocity.get()));
+
+        SmartDashboard.putData("Commands/Shooter/Stop accel",
+                commandFactory.cmdSetFuelAcceleratorVelocity(0));
+
+        SmartDashboard.putData("Commands/Shooter/Stop shooter",
+                commandFactory.cmdSetFuelShooterVelocity(0));
+
+        SmartDashboard.putData("Commands/Shared/Fire fuel",
+                commandFactory.cmdFireFuel(shooterVelocity.get(),
+                        acceleratorVelocity.get(),
+                        loaderCamVelocity.get()));
     }
 
     private void configureCommonBindings(EventLoop loop) {
@@ -254,10 +271,39 @@ public class RobotContainer {
          * default
          */
         autoChooser.setDefaultOption("Do nothing", new WaitCommand(15));
+        addPathAuto("DepotOutpostClimb", "DepotOutpostClimb");
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
     private void configureNamedCommands() {
+        final double fireTimeout = 5;
 
+        NamedCommands.registerCommand("extend_hopper",
+                commandFactory.cmdSetHopperPosition(HopperPosition.EXTENDED.rotations));
+
+        NamedCommands.registerCommand("fire_fuel_with_timeout",
+                commandFactory.cmdFireFuel(ShooterVelocity.HUB, LoaderCamVelocity.SIX_BPS)
+                        .withTimeout(fireTimeout));
+
+        /*
+         * TODO: One sequential command for:
+         * - Extend hopper
+         * - Turn on intake wheels
+         * - Turn on fuelline rollers
+         */
+
+        NamedCommands.registerCommand("pick_up_fuel", commandFactory
+                .cmdSetHopperPosition(HopperPosition.EXTENDED.rotations)
+                .andThen(commandFactory.cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond))
+                .andThen(commandFactory.cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond)));
+
+        // TODO: Command warming up the accelerator and shooter
+        // TODO: Command for climb prep
+        // TODO: Command for level one climb
+
+        NamedCommands.registerCommand("shooter_prep", commandFactory
+                .cmdSetFuelShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond)
+                .andThen(commandFactory
+                        .cmdSetFuelAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond)));
     }
 }
