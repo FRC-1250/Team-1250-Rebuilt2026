@@ -42,7 +42,6 @@ import frc.robot.subsystems.Shooter.ShooterVelocity;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.ShooterLogger;
 import frc.robot.subsystems.FuelLine.LoaderCamVelocity;
 import frc.robot.subsystems.FuelLine.RollerVelocity;
 import frc.robot.telemetry.HealthMonitor;
@@ -285,21 +284,10 @@ public class RobotContainer {
                 commandFactory.cmdFireFuel(ShooterVelocity.HUB, LoaderCamVelocity.SIX_BPS)
                         .withTimeout(fireTimeout));
 
-        /*
-         * TODO: One sequential command for:
-         * - Extend hopper
-         * - Turn on intake wheels
-         * - Turn on fuelline rollers
-         */
-
         NamedCommands.registerCommand("pick_up_fuel", commandFactory
                 .cmdSetHopperPosition(HopperPosition.EXTENDED.rotations)
                 .andThen(commandFactory.cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond))
                 .andThen(commandFactory.cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond)));
-
-        // TODO: Command warming up the accelerator and shooter
-        // TODO: Command for climb prep
-        // TODO: Command for level one climb
 
         NamedCommands.registerCommand("shooter_prep", commandFactory
                 .cmdSetFuelShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond)
