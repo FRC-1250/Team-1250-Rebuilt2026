@@ -7,19 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CenterDisruptStart"
+            "pathName": "TestAutoStart"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "CenterDisruptFinish"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "CenterDisruptClimb"
+            "name": "fire_fuel_with_timeout"
           }
         }
       ]

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.589750889679717,
-        "y": 4.061897983392646
+        "x": 3.636650602409638,
+        "y": 4.056855421686747
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7612930011862415,
-        "y": 3.7929181494661925
+        "x": 2.7952168674698794,
+        "y": 4.450253012048193
       },
       "isLocked": false,
       "linkedName": "DepotSideStart"
@@ -20,8 +20,8 @@
         "y": 5.944756820877817
       },
       "prevControl": {
-        "x": 2.3094068801897962,
-        "y": 6.332087781731911
+        "x": 2.5766626506024095,
+        "y": 6.056626506024097
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,20 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "shooter_prep",
+      "waypointRelativePos": 0.28089330024813675,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "pick_up_fuel",
+      "waypointRelativePos": 0.28287841191066937,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -48,7 +61,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 179.35988617075813
   },
   "useDefaultConstraints": true
 }

@@ -7,31 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "OutpostSideCenterStart"
+            "pathName": "DepotPrep"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "OutpostSideCenterCollect"
+            "pathName": "DepotCollect"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "OutpostSideCenterFinish"
+            "pathName": "DepotCenter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterLeftBumpShoot"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "fire_fuel_with_timeout"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "OutpostClimbPrep"
           }
         }
       ]

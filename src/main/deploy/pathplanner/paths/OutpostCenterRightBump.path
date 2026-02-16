@@ -31,12 +31,19 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.4706927175843697,
-      "rotationDegrees": 45.0
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "shooter_prep",
+      "waypointRelativePos": 0.1478908188585608,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,

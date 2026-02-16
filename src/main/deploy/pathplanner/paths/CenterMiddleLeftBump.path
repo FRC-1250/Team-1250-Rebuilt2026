@@ -31,7 +31,20 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "shooter_prep",
+      "waypointRelativePos": 0.16575682382133325,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "pick_up_fuel",
+      "waypointRelativePos": 0.16972704714641512,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,

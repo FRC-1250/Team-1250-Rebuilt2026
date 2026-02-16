@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.27773428232503,
-        "y": 5.256168446026098
+        "x": 1.298120481927711,
+        "y": 5.652301204819277
       },
       "isLocked": false,
       "linkedName": "DepotFull"
@@ -20,8 +20,8 @@
         "y": 5.880201660735468
       },
       "prevControl": {
-        "x": 7.0434519572953755,
-        "y": 5.417556346381969
+        "x": 7.341144578313252,
+        "y": 5.619518072289156
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,8 +30,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.32326820603907597,
-      "rotationDegrees": 45.0
+      "waypointRelativePos": 0.43070539419087345,
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [],

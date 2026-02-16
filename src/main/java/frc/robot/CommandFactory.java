@@ -102,7 +102,7 @@ public class CommandFactory {
     public Command cmdResetHopperPosition() {
         return Commands.runOnce(() -> {
             intake.resetHopperPosition(0);
-        });
+        }).ignoringDisable(true);
     }
 
     /*

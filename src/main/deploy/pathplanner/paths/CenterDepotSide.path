@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.589750889679717,
-        "y": 4.061897983392646
+        "x": 3.636650602409638,
+        "y": 4.056855421686747
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.944804270462636,
-        "y": 5.040984578884936
+        "x": 3.991703983192557,
+        "y": 5.035942017179038
       },
       "isLocked": false,
       "linkedName": "DepotSideStart"
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 179.35988617075813
   },
   "useDefaultConstraints": true
 }

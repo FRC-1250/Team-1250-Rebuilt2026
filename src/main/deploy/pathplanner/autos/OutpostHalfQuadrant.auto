@@ -7,25 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DepotPrep"
+            "pathName": "Outpost"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "DepotCollect"
+            "pathName": "OutpostCenterRightBump"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "DepotCenter"
+            "pathName": "CenterRightShoot"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "CenterLeftBumpShoot"
+            "name": "fire_fuel_with_timeout"
           }
         }
       ]

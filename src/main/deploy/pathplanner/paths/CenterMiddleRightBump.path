@@ -8,7 +8,7 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7068920521945448,
+        "x": 1.706892052194545,
         "y": 1.5980427046263346
       },
       "isLocked": false,
@@ -20,8 +20,8 @@
         "y": 2.200557532621589
       },
       "prevControl": {
-        "x": 7.266857301132169,
-        "y": 2.1999109551556364
+        "x": 7.283889018419315,
+        "y": 2.2912557621021703
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,20 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "shooter_prep",
+      "waypointRelativePos": 0.21736972704714444,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "pick_up_fuel",
+      "waypointRelativePos": 0.21935483870967512,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,

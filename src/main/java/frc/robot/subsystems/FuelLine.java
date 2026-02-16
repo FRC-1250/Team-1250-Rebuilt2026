@@ -139,7 +139,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     private void configureLoaderCam() {
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
         motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
-        motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
+        motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
 
         Slot0Configs positionPIDConfigs = new Slot0Configs()
                 .withGravityType(GravityTypeValue.Elevator_Static)
@@ -152,7 +152,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
         Slot1Configs velocityPIDConfigs = new Slot1Configs()
                 .withKS(0.1)
-                .withKV(0)
+                .withKV(0.08)
                 .withKP(0.1)
                 .withKI(0)
                 .withKD(0);
@@ -183,7 +183,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
         Slot0Configs slot0Configs = new Slot0Configs()
                 .withKS(0.1)
-                .withKV(0)
+                .withKV(0.08)
                 .withKP(0.1)
                 .withKI(0)
                 .withKD(0);
