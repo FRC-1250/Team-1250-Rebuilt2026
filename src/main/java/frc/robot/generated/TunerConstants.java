@@ -73,7 +73,7 @@ public class TunerConstants {
 
     // CAN bus that the devices are located on;
     // All swerve devices must share the same CAN bus
-    public static final CANBus kCANBus = new CANBus("Party Bus", "./logs/example.hoot");
+    public static final CANBus kCANBus = new CANBus("Party Bus");
 
     // Theoretical free speed (m/s) at 12 V applied output;
     // This needs to be tuned to your individual robot
@@ -161,7 +161,7 @@ public class TunerConstants {
 
     // Back Right
     private static final int kBackRightDriveMotorId = 4;
-    private static final int kBackRightSteerMotorId = 0;
+    private static final int kBackRightSteerMotorId = 5;
     private static final int kBackRightEncoderId = 6;
     private static final Angle kBackRightEncoderOffset = Rotations.of(0.300537109375);
     private static final boolean kBackRightSteerMotorInverted = true;
