@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
@@ -11,8 +12,11 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
@@ -48,12 +52,26 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         }
     }
 
-    private final TalonFX roller = new TalonFX(31);
-    private final VelocityVoltage rollerVelocityControl = new VelocityVoltage(0);;
-    private final TalonFX loaderCam = new TalonFX(30);
-    private final CANcoder canCoder = new CANcoder(32);
-    private final VelocityVoltage loaderCamVelocityControl = new VelocityVoltage(0).withSlot(1);
+    public enum CamCoderPosition {
+        OPEN_LEFT_CENTER(0),
+        OPEN_LEFT_RIGHT(0),
+        OPEN_RIGHT_CENTER(0);
 
+        public double rotations;
+
+        private CamCoderPosition(double rotations) {
+            this.rotations = rotations;
+        }
+
+    }
+
+    private final TalonFX roller = new TalonFX(31);
+    private final VelocityVoltage rollerVelocityControl = new VelocityVoltage(0);
+
+    private final TalonFX loaderCam = new TalonFX(30);
+    private final CANcoder camCoder = new CANcoder(32);
+    private final double MAGNET_OFFSET = 0;
+    private final VelocityVoltage loaderCamVelocityControl = new VelocityVoltage(0).withSlot(1);
     private final PositionVoltage loaderCamPositionControl = new PositionVoltage(0).withSlot(0);
 
     private final Color systemColor = new Color(0, 0, 0);
@@ -130,6 +148,10 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
         Slot0Configs positionPIDConfigs = new Slot0Configs()
+                .withGravityType(GravityTypeValue.Elevator_Static)
+                .withKG(0)
+                .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
+                .withKS(0.1)
                 .withKP(0.1)
                 .withKI(0)
                 .withKD(0);
@@ -137,7 +159,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         Slot1Configs velocityPIDConfigs = new Slot1Configs()
                 .withKS(0.1)
                 .withKV(0)
-                .withKP(0)
+                .withKP(0.1)
                 .withKI(0)
                 .withKD(0);
 
@@ -150,6 +172,14 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         loaderCam.getConfigurator().apply(talonFXConfiguration);
         loaderCam.getPosition().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
         loaderCam.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
+
+        CANcoderConfiguration canCoderConfiguration = new CANcoderConfiguration();
+        canCoderConfiguration.MagnetSensor.MagnetOffset = MAGNET_OFFSET;
+        canCoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
+        canCoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+
+        camCoder.getConfigurator().apply(canCoderConfiguration);
+        camCoder.getAbsolutePosition().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
     }
 
     private void configureRoller() {
@@ -157,12 +187,12 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
         motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
-        Slot0Configs slot0Configs = new Slot0Configs();
-        slot0Configs.kS = 0.1;
-        slot0Configs.kV = 0;
-        slot0Configs.kP = 0.1;
-        slot0Configs.kI = 0;
-        slot0Configs.kD = 0;
+        Slot0Configs slot0Configs = new Slot0Configs()
+                .withKS(0.1)
+                .withKV(0)
+                .withKP(0.1)
+                .withKI(0)
+                .withKD(0);
 
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
         talonFXConfiguration.Slot0 = slot0Configs;
