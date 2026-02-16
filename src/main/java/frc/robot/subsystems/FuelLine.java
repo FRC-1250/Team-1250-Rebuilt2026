@@ -97,7 +97,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     }
 
     public boolean isLoaderCamNearPosition(double rotations, double tolerance) {
-        return MathUtil.isNear(rotations, getLoaderCamPosition(), tolerance);
+        return loaderCam.getPosition().isNear(rotations, tolerance);
     }
 
     public double getLoaderCamPosition() {
@@ -112,7 +112,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     }
 
     public boolean isLoaderCamNearRotationsPerSecond(double rotationsPerSecond, double tolerance) {
-        return MathUtil.isNear(rotationsPerSecond, getLoaderCamVelocity(), tolerance);
+        return loaderCam.getVelocity().isNear(rotationsPerSecond, tolerance);
     }
 
     public double getLoaderCamVelocity() {

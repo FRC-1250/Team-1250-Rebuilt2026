@@ -150,7 +150,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     }
 
     public boolean isHopperNearPosition(double rotations, double tolerance) {
-        return MathUtil.isNear(rotations, getHopperPosition(), tolerance);
+        return hopper.getPosition().isNear(rotations, tolerance);
     }
 
     @Override

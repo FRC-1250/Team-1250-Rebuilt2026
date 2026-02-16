@@ -91,7 +91,7 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
     }
 
     public boolean isHoodNearPosition(double position, double tolerance) {
-        return MathUtil.isNear(position, getHoodPosition(), tolerance);
+        return hood.getPosition().isNear(position, tolerance);
     }
 
     public double getAcceleratorVelocity() {
@@ -106,7 +106,7 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
     }
 
     public boolean isAcceleratorNearRotationsPerSecond(double rotationsPerSecond, double tolerance) {
-        return MathUtil.isNear(rotationsPerSecond, getAcceleratorVelocity(), tolerance);
+        return acceleratorLeader.getVelocity().isNear(rotationsPerSecond, tolerance);
     }
 
     public double getShooterVelocity() {
@@ -121,7 +121,7 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
     }
 
     public boolean isShooterNearRotationsPerSecond(double rotationsPerSecond, double tolerance) {
-        return MathUtil.isNear(rotationsPerSecond, getShooterVelocity(), tolerance);
+        return shooterLeader.getVelocity().isNear(rotationsPerSecond, tolerance);
     }
 
     private void configureAccelerator() {
