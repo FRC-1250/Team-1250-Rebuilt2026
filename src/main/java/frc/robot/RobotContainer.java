@@ -105,6 +105,7 @@ public class RobotContainer {
             .getEntry(0.0);
     private final DoubleEntry shooterVelocity = commandInputs.getDoubleTopic("shooterVelocity").getEntry(0.0);
     private final DoubleEntry climberPosition = commandInputs.getDoubleTopic("climberPosition").getEntry(0.0);
+    private final DoubleEntry hopperposition = commandInputs.getDoubleTopic("hopperPosition").getEntry(0.0);
 
     @NotLogged
     private final Trigger blueAlliance = new Trigger(() -> DriverStation.getAlliance().get() == Alliance.Blue);
@@ -255,9 +256,16 @@ public class RobotContainer {
         acceleratorVelocity.set(0);
         shooterVelocity.set(0);
         climberPosition.set(0);
+        hopperposition.set(0);
 
         SmartDashboard.putData("Commands/Intake/Set intake velocity",
                 commandFactory.cmdSetIntakeVelocity(() -> intakeVelocity.get()));
+        SmartDashboard.putData("Commands/Intake/Set hopper position",
+                commandFactory.cmdSetHopperPosition(() -> hopperposition.get()));
+        SmartDashboard.putData("Commands/Intake/Set Hopper Position",
+                commandFactory.cmdSetHopperPosition(0));
+        SmartDashboard.putData("Commands/Intake/Stop intake velocity",
+                commandFactory.cmdSetIntakeVelocity(0));
 
         SmartDashboard.putData("Commands/Fuel line/Set roller velocity",
                 commandFactory.cmdSetRollerVelocity(() -> rollerVelocity.get()));
@@ -265,15 +273,17 @@ public class RobotContainer {
                 commandFactory.cmdSetLoaderCamVelocity(() -> loaderCamVelocity.get()));
         SmartDashboard.putData("Commands/Fuel line/Set cam position",
                 commandFactory.cmdSetLoaderCamPosition(() -> loaderCamPosition.get()));
+        SmartDashboard.putData("Commands/Fuel line/Stop roller velocity",
+                commandFactory.cmdSetRollerVelocity(0));
+        SmartDashboard.putData("Commands/Fuel line/Stop cam velocity",
+                commandFactory.cmdSetLoaderCamVelocity(0));
 
         SmartDashboard.putData("Commands/Shooter/Set accel velocity",
                 commandFactory.cmdSetFuelAcceleratorVelocity(() -> acceleratorVelocity.get()));
         SmartDashboard.putData("Commands/Shooter/Set shoot velocity",
                 commandFactory.cmdSetFuelShooterVelocity(() -> shooterVelocity.get()));
-
         SmartDashboard.putData("Commands/Shooter/Stop accel",
                 commandFactory.cmdSetFuelAcceleratorVelocity(0));
-
         SmartDashboard.putData("Commands/Shooter/Stop shooter",
                 commandFactory.cmdSetFuelShooterVelocity(0));
 
