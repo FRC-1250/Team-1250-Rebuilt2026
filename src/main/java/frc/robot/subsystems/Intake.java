@@ -147,6 +147,18 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
                         .withFeedForward(Volts.of(0)));
     }
 
+    public void resetHopperPosition(double rotations) {
+        hopper.setPosition(rotations);
+    }
+
+    public boolean isHopperAmpNearLimit() {
+        return hopper.getStatorCurrent().isNear(30, 1);
+    }
+
+    public void setHopperSpeed(double speed) {
+        hopper.set(speed);
+    }
+
     public double getHopperPosition() {
         return hopper.getPosition().getValueAsDouble();
     }

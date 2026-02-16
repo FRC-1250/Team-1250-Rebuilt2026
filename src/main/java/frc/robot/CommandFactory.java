@@ -89,6 +89,22 @@ public class CommandFactory {
                         Commands.waitUntil((() -> intake.isHopperNearPosition(supplier.get(), 1))));
     }
 
+    public Command cmdResetHopperPositionWithAmps() {
+        return Commands.sequence(
+                Commands.runOnce(() -> intake.setHopperSpeed(-0.2), intake),
+                Commands.waitUntil(() -> intake.isHopperAmpNearLimit()),
+                Commands.runOnce(() -> {
+                    intake.setHopperPosition(0);
+                    intake.resetHopperPosition(0);
+                }));
+    }
+
+    public Command cmdResetHopperPosition() {
+        return Commands.runOnce(() -> {
+            intake.resetHopperPosition(0);
+        });
+    }
+
     /*
      * FuelLine
      */
