@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentricFacingAngle;
+import com.ctre.phoenix6.swerve.SwerveRequest.SwerveDriveBrake;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
@@ -79,6 +80,9 @@ public class RobotContainer {
 
     private final SwerveRequest.FieldCentricFacingAngle driveWithAngle = new FieldCentricFacingAngle()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
+    private final SwerveRequest.SwerveDriveBrake brake = new SwerveDriveBrake()
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private final SendableChooser<EventLoop> robotOperationModeChooser = new SendableChooser<>();
