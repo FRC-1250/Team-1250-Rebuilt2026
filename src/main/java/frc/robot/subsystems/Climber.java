@@ -50,11 +50,6 @@ public class Climber extends SubsystemBase implements MonitoredSubsystem {
         monitor.addComponent(getSubsystem(), "Climber follower", climberFollower);
     }
 
-    @Override
-    public Color getSubsystemColor() {
-        return systemColor;
-    }
-
     public void setClimberPosition(double rotations) {
         climberLeader.setControl(
                 climberPositionControl

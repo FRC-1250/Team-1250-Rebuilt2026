@@ -21,7 +21,6 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -211,10 +210,5 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
         monitor.addComponent(getSubsystem(), "Accelerator follower", acceleratorFollower);
         monitor.addComponent(getSubsystem(), "Shooter leader", shooterLeader);
         monitor.addComponent(getSubsystem(), "Shooter follower", shooterFollower);
-    }
-
-    @Override
-    public Color getSubsystemColor() {
-        return systemColor;
     }
 }

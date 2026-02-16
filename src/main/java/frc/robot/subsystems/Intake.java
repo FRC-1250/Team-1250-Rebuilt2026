@@ -19,7 +19,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
@@ -107,6 +106,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     private final PositionVoltage hopperPositionVoltage = new PositionVoltage(0);
     private final TalonFX intake = new TalonFX(40);
     private final VelocityVoltage intakeVelocityControl = new VelocityVoltage(0);
+
     private final Color systemColor = new Color(0, 0, 0);
 
     private HopperAgitationProfile activeAgitiationProfile;
@@ -162,11 +162,6 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     public void registerWithHealthMonitor(HealthMonitor monitor) {
         monitor.addComponent(getSubsystem(), "Intake", intake);
         monitor.addComponent(getSubsystem(), "hopper", hopper);
-    }
-
-    @Override
-    public Color getSubsystemColor() {
-        return systemColor;
     }
 
     private void configureHopperAgitation() {

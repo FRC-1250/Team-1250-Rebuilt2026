@@ -19,7 +19,6 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -135,11 +134,6 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     public void registerWithHealthMonitor(HealthMonitor monitor) {
         monitor.addComponent(getSubsystem(), "Roller", roller);
         monitor.addComponent(getSubsystem(), "Loader cam", loaderCam);
-    }
-
-    @Override
-    public Color getSubsystemColor() {
-        return systemColor;
     }
 
     private void configureLoaderCam() {
