@@ -17,6 +17,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -156,59 +157,94 @@ public class RobotContainer {
     private void configureSinglePlayerBindings() {
         configureCommonBindings(singlePlayer);
 
-        primary.rightTrigger(0.5, singlePlayer).whileTrue(Commands.none()); // Shoot
-        primary.leftTrigger(0.5, singlePlayer).whileTrue(Commands.none()); // Tageting
-        primary.rightBumper(singlePlayer).onTrue(Commands.none()); // Intake out
-        primary.leftBumper(singlePlayer).onTrue(Commands.none()); // Intake in
+        primary.rightTrigger(0.5, singlePlayer)
+                .whileTrue(commandFactory.cmdFireFuel(
+                        ShooterVelocity.HUB.shooterRotationsPerSecond,
+                        ShooterVelocity.HUB.acceleratorRotationsPerSecond,
+                        LoaderCamVelocity.SIX_BPS.rotationsPerSecond)); // Shoot
+
+        primaryLeftTriggerPointToPosition(
+                singlePlayer,
+                isInBlueSide,
+                blueAlliance,
+                FieldPositions.blueHub);
+
+        primaryLeftTriggerPointToPosition(
+                singlePlayer,
+                isInCenterBlueOutpostRedDepotZone,
+                blueAlliance,
+                FieldPositions.blueOutpostSide);
+
+        primaryLeftTriggerPointToPosition(
+                singlePlayer,
+                isInCenterBlueDepotRedOutpostZone,
+                blueAlliance,
+                FieldPositions.blueDepotSide);
+
+        primaryLeftTriggerPointToPosition(
+                singlePlayer,
+                isInRedSide,
+                redAlliance,
+                FieldPositions.redHub);
+
+        primaryLeftTriggerPointToPosition(
+                singlePlayer,
+                isInCenterBlueOutpostRedDepotZone,
+                redAlliance,
+                FieldPositions.redDepotSide);
+
+        primaryLeftTriggerPointToPosition(
+                singlePlayer,
+                isInCenterBlueDepotRedOutpostZone,
+                redAlliance,
+                FieldPositions.redOutpostSide);
+
+        primary.rightBumper(singlePlayer).onTrue(commandFactory.cmdPickUpFuel()); // Intake out
+        primary.leftBumper(singlePlayer).onTrue(commandFactory.cmdHome()); // Intake in
         primary.y(singlePlayer).onTrue(Commands.none()); // Climb foeward
         primary.b(singlePlayer).onTrue(Commands.none()); // Climb back
         primary.x(singlePlayer).onTrue(Commands.none()); // drive to tower position
-        primary.a(singlePlayer).and(isInBlueSide).and(blueAlliance)
-                .whileTrue(swerve.applyRequest(() -> driveWithAngle
-                        .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
-                        .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
-                        .withHeadingPID(8, 0, 0)
-                        .withTargetDirection(commandFactory.determineHeading(FieldPositions.blueHub)))
-                        .withName("Point centric swerve")); // Toggle auto heading
-        primary.a(singlePlayer).and(isInCenterBlueOutpostRedDepotZone).and(blueAlliance)
-                .whileTrue(swerve.applyRequest(() -> driveWithAngle
-                        .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
-                        .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
-                        .withHeadingPID(8, 0, 0)
-                        .withTargetDirection(commandFactory.determineHeading(FieldPositions.blueOutpostSide)))
-                        .withName("Point centric swerve")); // Toggle auto heading
-        primary.a(singlePlayer).and(isInCenterBlueDepotRedOutpostZone).and(blueAlliance)
-                .whileTrue(swerve.applyRequest(() -> driveWithAngle
-                        .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
-                        .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
-                        .withHeadingPID(8, 0, 0)
-                        .withTargetDirection(commandFactory.determineHeading(FieldPositions.blueDepotSide)))
-                        .withName("Point centric swerve")); // Toggle auto heading
-        primary.a(singlePlayer).and(isInRedSide).and(redAlliance)
-                .whileTrue(swerve.applyRequest(() -> driveWithAngle
-                        .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
-                        .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
-                        .withHeadingPID(8, 0, 0)
-                        .withTargetDirection(commandFactory.determineHeading(FieldPositions.redHub)))
-                        .withName("Point centric swerve")); // Toggle auto heading
-        primary.a(singlePlayer).and(isInCenterBlueOutpostRedDepotZone).and(redAlliance)
-                .whileTrue(swerve.applyRequest(() -> driveWithAngle
-                        .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
-                        .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
-                        .withHeadingPID(8, 0, 0)
-                        .withTargetDirection(commandFactory.determineHeading(FieldPositions.redDepotSide)))
-                        .withName("Point centric swerve")); // Toggle auto heading
-        primary.a(singlePlayer).and(isInCenterBlueDepotRedOutpostZone).and(redAlliance)
-                .whileTrue(swerve.applyRequest(() -> driveWithAngle
-                        .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
-                        .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
-                        .withHeadingPID(8, 0, 0)
-                        .withTargetDirection(commandFactory.determineHeading(FieldPositions.redOutpostSide)))
-                        .withName("Point centric swerve")); // Toggle auto heading
+    }
+
+    private void primaryLeftTriggerPointToPosition(
+            EventLoop eventLoop,
+            Trigger zoneTrigger,
+            Trigger allianceTrigger,
+            Translation2d t2d) {
+        primary.leftTrigger(0.5, eventLoop).and(zoneTrigger).and(allianceTrigger)
+                .whileTrue(
+                        swerve.applyRequest(
+                                () -> driveWithAngle
+                                        .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
+                                        .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
+                                        .withHeadingPID(8, 0, 0)
+                                        .withTargetDirection(commandFactory.determineHeading(t2d)))
+                                .withName("Point centric swerve"));
     }
 
     private void configureTwoPlayerBindings() {
         configureCommonBindings(twoPlayer);
+    }
+
+    private void configureCommonBindings(EventLoop loop) {
+        swerve.setDefaultCommand(
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
+                        .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
+                        .withRotationalRate(-primary.getRightX() * MaxAngularRate))
+                        .withName("Field centric swerve"));
+
+        configureDevBindings();
+    }
+
+    private void addPathAuto(String name, String pathName) {
+        try {
+            autoChooser.addOption(name, new PathPlannerAuto(pathName));
+        } catch (Exception e) {
+            // Exceptions are now caught in the PathPlannerAuto constructor and this should
+            // never run. Leaving it in place to catch any edge cases.
+            DataLogManager.log(String.format("GatorBot: Not able to build auto routines! %s", e.getMessage()));
+        }
     }
 
     private void configureDevBindings() {
@@ -247,27 +283,6 @@ public class RobotContainer {
                         loaderCamVelocity.get()));
     }
 
-    private void configureCommonBindings(EventLoop loop) {
-        swerve.setDefaultCommand(
-                swerve.applyRequest(() -> drive
-                        .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
-                        .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
-                        .withRotationalRate(-primary.getRightX() * MaxAngularRate))
-                        .withName("Field centric swerve"));
-
-        configureDevBindings();
-    }
-
-    private void addPathAuto(String name, String pathName) {
-        try {
-            autoChooser.addOption(name, new PathPlannerAuto(pathName));
-        } catch (Exception e) {
-            // Exceptions are now caught in the PathPlannerAuto constructor and this should
-            // never run. Leaving it in place to catch any edge cases.
-            DataLogManager.log(String.format("GatorBot: Not able to build auto routines! %s", e.getMessage()));
-        }
-    }
-
     private void configureAutoCommands() {
         /*
          * Do nothing as default is a human safety condition, this should always be the
@@ -285,17 +300,12 @@ public class RobotContainer {
                 commandFactory.cmdSetHopperPosition(HopperPosition.EXTENDED.rotations));
 
         NamedCommands.registerCommand("fire_fuel_with_timeout",
-                commandFactory.cmdFireFuel(ShooterVelocity.HUB, LoaderCamVelocity.SIX_BPS)
+                commandFactory.cmdFireFuel(ShooterVelocity.HUB.shooterRotationsPerSecond,
+                        ShooterVelocity.HUB.acceleratorRotationsPerSecond,
+                        LoaderCamVelocity.SIX_BPS.rotationsPerSecond)
                         .withTimeout(fireTimeout));
 
-        NamedCommands.registerCommand("pick_up_fuel", commandFactory
-                .cmdSetHopperPosition(HopperPosition.EXTENDED.rotations)
-                .andThen(commandFactory.cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond))
-                .andThen(commandFactory.cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond)));
-
-        NamedCommands.registerCommand("shooter_prep", commandFactory
-                .cmdSetFuelShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond)
-                .andThen(commandFactory
-                        .cmdSetFuelAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond)));
+        NamedCommands.registerCommand("pick_up_fuel", commandFactory.cmdPickUpFuel());
+        NamedCommands.registerCommand("shooter_prep", commandFactory.cmdShooterPrep());
     }
 }

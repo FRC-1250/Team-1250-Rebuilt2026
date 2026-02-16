@@ -11,10 +11,11 @@ import frc.robot.commands.SwerveVisionLogic;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FuelLine;
-import frc.robot.subsystems.FuelLine.LoaderCamVelocity;
 import frc.robot.subsystems.FuelLine.RollerVelocity;
 import frc.robot.subsystems.Shooter.ShooterVelocity;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Intake.HopperPosition;
+import frc.robot.subsystems.Intake.IntakeVelocity;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
@@ -28,22 +29,6 @@ public class CommandFactory {
     private final Limelight cmdLimelight;
     private final Leds leds;
     private final Intake intake;
-
-    public Command cmdSwerveVisionLogic() {
-        return new SwerveVisionLogic(cmdLimelight, cmdSwerveDriveState);
-    }
-
-    public Rotation2d determineHeading(Translation2d feildHeading) {
-        {
-            return Rotation2d.fromRadians(
-                    Math.atan2(
-                            feildHeading.getY() - cmdSwerveDriveState.getState().Pose.getY(),
-                            feildHeading.getX() - cmdSwerveDriveState.getState().Pose.getX()))
-                    .plus(cmdSwerveDriveState.getOperatorForwardDirection());
-
-        }
-
-    }
 
     public CommandFactory(
             CommandSwerveDrivetrain SwerveDriveState,
@@ -60,6 +45,24 @@ public class CommandFactory {
         this.climber = climber;
         this.cmdLimelight = limelight;
         this.leds = leds;
+    }
+
+    /*
+     * Drive
+     */
+
+    public Command cmdSwerveVisionLogic() {
+        return new SwerveVisionLogic(cmdLimelight, cmdSwerveDriveState);
+    }
+
+    public Rotation2d determineHeading(Translation2d feildHeading) {
+        {
+            return Rotation2d.fromRadians(
+                    Math.atan2(
+                            feildHeading.getY() - cmdSwerveDriveState.getState().Pose.getY(),
+                            feildHeading.getX() - cmdSwerveDriveState.getState().Pose.getX()))
+                    .plus(cmdSwerveDriveState.getOperatorForwardDirection());
+        }
     }
 
     /*
@@ -89,11 +92,6 @@ public class CommandFactory {
     /*
      * FuelLine
      */
-
-    public Command cmdSetRollerVelocity(RollerVelocity control) {
-        return cmdSetRollerVelocity(() -> control.rotationsPerSecond);
-    }
-
     public Command cmdSetRollerVelocity(double rotationsPerSecond) {
         return cmdSetRollerVelocity(() -> rotationsPerSecond);
     }
@@ -149,6 +147,19 @@ public class CommandFactory {
 
     }
 
+    public Command cmdSetHoodPosition(Supplier<Double> supplier) {
+        return Commands.runOnce(
+                () -> shooter.setHoodPosition(supplier.get()), shooter)
+                .andThen(Commands.waitUntil(() -> shooter.isHoodNearPosition(supplier.get(), 1)));
+    }
+
+    public Command cmdSetHoodPosition(double rotationsPerSecond) {
+        return cmdSetHoodPosition(() -> rotationsPerSecond);
+    }
+
+    /*
+     * Shared
+     */
     public Command cmdFireFuel(Supplier<Double> shooterVelocitySupplier, Supplier<Double> acceleratorVelocitySupplier,
             Supplier<Double> loaderCamVelocitySupplier) {
         return Commands.runEnd(
@@ -175,20 +186,20 @@ public class CommandFactory {
                 () -> loaderCamVelocity);
     }
 
-    public Command cmdFireFuel(ShooterVelocity shooterVelocity, LoaderCamVelocity loaderVelocity) {
-        return cmdFireFuel(() -> shooterVelocity.shooterRotationsPerSecond,
-                () -> shooterVelocity.acceleratorRotationsPerSecond,
-                () -> loaderVelocity.rotationsPerSecond);
+    public Command cmdPickUpFuel() {
+        return cmdSetHopperPosition(HopperPosition.EXTENDED.rotations)
+                .andThen(cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond))
+                .andThen(cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond));
     }
 
-    public Command cmdSetHoodPosition(Supplier<Double> supplier) {
-        return Commands.runOnce(
-                () -> shooter.setHoodPosition(supplier.get()), shooter)
-                .andThen(Commands.waitUntil(() -> shooter.isHoodNearPosition(supplier.get(), 1)));
+    public Command cmdHome() {
+        return cmdSetRollerVelocity(RollerVelocity.STOP.rotationsPerSecond)
+                .andThen(cmdSetIntakeVelocity(IntakeVelocity.STOP.rotationsPerSecond))
+                .andThen(cmdSetHopperPosition(HopperPosition.RETRACTED.rotations));
     }
 
-    public Command cmdSetHoodPosition(double rotationsPerSecond) {
-        return cmdSetHoodPosition(() -> rotationsPerSecond);
+    public Command cmdShooterPrep() {
+        return cmdSetFuelShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond)
+                .andThen(cmdSetFuelAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond));
     }
-
 }
