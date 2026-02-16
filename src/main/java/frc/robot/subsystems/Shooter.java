@@ -44,8 +44,8 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
     public enum ShooterVelocity {
         STOP(0),
         WARM(10),
-        HUB(20),
-        MAX(40);
+        HUB(40),
+        MAX(50);
 
         public double shooterRotationsPerSecond;
         public double acceleratorRotationsPerSecond;
@@ -132,7 +132,7 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
         Slot1Configs velocityPIDConfigs = new Slot1Configs()
                 .withKS(0.1)
-                .withKV(0)
+                .withKV(0.1)
                 .withKP(0.1)
                 .withKI(0)
                 .withKD(0);
@@ -158,7 +158,7 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
         Slot0Configs velocityPIDConfigs = new Slot0Configs()
                 .withKS(0.1)
-                .withKV(0)
+                .withKV(0.1)
                 .withKP(0.1)
                 .withKI(0)
                 .withKD(0);

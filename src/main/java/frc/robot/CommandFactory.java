@@ -184,15 +184,18 @@ public class CommandFactory {
                     shooter.setShooterVelocity(shooterVelocitySupplier.get());
                     if (shooter.isAcceleratorNearRotationsPerSecond(acceleratorVelocitySupplier.get(), 2)
                             && shooter.isShooterNearRotationsPerSecond(shooterVelocitySupplier.get(), 2)) {
-                        fuelLine.setLoaderCamVelocity(loaderCamVelocitySupplier.get());
-                        intake.agitateHopper();
+                        // fuelLine.setLoaderCamVelocity(loaderCamVelocitySupplier.get());
+                        // intake.agitateHopper();
+                        fuelLine.setRollerVelocity(25);
                     }
                 },
                 () -> {
                     shooter.setAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond);
                     shooter.setShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond);
-                    fuelLine.setLoaderCamVelocity(0);
-                    intake.resetAgitation();
+                    fuelLine.setRollerVelocity(0);
+
+                    // fuelLine.setLoaderCamVelocity(0);
+                    // intake.resetAgitation();
                 }, shooter, fuelLine, intake);
     }
 
@@ -204,7 +207,7 @@ public class CommandFactory {
 
     public Command cmdPickUpFuel() {
         return cmdSetHopperPosition(HopperPosition.EXTENDED.rotations)
-                .andThen(cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond))
+                // .andThen(cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond))
                 .andThen(cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond));
     }
 
