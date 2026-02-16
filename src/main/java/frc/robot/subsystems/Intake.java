@@ -183,12 +183,12 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
         motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
-        Slot0Configs slot0Configs = new Slot0Configs();
-        slot0Configs.kS = 0.1;
-        slot0Configs.kV = 0;
-        slot0Configs.kP = 0.1;
-        slot0Configs.kI = 0;
-        slot0Configs.kD = 0;
+        Slot0Configs slot0Configs = new Slot0Configs()
+                .withKS(0.1)
+                .withKV(0)
+                .withKP(0.1)
+                .withKI(0)
+                .withKD(0);
 
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
         talonFXConfiguration.Slot0 = slot0Configs;
@@ -205,12 +205,12 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
         motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
-        Slot0Configs slot0Configs = new Slot0Configs();
-        slot0Configs.kS = 0.1;
-        slot0Configs.kV = 0;
-        slot0Configs.kP = 0.1;
-        slot0Configs.kI = 0;
-        slot0Configs.kD = 0;
+        Slot0Configs slot0Configs = new Slot0Configs()
+                .withKS(0.1)
+                .withKV(0)
+                .withKP(0.1)
+                .withKI(0)
+                .withKD(0);
 
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
         talonFXConfiguration.Slot0 = slot0Configs;
