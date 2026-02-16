@@ -19,6 +19,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
@@ -26,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.telemetry.MonitoredSubsystem;
 
+@Logged
 public class Intake extends SubsystemBase implements MonitoredSubsystem {
     public enum HopperPosition {
         RETRACTED(0),
