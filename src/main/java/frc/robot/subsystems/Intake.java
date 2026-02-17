@@ -197,7 +197,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
         Slot0Configs velocityGains = new Slot0Configs()
                 .withKS(0.1)
-                .withKV(0.1)
+                .withKV(0.11)
                 .withKP(0.1)
                 .withKI(0)
                 .withKD(0);
@@ -219,8 +219,8 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
         Slot1Configs positionGains = new Slot1Configs()
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
-                .withKS(0.1)
-                .withKP(1.5)
+                .withKS(0)
+                .withKP(8)
                 .withKI(0)
                 .withKD(0);
 
@@ -229,10 +229,13 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
-        talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 3.6;
-        talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        // talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 3.725;
+        // talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
         talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+
+        talonFXConfiguration.Voltage.PeakForwardVoltage = 0.25;
+        talonFXConfiguration.Voltage.PeakReverseVoltage = -12;
 
         hopper.getConfigurator().apply(talonFXConfiguration);
         hopper.getPosition().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));

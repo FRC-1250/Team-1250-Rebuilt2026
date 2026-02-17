@@ -130,9 +130,9 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
         acceleratorLeader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
 
         Slot0Configs velocityGains = new Slot0Configs()
-                .withKS(0.1)
-                .withKV(0.1)
-                .withKP(0.1)
+                .withKS(0.09)
+                .withKV(0.11)
+                .withKP(0.15)
                 .withKI(0)
                 .withKD(0);
 
@@ -156,11 +156,11 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
         shooterLeader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
 
         Slot0Configs velocityGains = new Slot0Configs()
-                .withKS(0.1)
-                .withKV(0.1)
-                .withKP(0.1)
+                .withKS(0.09)
+                .withKV(0.11)
+                .withKP(0.25)
                 .withKI(0)
-                .withKD(0);
+                .withKD(0.01);
 
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
         talonFXConfiguration.Slot0 = velocityGains;
