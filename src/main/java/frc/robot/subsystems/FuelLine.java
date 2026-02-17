@@ -12,7 +12,6 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -38,7 +37,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         }
     }
 
-    public enum LoaderCamVelocity {
+    public enum CamVelocity {
         THREE_BPS(1),
         SIX_BPS(2),
         NINE_BPS(3),
@@ -46,7 +45,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
         public double rotationsPerSecond;
 
-        private LoaderCamVelocity(double rotationsPerSecond) {
+        private CamVelocity(double rotationsPerSecond) {
             this.rotationsPerSecond = rotationsPerSecond;
         }
     }
@@ -65,18 +64,18 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     }
 
     private final TalonFX roller = new TalonFX(31);
-    private final VelocityVoltage rollerVelocityControl = new VelocityVoltage(0);
+    private final VelocityVoltage rollerVelocityControl = new VelocityVoltage(0).withSlot(0);
 
-    private final TalonFX loaderCam = new TalonFX(30);
+    private final TalonFX cam = new TalonFX(30);
+    private final VelocityVoltage camVelocityControl = new VelocityVoltage(0).withSlot(0);
+    private final PositionVoltage camPositionControl = new PositionVoltage(0).withSlot(1);
     private final CANcoder camCoder = new CANcoder(32);
     private final double MAGNET_OFFSET = 0;
-    private final VelocityVoltage loaderCamVelocityControl = new VelocityVoltage(0).withSlot(1);
-    private final PositionVoltage loaderCamPositionControl = new PositionVoltage(0).withSlot(0);
 
     private final Color systemColor = new Color(0, 0, 0);
 
     public FuelLine() {
-        configureLoaderCam();
+        configureCam();
         configureRoller();
     }
 
@@ -91,36 +90,36 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
                         .withFeedForward(Volts.of(0)));
     }
 
-    public void resetLoaderCamPositionToPosition(double rotations) {
-        loaderCam.setPosition(rotations);
+    public void resetCamPositionToPosition(double rotations) {
+        cam.setPosition(rotations);
     }
 
-    public boolean isLoaderCamNearPosition(double rotations, double tolerance) {
-        return loaderCam.getPosition().isNear(rotations, tolerance);
+    public boolean isCamNearPosition(double rotations, double tolerance) {
+        return cam.getPosition().isNear(rotations, tolerance);
     }
 
-    public double getLoaderCamPosition() {
-        return loaderCam.getPosition().getValueAsDouble();
+    public double getCamPosition() {
+        return cam.getPosition().getValueAsDouble();
     }
 
-    public void setLoaderCamPosition(double rotations) {
-        loaderCam.setControl(
-                loaderCamPositionControl
+    public void setCamPosition(double rotations) {
+        cam.setControl(
+                camPositionControl
                         .withPosition(rotations)
                         .withFeedForward(Volts.of(0)));
     }
 
-    public boolean isLoaderCamNearRotationsPerSecond(double rotationsPerSecond, double tolerance) {
-        return loaderCam.getVelocity().isNear(rotationsPerSecond, tolerance);
+    public boolean isCamNearRotationsPerSecond(double rotationsPerSecond, double tolerance) {
+        return cam.getVelocity().isNear(rotationsPerSecond, tolerance);
     }
 
-    public double getLoaderCamVelocity() {
-        return loaderCam.getVelocity().getValueAsDouble();
+    public double getCamVelocity() {
+        return cam.getVelocity().getValueAsDouble();
     }
 
-    public void setLoaderCamVelocity(double rotationsPerSecond) {
-        loaderCam.setControl(
-                loaderCamVelocityControl
+    public void setCamVelocity(double rotationsPerSecond) {
+        cam.setControl(
+                camVelocityControl
                         .withVelocity(rotationsPerSecond)
                         .withFeedForward(Volts.of(0)));
     }
@@ -133,39 +132,37 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     @Override
     public void registerWithHealthMonitor(HealthMonitor monitor) {
         monitor.addComponent(getSubsystem(), "Roller", roller);
-        monitor.addComponent(getSubsystem(), "Loader cam", loaderCam);
+        monitor.addComponent(getSubsystem(), "Cam", cam);
     }
 
-    private void configureLoaderCam() {
+    private void configureCam() {
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
         motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
         motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
 
-        Slot0Configs positionPIDConfigs = new Slot0Configs()
-                .withGravityType(GravityTypeValue.Elevator_Static)
-                .withKG(0)
-                .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
-                .withKS(0.1)
-                .withKP(0.1)
-                .withKI(0)
-                .withKD(0);
-
-        Slot1Configs velocityPIDConfigs = new Slot1Configs()
+        Slot0Configs velocityGains = new Slot0Configs()
                 .withKS(0.1)
                 .withKV(0.08)
                 .withKP(0.1)
                 .withKI(0)
                 .withKD(0);
 
+        Slot1Configs positionGains = new Slot1Configs()
+                .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
+                .withKS(0.1)
+                .withKP(0.1)
+                .withKI(0)
+                .withKD(0);
+
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
-        talonFXConfiguration.Slot0 = positionPIDConfigs;
-        talonFXConfiguration.Slot1 = velocityPIDConfigs;
+        talonFXConfiguration.Slot0 = velocityGains;
+        talonFXConfiguration.Slot1 = positionGains;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
-        loaderCam.getConfigurator().apply(talonFXConfiguration);
-        loaderCam.getPosition().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
-        loaderCam.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
+        cam.getConfigurator().apply(talonFXConfiguration);
+        cam.getPosition().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
+        cam.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
 
         CANcoderConfiguration canCoderConfiguration = new CANcoderConfiguration();
         canCoderConfiguration.MagnetSensor.MagnetOffset = MAGNET_OFFSET;
@@ -181,7 +178,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
         motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
-        Slot0Configs slot0Configs = new Slot0Configs()
+        Slot0Configs velocityGains = new Slot0Configs()
                 .withKS(0.1)
                 .withKV(0.08)
                 .withKP(0.1)
@@ -189,7 +186,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
                 .withKD(0);
 
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
-        talonFXConfiguration.Slot0 = slot0Configs;
+        talonFXConfiguration.Slot0 = velocityGains;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;

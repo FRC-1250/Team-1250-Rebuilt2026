@@ -124,8 +124,8 @@ public class CommandFactory {
 
     public Command cmdSetLoaderCamPosition(Supplier<Double> supplier) {
         return Commands.runOnce(
-                () -> fuelLine.setLoaderCamPosition(supplier.get()), fuelLine)
-                .andThen(Commands.waitUntil(() -> fuelLine.isLoaderCamNearPosition(supplier.get(), 1)));
+                () -> fuelLine.setCamPosition(supplier.get()), fuelLine)
+                .andThen(Commands.waitUntil(() -> fuelLine.isCamNearPosition(supplier.get(), 1)));
     }
 
     public Command cmdSetLoaderCamVelocity(double rotationsPerSecond) {
@@ -134,7 +134,7 @@ public class CommandFactory {
 
     public Command cmdSetLoaderCamVelocity(Supplier<Double> supplier) {
         return Commands.runOnce(
-                () -> fuelLine.setLoaderCamVelocity(supplier.get()), fuelLine);
+                () -> fuelLine.setCamVelocity(supplier.get()), fuelLine);
     }
 
     /*

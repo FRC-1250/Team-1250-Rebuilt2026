@@ -12,12 +12,14 @@ import java.util.List;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Frequency;
@@ -104,10 +106,11 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         }
     }
 
-    private final TalonFX hopper = new TalonFX(41);
-    private final PositionVoltage hopperPositionVoltage = new PositionVoltage(0);
     private final TalonFX intake = new TalonFX(40);
-    private final VelocityVoltage intakeVelocityControl = new VelocityVoltage(0);
+    private final VelocityVoltage intakeVelocityControl = new VelocityVoltage(0).withSlot(0);
+
+    private final TalonFX hopper = new TalonFX(41);
+    private final PositionVoltage hopperPositionVoltage = new PositionVoltage(0).withSlot(1);
 
     private final Color systemColor = new Color(0, 0, 0);
 
@@ -115,8 +118,8 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     private HopperAgitationProfile wave;
 
     public Intake() {
-        configureHopperTalonFX();
-        configureIntakeTalonFX();
+        configureHopper();
+        configureIntake();
         configureHopperAgitation();
         activeAgitiationProfile = wave;
     }
@@ -187,20 +190,20 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_3, 1));
     }
 
-    private void configureIntakeTalonFX() {
+    private void configureIntake() {
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
         motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
         motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
-        Slot0Configs slot0Configs = new Slot0Configs()
+        Slot0Configs velocityGains = new Slot0Configs()
                 .withKS(0.1)
-                .withKV(0)
+                .withKV(0.1)
                 .withKP(0.1)
                 .withKI(0)
                 .withKD(0);
 
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
-        talonFXConfiguration.Slot0 = slot0Configs;
+        talonFXConfiguration.Slot0 = velocityGains;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
@@ -209,20 +212,20 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         intake.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
     }
 
-    private void configureHopperTalonFX() {
+    private void configureHopper() {
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
         motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
         motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
 
-        Slot0Configs slot0Configs = new Slot0Configs()
+        Slot1Configs positionGains = new Slot1Configs()
+                .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
                 .withKS(0.1)
-                .withKV(0)
-                .withKP(0.1)
+                .withKP(1.5)
                 .withKI(0)
                 .withKD(0);
 
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
-        talonFXConfiguration.Slot0 = slot0Configs;
+        talonFXConfiguration.Slot1 = positionGains;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;

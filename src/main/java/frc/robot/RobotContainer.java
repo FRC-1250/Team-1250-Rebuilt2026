@@ -44,7 +44,7 @@ import frc.robot.subsystems.Shooter.ShooterVelocity;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.FuelLine.LoaderCamVelocity;
+import frc.robot.subsystems.FuelLine.CamVelocity;
 import frc.robot.subsystems.FuelLine.RollerVelocity;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.utility.FieldZones;
@@ -162,7 +162,7 @@ public class RobotContainer {
                 .whileTrue(commandFactory.cmdFireFuel(
                         ShooterVelocity.HUB.shooterRotationsPerSecond,
                         ShooterVelocity.HUB.acceleratorRotationsPerSecond,
-                        LoaderCamVelocity.SIX_BPS.rotationsPerSecond)); // Shoot
+                        CamVelocity.SIX_BPS.rotationsPerSecond)); // Shoot
 
         primaryLeftTriggerPointToPosition(
                 singlePlayer,
@@ -314,7 +314,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("fire_fuel_with_timeout",
                 commandFactory.cmdFireFuel(ShooterVelocity.HUB.shooterRotationsPerSecond,
                         ShooterVelocity.HUB.acceleratorRotationsPerSecond,
-                        LoaderCamVelocity.SIX_BPS.rotationsPerSecond)
+                        CamVelocity.SIX_BPS.rotationsPerSecond)
                         .withTimeout(fireTimeout));
 
         NamedCommands.registerCommand("pick_up_fuel", commandFactory.cmdPickUpFuel());

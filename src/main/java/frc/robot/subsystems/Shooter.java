@@ -13,7 +13,6 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -66,7 +65,7 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
     private final VelocityVoltage shooterVelocityControl = new VelocityVoltage(0).withSlot(0);
 
     private final TalonFX hood = new TalonFX(25);
-    private final PositionVoltage hoodPositionControl = new PositionVoltage(0).withSlot(0);
+    private final PositionVoltage hoodPositionControl = new PositionVoltage(0).withSlot(1);
     private final CANcoder hoodAbsoluteEncoder = new CANcoder(25);
     private final double encoderOffset = 0;
 
@@ -130,7 +129,7 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
         acceleratorLeader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
 
-        Slot1Configs velocityPIDConfigs = new Slot1Configs()
+        Slot0Configs velocityGains = new Slot0Configs()
                 .withKS(0.1)
                 .withKV(0.1)
                 .withKP(0.1)
@@ -138,7 +137,7 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
                 .withKD(0);
 
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
-        talonFXConfiguration.Slot1 = velocityPIDConfigs;
+        talonFXConfiguration.Slot0 = velocityGains;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
@@ -156,7 +155,7 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
         shooterLeader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
 
-        Slot0Configs velocityPIDConfigs = new Slot0Configs()
+        Slot0Configs velocityGains = new Slot0Configs()
                 .withKS(0.1)
                 .withKV(0.1)
                 .withKP(0.1)
@@ -164,7 +163,7 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
                 .withKD(0);
 
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
-        talonFXConfiguration.Slot0 = velocityPIDConfigs;
+        talonFXConfiguration.Slot0 = velocityGains;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
@@ -184,9 +183,7 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
         hoodAbsoluteEncoder.getConfigurator().apply(hoodAbsoluteEncoderConfiguration);
         hoodAbsoluteEncoder.getAbsolutePosition().setUpdateFrequency(200);
 
-        Slot0Configs hoodPositionPIDConfigs = new Slot0Configs()
-                .withGravityType(GravityTypeValue.Arm_Cosine)
-                .withKG(0)
+        Slot1Configs positionGains = new Slot1Configs()
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
                 .withKS(0.1)
                 .withKP(0.1)
@@ -194,7 +191,7 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
                 .withKD(0);
 
         TalonFXConfiguration hoodConfiguration = new TalonFXConfiguration();
-        hoodConfiguration.Slot0 = hoodPositionPIDConfigs;
+        hoodConfiguration.Slot1 = positionGains;
         hoodConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
         hoodConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         hoodConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
