@@ -262,8 +262,6 @@ public class RobotContainer {
                 commandFactory.cmdSetIntakeVelocity(() -> intakeVelocity.get()));
         SmartDashboard.putData("Commands/Intake/Set hopper position",
                 commandFactory.cmdSetHopperPosition(() -> hopperposition.get()));
-        SmartDashboard.putData("Commands/Intake/Set Hopper Position",
-                commandFactory.cmdSetHopperPosition(0));
         SmartDashboard.putData("Commands/Intake/Stop intake velocity",
                 commandFactory.cmdSetIntakeVelocity(0));
         SmartDashboard.putData("Commands/Intake/Reset hopper position",
