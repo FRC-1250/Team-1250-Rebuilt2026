@@ -224,7 +224,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         Slot1Configs positionGains = new Slot1Configs()
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
                 .withKS(0)
-                .withKP(8)
+                .withKP(5)
                 .withKI(0)
                 .withKD(0);
 
@@ -239,7 +239,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
         talonFXConfiguration.Voltage.PeakForwardVoltage = 0.25;
-        talonFXConfiguration.Voltage.PeakReverseVoltage = -12;
+        talonFXConfiguration.Voltage.PeakReverseVoltage = -10;
 
         hopper.setPosition(0);
         hopper.getConfigurator().apply(talonFXConfiguration);

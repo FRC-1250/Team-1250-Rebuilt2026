@@ -39,7 +39,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
     public enum LoaderVelocity {
         STALL(-10),
-        FIRE(5);
+        FIRE(15);
 
         public double rotationsPerSecond;
 
@@ -136,7 +136,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     private void configureLoader() {
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
         motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
-        motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
+        motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
         Slot0Configs velocityGains = new Slot0Configs()
                 .withKS(0.1)
