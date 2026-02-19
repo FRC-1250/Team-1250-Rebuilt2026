@@ -271,13 +271,13 @@ public class RobotContainer {
         SmartDashboard.putData("Commands/Fuel line/Set roller velocity",
                 commandFactory.cmdSetRollerVelocity(() -> rollerVelocity.get()));
         SmartDashboard.putData("Commands/Fuel line/Set Loader velocity",
-                commandFactory.cmdSetLoaderLoaderVelocity(() -> loaderLoaderVelocity.get()));
+                commandFactory.cmdSetLoaderVelocity(() -> loaderLoaderVelocity.get()));
         SmartDashboard.putData("Commands/Fuel line/Set Loader position",
-                commandFactory.cmdSetLoaderLoaderPosition(() -> loaderLoaderPosition.get()));
+                commandFactory.cmdSetLoaderPosition(() -> loaderLoaderPosition.get()));
         SmartDashboard.putData("Commands/Fuel line/Stop roller velocity",
                 commandFactory.cmdSetRollerVelocity(0));
         SmartDashboard.putData("Commands/Fuel line/Stop Loader velocity",
-                commandFactory.cmdSetLoaderLoaderVelocity(0));
+                commandFactory.cmdSetLoaderVelocity(0));
 
         SmartDashboard.putData("Commands/Shooter/Set accel velocity",
                 commandFactory.cmdSetFuelAcceleratorVelocity(() -> acceleratorVelocity.get()));
