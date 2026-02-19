@@ -11,6 +11,7 @@ import frc.robot.commands.SwerveVisionLogic;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FuelLine;
+import frc.robot.subsystems.FuelLine.LoaderVelocity;
 import frc.robot.subsystems.FuelLine.RollerVelocity;
 import frc.robot.subsystems.Shooter.ShooterVelocity;
 import frc.robot.subsystems.Intake;
@@ -118,23 +119,22 @@ public class CommandFactory {
                 fuelLine);
     }
 
-    public Command cmdSetLoaderCamPosition(double rotations) {
-        return cmdSetLoaderCamPosition(() -> rotations);
+    public Command cmdSetLoaderPosition(double rotations) {
+        return cmdSetLoaderPosition(() -> rotations);
     }
 
-    public Command cmdSetLoaderCamPosition(Supplier<Double> supplier) {
+    public Command cmdSetLoaderPosition(Supplier<Double> supplier) {
         return Commands.runOnce(
-                () -> fuelLine.setCamPosition(supplier.get()), fuelLine)
-                .andThen(Commands.waitUntil(() -> fuelLine.isCamNearPosition(supplier.get(), 1)));
+                () -> fuelLine.setLoaderPosition(supplier.get()), fuelLine);
     }
 
-    public Command cmdSetLoaderCamVelocity(double rotationsPerSecond) {
-        return cmdSetLoaderCamVelocity(() -> rotationsPerSecond);
+    public Command cmdSetLoaderVelocity(double rotationsPerSecond) {
+        return cmdSetLoaderVelocity(() -> rotationsPerSecond);
     }
 
-    public Command cmdSetLoaderCamVelocity(Supplier<Double> supplier) {
+    public Command cmdSetLoaderVelocity(Supplier<Double> supplier) {
         return Commands.runOnce(
-                () -> fuelLine.setCamVelocity(supplier.get()), fuelLine);
+                () -> fuelLine.setLoaderVelocity(supplier.get()), fuelLine);
     }
 
     /*
@@ -177,37 +177,36 @@ public class CommandFactory {
      * Shared
      */
     public Command cmdFireFuel(Supplier<Double> shooterVelocitySupplier, Supplier<Double> acceleratorVelocitySupplier,
-            Supplier<Double> loaderCamVelocitySupplier) {
+            Supplier<Double> loaderVelocitySupplier) {
         return Commands.runEnd(
                 () -> {
                     shooter.setAcceleratorVelocity(acceleratorVelocitySupplier.get());
                     shooter.setShooterVelocity(shooterVelocitySupplier.get());
                     if (shooter.isAcceleratorNearRotationsPerSecond(acceleratorVelocitySupplier.get(), 2)
                             && shooter.isShooterNearRotationsPerSecond(shooterVelocitySupplier.get(), 2)) {
-                        // fuelLine.setLoaderCamVelocity(loaderCamVelocitySupplier.get());
-                        // intake.agitateHopper();
-                        fuelLine.setRollerVelocity(25);
+                        fuelLine.setLoaderVelocity(LoaderVelocity.FIRE.rotationsPerSecond);
+                    } else {
+                        fuelLine.setLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond);
                     }
                 },
                 () -> {
                     shooter.setAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond);
                     shooter.setShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond);
-                    fuelLine.setRollerVelocity(0);
+                    fuelLine.setLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond);
 
-                    // fuelLine.setLoaderCamVelocity(0);
-                    // intake.resetAgitation();
                 }, shooter, fuelLine, intake);
     }
 
-    public Command cmdFireFuel(double shooterVelocity, double acceleratorVelocity, double loaderCamVelocity) {
+    public Command cmdFireFuel(double shooterVelocity, double acceleratorVelocity, double loaderVelocity) {
         return cmdFireFuel(() -> shooterVelocity,
                 () -> acceleratorVelocity,
-                () -> loaderCamVelocity);
+                () -> loaderVelocity);
     }
 
     public Command cmdPickUpFuel() {
         return cmdSetHopperPosition(HopperPosition.EXTENDED.rotations)
-                // .andThen(cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond))
+                .andThen(cmdSetLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond))
+                .andThen(cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond))
                 .andThen(cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond));
     }
 

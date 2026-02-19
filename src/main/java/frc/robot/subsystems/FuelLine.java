@@ -37,27 +37,25 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         }
     }
 
-    public enum CamVelocity {
-        THREE_BPS(1),
-        SIX_BPS(2),
-        NINE_BPS(3),
-        TWELVE_BPS(4);
+    public enum LoaderVelocity {
+        STALL(-10),
+        FIRE(5);
 
         public double rotationsPerSecond;
 
-        private CamVelocity(double rotationsPerSecond) {
+        private LoaderVelocity(double rotationsPerSecond) {
             this.rotationsPerSecond = rotationsPerSecond;
         }
     }
 
-    public enum CamCoderPosition {
+    public enum LoaderCoderPosition {
         OPEN_LEFT_CENTER(0),
         OPEN_LEFT_RIGHT(0),
         OPEN_RIGHT_CENTER(0);
 
         public double rotations;
 
-        private CamCoderPosition(double rotations) {
+        private LoaderCoderPosition(double rotations) {
             this.rotations = rotations;
         }
 
@@ -66,16 +64,16 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     private final TalonFX roller = new TalonFX(31);
     private final VelocityVoltage rollerVelocityControl = new VelocityVoltage(0).withSlot(0);
 
-    private final TalonFX cam = new TalonFX(30);
-    private final VelocityVoltage camVelocityControl = new VelocityVoltage(0).withSlot(0);
-    private final PositionVoltage camPositionControl = new PositionVoltage(0).withSlot(1);
-    private final CANcoder camCoder = new CANcoder(32);
+    private final TalonFX Loader = new TalonFX(30);
+    private final VelocityVoltage LoaderVelocityControl = new VelocityVoltage(0).withSlot(0);
+    private final PositionVoltage LoaderPositionControl = new PositionVoltage(0).withSlot(1);
+    private final CANcoder LoaderCoder = new CANcoder(32);
     private final double MAGNET_OFFSET = 0;
 
     private final Color systemColor = new Color(0, 0, 0);
 
     public FuelLine() {
-        configureCam();
+        configureLoader();
         configureRoller();
     }
 
@@ -90,36 +88,36 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
                         .withFeedForward(Volts.of(0)));
     }
 
-    public void resetCamPositionToPosition(double rotations) {
-        cam.setPosition(rotations);
+    public void resetLoaderPositionToPosition(double rotations) {
+        Loader.setPosition(rotations);
     }
 
-    public boolean isCamNearPosition(double rotations, double tolerance) {
-        return cam.getPosition().isNear(rotations, tolerance);
+    public boolean isNearPosition(double rotations, double tolerance) {
+        return Loader.getPosition().isNear(rotations, tolerance);
     }
 
-    public double getCamPosition() {
-        return cam.getPosition().getValueAsDouble();
+    public double getLoaderPosition() {
+        return Loader.getPosition().getValueAsDouble();
     }
 
-    public void setCamPosition(double rotations) {
-        cam.setControl(
-                camPositionControl
+    public void setLoaderPosition(double rotations) {
+        Loader.setControl(
+                LoaderPositionControl
                         .withPosition(rotations)
                         .withFeedForward(Volts.of(0)));
     }
 
-    public boolean isCamNearRotationsPerSecond(double rotationsPerSecond, double tolerance) {
-        return cam.getVelocity().isNear(rotationsPerSecond, tolerance);
+    public boolean isLoaderNearRotationsPerSecond(double rotationsPerSecond, double tolerance) {
+        return Loader.getVelocity().isNear(rotationsPerSecond, tolerance);
     }
 
-    public double getCamVelocity() {
-        return cam.getVelocity().getValueAsDouble();
+    public double getLoaderVelocity() {
+        return Loader.getVelocity().getValueAsDouble();
     }
 
-    public void setCamVelocity(double rotationsPerSecond) {
-        cam.setControl(
-                camVelocityControl
+    public void setLoaderVelocity(double rotationsPerSecond) {
+        Loader.setControl(
+                LoaderVelocityControl
                         .withVelocity(rotationsPerSecond)
                         .withFeedForward(Volts.of(0)));
     }
@@ -132,10 +130,10 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     @Override
     public void registerWithHealthMonitor(HealthMonitor monitor) {
         monitor.addComponent(getSubsystem(), "Roller", roller);
-        monitor.addComponent(getSubsystem(), "Cam", cam);
+        monitor.addComponent(getSubsystem(), "Loader", Loader);
     }
 
-    private void configureCam() {
+    private void configureLoader() {
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
         motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
         motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -160,17 +158,17 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
-        cam.getConfigurator().apply(talonFXConfiguration);
-        cam.getPosition().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
-        cam.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
+        Loader.getConfigurator().apply(talonFXConfiguration);
+        Loader.getPosition().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
+        Loader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
 
         CANcoderConfiguration canCoderConfiguration = new CANcoderConfiguration();
         canCoderConfiguration.MagnetSensor.MagnetOffset = MAGNET_OFFSET;
         canCoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
         canCoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
-        camCoder.getConfigurator().apply(canCoderConfiguration);
-        camCoder.getAbsolutePosition().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
+        LoaderCoder.getConfigurator().apply(canCoderConfiguration);
+        LoaderCoder.getAbsolutePosition().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
     }
 
     private void configureRoller() {

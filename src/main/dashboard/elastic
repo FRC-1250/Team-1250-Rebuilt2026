@@ -88,14 +88,14 @@
             }
           },
           {
-            "title": "loaderCamVelocity",
+            "title": "loaderLoaderVelocity",
             "x": 0.0,
             "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Number Slider",
             "properties": {
-              "topic": "/SmartDashboard/Commands/Inputs/loaderCamVelocity",
+              "topic": "/SmartDashboard/Commands/Inputs/loaderLoaderVelocity",
               "period": 0.06,
               "data_type": "double",
               "min_value": 0.0,
@@ -265,14 +265,14 @@
             }
           },
           {
-            "title": "Set cam velocity",
+            "title": "Set Loader velocity",
             "x": 256.0,
             "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
             "properties": {
-              "topic": "/SmartDashboard/Commands/Fuel line/Set cam velocity",
+              "topic": "/SmartDashboard/Commands/Fuel line/Set Loader velocity",
               "period": 0.06,
               "show_type": true,
               "maximize_button_space": false
@@ -341,14 +341,14 @@
             }
           },
           {
-            "title": "Stop cam velocity",
+            "title": "Stop Loader velocity",
             "x": 512.0,
             "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
             "properties": {
-              "topic": "/SmartDashboard/Commands/Fuel line/Stop cam velocity",
+              "topic": "/SmartDashboard/Commands/Fuel line/Stop Loader velocity",
               "period": 0.06,
               "show_type": true,
               "maximize_button_space": false
@@ -397,14 +397,14 @@
             }
           },
           {
-            "title": "getCamVelocity",
+            "title": "getLoaderVelocity",
             "x": 768.0,
             "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
-              "topic": "Robot/robotContainer/fuelLine/getCamVelocity",
+              "topic": "Robot/robotContainer/fuelLine/getLoaderVelocity",
               "period": 0.06,
               "data_type": "double",
               "show_submit_button": false

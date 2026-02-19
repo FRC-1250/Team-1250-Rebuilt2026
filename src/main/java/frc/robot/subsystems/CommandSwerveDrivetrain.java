@@ -316,7 +316,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * while still accounting for measurement noise.
      *
      * @param visionRobotPoseMeters The pose of the robot as measured by the vision
-     *                              camera.
+     *                              Loaderera.
      * @param timestampSeconds      The timestamp of the vision measurement in
      *                              seconds.
      */
@@ -335,7 +335,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * {@link #setVisionMeasurementStdDevs(Matrix)} or this method.
      *
      * @param visionRobotPoseMeters    The pose of the robot as measured by the
-     *                                 vision camera.
+     *                                 vision Loaderera.
      * @param timestampSeconds         The timestamp of the vision measurement in
      *                                 seconds.
      * @param visionMeasurementStdDevs Standard deviations of the vision pose

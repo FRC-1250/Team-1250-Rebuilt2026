@@ -44,7 +44,7 @@ import frc.robot.subsystems.Shooter.ShooterVelocity;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.FuelLine.CamVelocity;
+import frc.robot.subsystems.FuelLine.LoaderVelocity;
 import frc.robot.subsystems.FuelLine.RollerVelocity;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.utility.FieldZones;
@@ -99,8 +99,9 @@ public class RobotContainer {
     private final NetworkTable commandInputs = inst.getTable("SmartDashboard/Commands/Inputs");
     private final DoubleEntry intakeVelocity = commandInputs.getDoubleTopic("intakeVelocity").getEntry(0.0);
     private final DoubleEntry rollerVelocity = commandInputs.getDoubleTopic("rollerVelocity").getEntry(0.0);
-    private final DoubleEntry loaderCamVelocity = commandInputs.getDoubleTopic("loaderCamVelocity").getEntry(0.0);
-    private final DoubleEntry loaderCamPosition = commandInputs.getDoubleTopic("loaderCamPosition").getEntry(0.0);;
+    private final DoubleEntry loaderLoaderVelocity = commandInputs.getDoubleTopic("loaderLoaderVelocity").getEntry(0.0);
+    private final DoubleEntry loaderLoaderPosition = commandInputs.getDoubleTopic("loaderLoaderPosition")
+            .getEntry(0.0);;
     private final DoubleEntry acceleratorVelocity = commandInputs.getDoubleTopic("acceleratorVelocity")
             .getEntry(0.0);
     private final DoubleEntry shooterVelocity = commandInputs.getDoubleTopic("shooterVelocity").getEntry(0.0);
@@ -162,7 +163,7 @@ public class RobotContainer {
                 .whileTrue(commandFactory.cmdFireFuel(
                         ShooterVelocity.HUB.shooterRotationsPerSecond,
                         ShooterVelocity.HUB.acceleratorRotationsPerSecond,
-                        CamVelocity.SIX_BPS.rotationsPerSecond)); // Shoot
+                        LoaderVelocity.FIRE.rotationsPerSecond)); // Shoot
 
         primaryLeftTriggerPointToPosition(
                 singlePlayer,
@@ -251,8 +252,8 @@ public class RobotContainer {
     private void configureDevBindings() {
         intakeVelocity.set(0);
         rollerVelocity.set(0);
-        loaderCamVelocity.set(0);
-        loaderCamPosition.set(0);
+        loaderLoaderVelocity.set(0);
+        loaderLoaderPosition.set(0);
         acceleratorVelocity.set(0);
         shooterVelocity.set(0);
         climberPosition.set(0);
@@ -269,14 +270,14 @@ public class RobotContainer {
 
         SmartDashboard.putData("Commands/Fuel line/Set roller velocity",
                 commandFactory.cmdSetRollerVelocity(() -> rollerVelocity.get()));
-        SmartDashboard.putData("Commands/Fuel line/Set cam velocity",
-                commandFactory.cmdSetLoaderCamVelocity(() -> loaderCamVelocity.get()));
-        SmartDashboard.putData("Commands/Fuel line/Set cam position",
-                commandFactory.cmdSetLoaderCamPosition(() -> loaderCamPosition.get()));
+        SmartDashboard.putData("Commands/Fuel line/Set Loader velocity",
+                commandFactory.cmdSetLoaderLoaderVelocity(() -> loaderLoaderVelocity.get()));
+        SmartDashboard.putData("Commands/Fuel line/Set Loader position",
+                commandFactory.cmdSetLoaderLoaderPosition(() -> loaderLoaderPosition.get()));
         SmartDashboard.putData("Commands/Fuel line/Stop roller velocity",
                 commandFactory.cmdSetRollerVelocity(0));
-        SmartDashboard.putData("Commands/Fuel line/Stop cam velocity",
-                commandFactory.cmdSetLoaderCamVelocity(0));
+        SmartDashboard.putData("Commands/Fuel line/Stop Loader velocity",
+                commandFactory.cmdSetLoaderLoaderVelocity(0));
 
         SmartDashboard.putData("Commands/Shooter/Set accel velocity",
                 commandFactory.cmdSetFuelAcceleratorVelocity(() -> acceleratorVelocity.get()));
@@ -290,7 +291,7 @@ public class RobotContainer {
         SmartDashboard.putData("Commands/Shared/Fire fuel",
                 commandFactory.cmdFireFuel(shooterVelocity.get(),
                         acceleratorVelocity.get(),
-                        loaderCamVelocity.get()));
+                        loaderLoaderVelocity.get()));
     }
 
     private void configureAutoCommands() {
@@ -312,7 +313,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("fire_fuel_with_timeout",
                 commandFactory.cmdFireFuel(ShooterVelocity.HUB.shooterRotationsPerSecond,
                         ShooterVelocity.HUB.acceleratorRotationsPerSecond,
-                        CamVelocity.SIX_BPS.rotationsPerSecond)
+                        LoaderVelocity.FIRE.rotationsPerSecond)
                         .withTimeout(fireTimeout));
 
         NamedCommands.registerCommand("pick_up_fuel", commandFactory.cmdPickUpFuel());
