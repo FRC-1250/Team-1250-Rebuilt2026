@@ -36,7 +36,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         PHASE_1(2),
         PHASE_2(2.5),
         PHASE_3(3),
-        EXTENDED(3.6);
+        EXTENDED(3.7);
 
         public double rotations;
 
@@ -162,6 +162,10 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         hopper.set(speed);
     }
 
+    public void stopHopper() {
+        hopper.stopMotor();
+    }
+
     public double getHopperPosition() {
         return hopper.getPosition().getValueAsDouble();
     }
@@ -237,6 +241,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         talonFXConfiguration.Voltage.PeakForwardVoltage = 0.25;
         talonFXConfiguration.Voltage.PeakReverseVoltage = -12;
 
+        hopper.setPosition(0);
         hopper.getConfigurator().apply(talonFXConfiguration);
         hopper.getPosition().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
     }

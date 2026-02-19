@@ -90,14 +90,11 @@ public class CommandFactory {
                         Commands.waitUntil((() -> intake.isHopperNearPosition(supplier.get(), 1))));
     }
 
-    public Command cmdResetHopperPositionWithAmps() {
+    public Command cmdResetHopperPositionBasedOnAmps() {
         return Commands.sequence(
                 Commands.runOnce(() -> intake.setHopperSpeed(-0.2), intake),
                 Commands.waitUntil(() -> intake.isHopperAmpNearLimit()),
-                Commands.runOnce(() -> {
-                    intake.setHopperPosition(0);
-                    intake.resetHopperPosition(0);
-                }));
+                Commands.runOnce(() -> intake.resetHopperPosition(0)));
     }
 
     public Command cmdResetHopperPosition() {
@@ -205,6 +202,7 @@ public class CommandFactory {
 
     public Command cmdPickUpFuel() {
         return cmdSetHopperPosition(HopperPosition.EXTENDED.rotations)
+                .andThen(() -> intake.stopHopper())
                 .andThen(cmdSetLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond))
                 .andThen(cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond))
                 .andThen(cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond));
