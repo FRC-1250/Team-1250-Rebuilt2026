@@ -176,7 +176,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     private void configureRoller() {
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
         motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
-        motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
+        motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
 
         Slot0Configs velocityGains = new Slot0Configs()
                 .withKS(0.1)
