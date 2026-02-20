@@ -94,7 +94,8 @@ public class CommandFactory {
         return Commands.sequence(
                 Commands.runOnce(() -> intake.setHopperSpeed(-0.2), intake),
                 Commands.waitUntil(() -> intake.isHopperAmpNearLimit()),
-                Commands.runOnce(() -> intake.resetHopperPosition(0)));
+                Commands.runOnce(() -> intake.resetHopperPosition(HopperPosition.MIN.rotations)),
+                Commands.runOnce(() -> intake.setHopperPosition(HopperPosition.RETRACTED.rotations)));
     }
 
     public Command cmdResetHopperPosition() {

@@ -32,11 +32,13 @@ import frc.robot.telemetry.MonitoredSubsystem;
 @Logged
 public class Intake extends SubsystemBase implements MonitoredSubsystem {
     public enum HopperPosition {
-        RETRACTED(0.1),
+        MIN(0),
+        RETRACTED(0.15),
         PHASE_1(2),
         PHASE_2(2.5),
         PHASE_3(3),
-        EXTENDED(3.7);
+        EXTENDED(3.6),
+        MAX(3.75);
 
         public double rotations;
 
@@ -147,7 +149,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         hopper.setControl(
                 hopperPositionVoltage
                         .withPosition(rotations)
-                        .withFeedForward(Volts.of(0)));
+                        .withFeedForward(Volts.of(-2)));
     }
 
     public void resetHopperPosition(double rotations) {
@@ -224,9 +226,9 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         Slot1Configs positionGains = new Slot1Configs()
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
                 .withKS(0)
-                .withKP(5)
+                .withKP(2)
                 .withKI(0)
-                .withKD(0);
+                .withKD(0.01);
 
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
         talonFXConfiguration.Slot1 = positionGains;
@@ -238,7 +240,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         // talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
         talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
-        talonFXConfiguration.Voltage.PeakForwardVoltage = 0.25;
+        talonFXConfiguration.Voltage.PeakForwardVoltage = 2.5;
         talonFXConfiguration.Voltage.PeakReverseVoltage = -10;
 
         hopper.setPosition(0);
