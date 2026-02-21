@@ -38,7 +38,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     }
 
     public enum LoaderVelocity {
-        STALL(-10),
+        STALL(-12.5),
         FIRE(15);
 
         public double rotationsPerSecond;
