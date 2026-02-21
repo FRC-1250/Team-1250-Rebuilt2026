@@ -141,7 +141,8 @@ public class RobotContainer {
         HealthMonitor hm = HealthMonitor.getInstance();
         fuelLine.registerWithHealthMonitor(hm);
         intake.registerWithHealthMonitor(hm);
-
+        shooter.registerWithHealthMonitor(hm);
+        climber.registerWithHealthMonitor(hm);
         swerve.registerTelemetry(logger::telemeterize);
     }
 
