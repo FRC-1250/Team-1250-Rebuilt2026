@@ -191,6 +191,7 @@ public class CommandFactory {
                 () -> {
                     intake.setHopperPosition(HopperPosition.EXTENDED.rotations);
                     intake.stopHopper();
+                    intake.resetAgitation();
                     shooter.setAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond);
                     shooter.setShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond);
                     fuelLine.setLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond);
