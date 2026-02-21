@@ -183,15 +183,16 @@ public class CommandFactory {
                     if (shooter.isAcceleratorNearRotationsPerSecond(acceleratorVelocitySupplier.get(), 2)
                             && shooter.isShooterNearRotationsPerSecond(shooterVelocitySupplier.get(), 2)) {
                         fuelLine.setLoaderVelocity(LoaderVelocity.FIRE.rotationsPerSecond);
+                        intake.agitateHopper();
                     } else {
                         fuelLine.setLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond);
                     }
                 },
                 () -> {
+                    intake.setHopperPosition(HopperPosition.EXTENDED.rotations);
                     shooter.setAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond);
                     shooter.setShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond);
                     fuelLine.setLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond);
-
                 }, shooter, fuelLine, intake);
     }
 
