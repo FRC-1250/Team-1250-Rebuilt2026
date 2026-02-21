@@ -55,10 +55,14 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     }
 
     private class HopperAgitationStep {
-        HopperPosition hopperPosition;
+        double hopperPosition;
         double interval;
 
         public HopperAgitationStep(HopperPosition hopperPosition, double interval) {
+            this(hopperPosition.rotations, interval);
+        }
+
+        public HopperAgitationStep(double hopperPosition, double interval) {
             this.hopperPosition = hopperPosition;
             this.interval = interval;
         }
@@ -86,7 +90,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
             index = 0;
         }
 
-        public HopperPosition shift() {
+        public double shift() {
             if (!timer.isRunning()) {
                 timer.start();
             }
@@ -111,6 +115,8 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
     private HopperAgitationProfile activeAgitiationProfile;
     private HopperAgitationProfile wave;
+    private HopperAgitationProfile pulse;
+    private HopperAgitationProfile wiggle;
 
     public Intake() {
         configureHopperTalonFX();
@@ -171,11 +177,29 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
     private void configureHopperAgitation() {
         wave = new HopperAgitationProfile();
-        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_3, 1));
+        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_3, 3));
         wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_2, 1));
         wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_1, 1));
         wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_2, 1));
         wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_3, 1));
+        pulse = new HopperAgitationProfile();
+        pulse.addStep(new HopperAgitationStep(3.7, 3));
+        pulse.addStep(new HopperAgitationStep(3.42, 0.5));
+        pulse.addStep(new HopperAgitationStep(3.09, 0.5));
+        pulse.addStep(new HopperAgitationStep(2.76, 0.5));
+        pulse.addStep(new HopperAgitationStep(2.43, 0.5));
+        pulse.addStep(new HopperAgitationStep(3.09, 1));
+        pulse.addStep(new HopperAgitationStep(2.76, 0.5));
+        pulse.addStep(new HopperAgitationStep(2.43, 0.5));
+        pulse.addStep(new HopperAgitationStep(2.10, 0.5));
+        pulse.addStep(new HopperAgitationStep(1.77, 0.5));
+        pulse.addStep(new HopperAgitationStep(2.43, 1));
+        pulse.addStep(new HopperAgitationStep(2.10, 0.5));
+        pulse.addStep(new HopperAgitationStep(1.77, 0.5));
+        pulse.addStep(new HopperAgitationStep(1.44, 0.5));
+        pulse.addStep(new HopperAgitationStep(1.25, 0.5));
+        wiggle = new HopperAgitationProfile();
+
     }
 
     private void configureIntakeTalonFX() {
