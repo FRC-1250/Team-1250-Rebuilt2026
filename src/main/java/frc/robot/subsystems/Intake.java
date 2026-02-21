@@ -34,7 +34,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     public enum HopperPosition {
         MIN(0),
         RETRACTED(0.05),
-        PHASE_1(2),
+        PHASE_1(1.25),
         PHASE_2(2.5),
         PHASE_3(3),
         EXTENDED(3.7),
@@ -127,7 +127,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     }
 
     public void agitateHopper() {
-        activeAgitiationProfile.shift();
+        setHopperPosition(activeAgitiationProfile.shift().rotations);
     }
 
     public void resetAgitation() {
@@ -149,7 +149,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         hopper.setControl(
                 hopperPositionVoltage
                         .withPosition(rotations)
-                        .withFeedForward(Volts.of(-1.5)));
+                        .withFeedForward(Volts.of(-1)));
     }
 
     public void resetHopperPosition(double rotations) {
@@ -189,11 +189,11 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
     private void configureHopperAgitation() {
         wave = new HopperAgitationProfile();
-        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_3, 1));
-        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_2, 1));
-        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_1, 1));
-        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_2, 1));
-        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_3, 1));
+        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_3, 0.25));
+        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_2, 0.25));
+        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_1, 0.25));
+        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_2, 0.25));
+        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_3, 0.25));
     }
 
     private void configureIntake() {
@@ -226,7 +226,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         Slot1Configs positionGains = new Slot1Configs()
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
                 .withKS(0)
-                .withKP(3)
+                .withKP(1)
                 .withKI(0)
                 .withKD(0.01);
 
@@ -240,7 +240,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         // talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
         // talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
-        talonFXConfiguration.Voltage.PeakForwardVoltage = 4;
+        talonFXConfiguration.Voltage.PeakForwardVoltage = 1.5;
         talonFXConfiguration.Voltage.PeakReverseVoltage = -10;
 
         hopper.setPosition(0);
