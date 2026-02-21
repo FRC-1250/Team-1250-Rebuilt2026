@@ -33,11 +33,11 @@ import frc.robot.telemetry.MonitoredSubsystem;
 public class Intake extends SubsystemBase implements MonitoredSubsystem {
     public enum HopperPosition {
         MIN(0),
-        RETRACTED(0.15),
+        RETRACTED(0.05),
         PHASE_1(2),
         PHASE_2(2.5),
         PHASE_3(3),
-        EXTENDED(3.6),
+        EXTENDED(3.7),
         MAX(3.75);
 
         public double rotations;
@@ -149,7 +149,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         hopper.setControl(
                 hopperPositionVoltage
                         .withPosition(rotations)
-                        .withFeedForward(Volts.of(-2)));
+                        .withFeedForward(Volts.of(-1.5)));
     }
 
     public void resetHopperPosition(double rotations) {
@@ -226,7 +226,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         Slot1Configs positionGains = new Slot1Configs()
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
                 .withKS(0)
-                .withKP(2)
+                .withKP(3)
                 .withKI(0)
                 .withKD(0.01);
 
@@ -236,11 +236,11 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
         // talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 3.725;
+        // talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 3.725;
         // talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+        // talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
-        talonFXConfiguration.Voltage.PeakForwardVoltage = 2.5;
+        talonFXConfiguration.Voltage.PeakForwardVoltage = 4;
         talonFXConfiguration.Voltage.PeakReverseVoltage = -10;
 
         hopper.setPosition(0);

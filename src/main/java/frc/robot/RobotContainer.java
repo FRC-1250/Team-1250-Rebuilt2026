@@ -159,6 +159,9 @@ public class RobotContainer {
     private void configureSinglePlayerBindings() {
         configureCommonBindings(singlePlayer);
 
+        primary.start()
+                .onTrue(swerve.runOnce(() -> swerve.seedFieldCentric()).withName("Reseed drive"));
+
         primary.rightTrigger(0.5, singlePlayer)
                 .whileTrue(commandFactory.cmdFireFuel(
                         ShooterVelocity.HUB.shooterRotationsPerSecond,
