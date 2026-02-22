@@ -217,7 +217,20 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         pulse.addStep(new HopperAgitationStep(1.44, 0.5));
         pulse.addStep(new HopperAgitationStep(1.25, 0.5));
         wiggle = new HopperAgitationProfile();
-
+        wiggle.addStep(new HopperAgitationStep(3.7, 3));
+        wiggle.addStep(new HopperAgitationStep(3.2, 0.5));
+        wiggle.addStep(new HopperAgitationStep(3.40, 0.5));
+        wiggle.addStep(new HopperAgitationStep(2.9, 1));
+        wiggle.addStep(new HopperAgitationStep(3.1, 0.5));
+        wiggle.addStep(new HopperAgitationStep(2.6, 0.5));
+        wiggle.addStep(new HopperAgitationStep(2.8, 1));
+        wiggle.addStep(new HopperAgitationStep(2.3, 0.5));
+        wiggle.addStep(new HopperAgitationStep(2.5, 0.5));
+        wiggle.addStep(new HopperAgitationStep(2.0, 1));
+        wiggle.addStep(new HopperAgitationStep(2.2, 0.5));
+        wiggle.addStep(new HopperAgitationStep(1.7, 0.5));
+        wiggle.addStep(new HopperAgitationStep(1.90, 0.5));
+        wiggle.addStep(new HopperAgitationStep(1.25, 0.5));
     }
 
     private void configureIntake() {
