@@ -133,7 +133,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     }
 
     public void agitateHopper() {
-        setHopperPosition(activeAgitiationProfile.shift().rotations);
+        setHopperPosition(activeAgitiationProfile.shift());
     }
 
     public void resetAgitation() {
