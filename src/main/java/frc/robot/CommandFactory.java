@@ -3,7 +3,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
-import java.util.function.Supplier;
+import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -73,9 +73,9 @@ public class CommandFactory {
         return cmdSetIntakeVelocity(() -> rotationsPerSecond);
     }
 
-    public Command cmdSetIntakeVelocity(Supplier<Double> supplier) {
+    public Command cmdSetIntakeVelocity(DoubleSupplier supplier) {
         return Commands.runOnce(
-                () -> intake.setIntakeVelocity(supplier.get()),
+                () -> intake.setIntakeVelocity(supplier.getAsDouble()),
                 intake);
     }
 
@@ -83,11 +83,11 @@ public class CommandFactory {
         return cmdSetHopperPosition(() -> rotations);
     }
 
-    public Command cmdSetHopperPosition(Supplier<Double> supplier) {
+    public Command cmdSetHopperPosition(DoubleSupplier supplier) {
         return Commands.runOnce(
-                () -> intake.setHopperPosition(supplier.get()), intake)
+                () -> intake.setHopperPosition(supplier.getAsDouble()), intake)
                 .andThen(
-                        Commands.waitUntil((() -> intake.isHopperNearPosition(supplier.get(), 1))));
+                        Commands.waitUntil((() -> intake.isHopperNearPosition(supplier.getAsDouble(), 1))));
     }
 
     public Command cmdResetHopperPositionRetract() {
@@ -119,9 +119,9 @@ public class CommandFactory {
         return cmdSetRollerVelocity(() -> rotationsPerSecond);
     }
 
-    public Command cmdSetRollerVelocity(Supplier<Double> supplier) {
+    public Command cmdSetRollerVelocity(DoubleSupplier supplier) {
         return Commands.runOnce(
-                () -> fuelLine.setRollerVelocity(supplier.get()),
+                () -> fuelLine.setRollerVelocity(supplier.getAsDouble()),
                 fuelLine);
     }
 
@@ -129,18 +129,18 @@ public class CommandFactory {
         return cmdSetLoaderPosition(() -> rotations);
     }
 
-    public Command cmdSetLoaderPosition(Supplier<Double> supplier) {
+    public Command cmdSetLoaderPosition(DoubleSupplier supplier) {
         return Commands.runOnce(
-                () -> fuelLine.setLoaderPosition(supplier.get()), fuelLine);
+                () -> fuelLine.setLoaderPosition(supplier.getAsDouble()), fuelLine);
     }
 
     public Command cmdSetLoaderVelocity(double rotationsPerSecond) {
         return cmdSetLoaderVelocity(() -> rotationsPerSecond);
     }
 
-    public Command cmdSetLoaderVelocity(Supplier<Double> supplier) {
+    public Command cmdSetLoaderVelocity(DoubleSupplier supplier) {
         return Commands.runOnce(
-                () -> fuelLine.setLoaderVelocity(supplier.get()), fuelLine);
+                () -> fuelLine.setLoaderVelocity(supplier.getAsDouble()), fuelLine);
     }
 
     /*
@@ -152,9 +152,9 @@ public class CommandFactory {
 
     }
 
-    public Command cmdSetFuelAcceleratorVelocity(Supplier<Double> supplier) {
+    public Command cmdSetFuelAcceleratorVelocity(DoubleSupplier supplier) {
         return Commands.runOnce(
-                () -> shooter.setAcceleratorVelocity(supplier.get()));
+                () -> shooter.setAcceleratorVelocity(supplier.getAsDouble()));
 
     }
 
@@ -163,16 +163,16 @@ public class CommandFactory {
 
     }
 
-    public Command cmdSetFuelShooterVelocity(Supplier<Double> supplier) {
+    public Command cmdSetFuelShooterVelocity(DoubleSupplier supplier) {
         return Commands.runOnce(
-                () -> shooter.setShooterVelocity(supplier.get()));
+                () -> shooter.setShooterVelocity(supplier.getAsDouble()));
 
     }
 
-    public Command cmdSetHoodPosition(Supplier<Double> supplier) {
+    public Command cmdSetHoodPosition(DoubleSupplier supplier) {
         return Commands.runOnce(
-                () -> shooter.setHoodPosition(supplier.get()), shooter)
-                .andThen(Commands.waitUntil(() -> shooter.isHoodNearPosition(supplier.get(), 1)));
+                () -> shooter.setHoodPosition(supplier.getAsDouble()), shooter)
+                .andThen(Commands.waitUntil(() -> shooter.isHoodNearPosition(supplier.getAsDouble(), 1)));
     }
 
     public Command cmdSetHoodPosition(double rotationsPerSecond) {
@@ -182,14 +182,14 @@ public class CommandFactory {
     /*
      * Shared
      */
-    public Command cmdFireFuel(Supplier<Double> shooterVelocitySupplier, Supplier<Double> acceleratorVelocitySupplier,
-            Supplier<Double> loaderVelocitySupplier) {
+    public Command cmdFireFuel(DoubleSupplier shooterVelocitySupplier, DoubleSupplier acceleratorVelocitySupplier,
+            DoubleSupplier loaderVelocitySupplier) {
         return Commands.runEnd(
                 () -> {
-                    shooter.setAcceleratorVelocity(acceleratorVelocitySupplier.get());
-                    shooter.setShooterVelocity(shooterVelocitySupplier.get());
-                    if (shooter.isAcceleratorNearRotationsPerSecond(acceleratorVelocitySupplier.get(), 2)
-                            && shooter.isShooterNearRotationsPerSecond(shooterVelocitySupplier.get(), 2)) {
+                    shooter.setAcceleratorVelocity(acceleratorVelocitySupplier.getAsDouble());
+                    shooter.setShooterVelocity(shooterVelocitySupplier.getAsDouble());
+                    if (shooter.isAcceleratorNearRotationsPerSecond(acceleratorVelocitySupplier.getAsDouble(), 2)
+                            && shooter.isShooterNearRotationsPerSecond(shooterVelocitySupplier.getAsDouble(), 2)) {
                         fuelLine.setLoaderVelocity(LoaderVelocity.FIRE.rotationsPerSecond);
                         intake.agitateHopper();
                     } else {
