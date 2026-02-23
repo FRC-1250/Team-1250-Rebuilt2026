@@ -78,19 +78,154 @@ public class CommandFactory {
 
                 // Drive forward
                 swerve.applyRequest(() -> drive
-                        .withVelocityX(-0.1 * maxSpeed)
+                        .withVelocityX(0.1 * maxSpeed)
                         .withVelocityY(0)
                         .withRotationalRate(0))
                         .withTimeout(5),
 
                 // Drive forward fast
                 swerve.applyRequest(() -> drive
+                        .withVelocityX(0.8 * maxSpeed)
+                        .withVelocityY(0)
+                        .withRotationalRate(0))
+                        .withTimeout(5),
+                // Drive backwards
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(-0.1 * maxSpeed)
+                        .withVelocityY(0)
+                        .withRotationalRate(0))
+                        .withTimeout(5),
+
+                // Drive backwards fast
+                swerve.applyRequest(() -> drive
                         .withVelocityX(-0.8 * maxSpeed)
                         .withVelocityY(0)
                         .withRotationalRate(0))
-                        .withTimeout(5)
+                        .withTimeout(5),
+                // Drive left
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(0 * maxSpeed)
+                        .withVelocityY(-0.1)
+                        .withRotationalRate(0))
+                        .withTimeout(5),
 
-        );
+                // Drive left fast
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(0 * maxSpeed)
+                        .withVelocityY(-0.8)
+                        .withRotationalRate(0))
+                        .withTimeout(5),
+                // Drive right
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(0 * maxSpeed)
+                        .withVelocityY(0.1)
+                        .withRotationalRate(0))
+                        .withTimeout(5),
+
+                // Drive right fast
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(0 * maxSpeed)
+                        .withVelocityY(0.8)
+                        .withRotationalRate(0))
+                        .withTimeout(5),
+                // Spin
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(0 * maxSpeed)
+                        .withVelocityY(0)
+                        .withRotationalRate(0.1 * maxAngularRate))
+                        .withTimeout(5),
+                // Circle P1
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(0.7 * maxSpeed)
+                        .withVelocityY(0.3 * maxSpeed)
+                        .withRotationalRate(0))
+                        .withTimeout(0.3),
+
+                // Circle P2
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(0.5 * maxSpeed)
+                        .withVelocityY(0.5 * maxSpeed)
+                        .withRotationalRate(0))
+                        .withTimeout(0.3),
+
+                // Circle P3
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(0.3 * maxSpeed)
+                        .withVelocityY(0.7 * maxSpeed)
+                        .withRotationalRate(0))
+                        .withTimeout(0.3),
+
+                // Circle P4
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(0 * maxSpeed)
+                        .withVelocityY(1 * maxSpeed)
+                        .withRotationalRate(0))
+                        .withTimeout(0.3),
+
+                // Circle P5
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(-0.3 * maxSpeed)
+                        .withVelocityY(0.7)
+                        .withRotationalRate(0))
+                        .withTimeout(0.3),
+
+                // Circle P6
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(-0.5 * maxSpeed)
+                        .withVelocityY(0.5 * maxSpeed)
+                        .withRotationalRate(0))
+                        .withTimeout(0.3),
+
+                // Circle P7
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(-1 * maxSpeed)
+                        .withVelocityY(0)
+                        .withRotationalRate(0))
+                        .withTimeout(0.3),
+
+                // Circle P8
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(-0.7 * maxSpeed)
+                        .withVelocityY(-0.3 * maxSpeed)
+                        .withRotationalRate(0))
+                        .withTimeout(0.3),
+                // Circle P9
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(-0.5 * maxSpeed)
+                        .withVelocityY(-0.5 * maxSpeed)
+                        .withRotationalRate(0))
+                        .withTimeout(0.3),
+                // Circle P10
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(-0.3 * maxSpeed)
+                        .withVelocityY(-0.7 * maxSpeed)
+                        .withRotationalRate(0))
+                        .withTimeout(0.3),
+                // Circle P11
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(0)
+                        .withVelocityY(-1 * maxSpeed)
+                        .withRotationalRate(0))
+                        .withTimeout(0.3),
+                // Circle P12
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(0.3 * maxSpeed)
+                        .withVelocityY(-0.7 * maxSpeed)
+                        .withRotationalRate(0))
+                        .withTimeout(0.3),
+                // Circle P13
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(0.5 * maxSpeed)
+                        .withVelocityY(-0.5 * maxSpeed)
+                        .withRotationalRate(0))
+                        .withTimeout(0.3),
+                // Circle P14
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(1 * maxSpeed)
+                        .withVelocityY(0)
+                        .withRotationalRate(0))
+                        .withTimeout(0.3));
+
     }
 
     /*
