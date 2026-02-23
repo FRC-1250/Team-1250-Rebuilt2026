@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DepotSideCenterStart"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DepotSideCenterCollect"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DepotSideCenterSweep"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DepotSideCenterPostSweep"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "fire_fuel_with_timeout"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
