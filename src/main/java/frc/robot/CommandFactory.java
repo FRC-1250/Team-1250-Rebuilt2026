@@ -5,6 +5,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.SwerveVisionLogic;
@@ -23,28 +26,28 @@ import frc.robot.subsystems.Shooter;
 
 public class CommandFactory {
 
-    private final CommandSwerveDrivetrain cmdSwerveDriveState;
+    private final CommandSwerveDrivetrain swerve;
     private final FuelLine fuelLine;
     private final Shooter shooter;
     private final Climber climber;
-    private final Limelight cmdLimelight;
+    private final Limelight limelight;
     private final Leds leds;
     private final Intake intake;
 
     public CommandFactory(
-            CommandSwerveDrivetrain SwerveDriveState,
+            CommandSwerveDrivetrain swerve,
             FuelLine fuelLine,
             Intake intake,
             Shooter shooter,
             Climber climber,
             Limelight limelight,
             Leds leds) {
-        this.cmdSwerveDriveState = SwerveDriveState;
+        this.swerve = swerve;
         this.intake = intake;
         this.fuelLine = fuelLine;
         this.shooter = shooter;
         this.climber = climber;
-        this.cmdLimelight = limelight;
+        this.limelight = limelight;
         this.leds = leds;
     }
 
@@ -53,17 +56,41 @@ public class CommandFactory {
      */
 
     public Command cmdSwerveVisionLogic() {
-        return new SwerveVisionLogic(cmdLimelight, cmdSwerveDriveState);
+        return new SwerveVisionLogic(limelight, swerve);
     }
 
     public Rotation2d determineHeading(Translation2d feildHeading) {
         {
             return Rotation2d.fromRadians(
                     Math.atan2(
-                            feildHeading.getY() - cmdSwerveDriveState.getState().Pose.getY(),
-                            feildHeading.getX() - cmdSwerveDriveState.getState().Pose.getX()))
-                    .plus(cmdSwerveDriveState.getOperatorForwardDirection());
+                            feildHeading.getY() - swerve.getState().Pose.getY(),
+                            feildHeading.getX() - swerve.getState().Pose.getX()))
+                    .plus(swerve.getOperatorForwardDirection());
         }
+    }
+
+    public Command cmdDriveTest(double maxSpeed, double maxAngularRate) {
+        SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+                .withDeadband(maxSpeed * 0.1).withRotationalDeadband(maxAngularRate * 0.1)
+                .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
+        return Commands.sequence(
+
+                // Drive forward
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(-0.1 * maxSpeed)
+                        .withVelocityY(0)
+                        .withRotationalRate(0))
+                        .withTimeout(5),
+
+                // Drive forward fast
+                swerve.applyRequest(() -> drive
+                        .withVelocityX(-0.8 * maxSpeed)
+                        .withVelocityY(0)
+                        .withRotationalRate(0))
+                        .withTimeout(5)
+
+        );
     }
 
     /*
