@@ -67,7 +67,6 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     private final TalonFX Loader = new TalonFX(30);
     private final VelocityVoltage LoaderVelocityControl = new VelocityVoltage(0).withSlot(0);
     private final PositionVoltage LoaderPositionControl = new PositionVoltage(0).withSlot(1);
-    private final CANcoder LoaderCoder = new CANcoder(32);
     private final double MAGNET_OFFSET = 0;
 
     private final Color systemColor = new Color(0, 0, 0);
@@ -166,9 +165,6 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         canCoderConfiguration.MagnetSensor.MagnetOffset = MAGNET_OFFSET;
         canCoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
         canCoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-
-        LoaderCoder.getConfigurator().apply(canCoderConfiguration);
-        LoaderCoder.getAbsolutePosition().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
     }
 
     private void configureRoller() {

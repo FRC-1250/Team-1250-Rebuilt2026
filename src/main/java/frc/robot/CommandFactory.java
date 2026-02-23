@@ -331,16 +331,6 @@ public class CommandFactory {
 
     }
 
-    public Command cmdSetHoodPosition(DoubleSupplier supplier) {
-        return Commands.runOnce(
-                () -> shooter.setHoodPosition(supplier.getAsDouble()), shooter)
-                .andThen(Commands.waitUntil(() -> shooter.isHoodNearPosition(supplier.getAsDouble(), 1)));
-    }
-
-    public Command cmdSetHoodPosition(double rotationsPerSecond) {
-        return cmdSetHoodPosition(() -> rotationsPerSecond);
-    }
-
     /*
      * Shared
      */

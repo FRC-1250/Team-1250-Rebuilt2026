@@ -3,20 +3,16 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.epilogue.Logged;
@@ -28,17 +24,6 @@ import frc.robot.telemetry.MonitoredSubsystem;
 
 @Logged
 public class Shooter extends SubsystemBase implements MonitoredSubsystem {
-
-    public enum HoodPosition {
-        HOME(0.01),
-        MAX(1);
-
-        public double rotations;
-
-        HoodPosition(double rotations) {
-            this.rotations = rotations;
-        }
-    }
 
     public enum ShooterVelocity {
         STOP(0),
@@ -64,32 +49,11 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
     private final TalonFX shooterFollower = new TalonFX(24);
     private final VelocityVoltage shooterVelocityControl = new VelocityVoltage(0).withSlot(0);
 
-    private final TalonFX hood = new TalonFX(25);
-    private final PositionVoltage hoodPositionControl = new PositionVoltage(0).withSlot(1);
-    private final CANcoder hoodAbsoluteEncoder = new CANcoder(25);
-    private final double encoderOffset = 0;
-
     private final Color systemColor = new Color(0, 0, 0);
 
     public Shooter() {
         configureAccelerator();
         configureShooter();
-        configureHood();
-    }
-
-    public double getHoodPosition() {
-        return hood.getPosition().getValueAsDouble();
-    }
-
-    public void setHoodPosition(double rotations) {
-        hood.setControl(
-                hoodPositionControl
-                        .withPosition(rotations)
-                        .withFeedForward(Volts.of(0)));
-    }
-
-    public boolean isHoodNearPosition(double position, double tolerance) {
-        return hood.getPosition().isNear(position, tolerance);
     }
 
     public double getAcceleratorVelocity() {
@@ -174,35 +138,15 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
                 .setControl(new Follower(shooterLeader.getDeviceID(), MotorAlignmentValue.Opposed));
     }
 
-    private void configureHood() {
-        CANcoderConfiguration hoodAbsoluteEncoderConfiguration = new CANcoderConfiguration();
-        // Set encoder to provide a value between 0 and 1
-        hoodAbsoluteEncoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
-        hoodAbsoluteEncoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-        hoodAbsoluteEncoderConfiguration.MagnetSensor.MagnetOffset = encoderOffset;
-        hoodAbsoluteEncoder.getConfigurator().apply(hoodAbsoluteEncoderConfiguration);
-        hoodAbsoluteEncoder.getAbsolutePosition().setUpdateFrequency(200);
-
-        Slot1Configs positionGains = new Slot1Configs()
-                .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
-                .withKS(0.1)
-                .withKP(0.1)
-                .withKI(0)
-                .withKD(0);
-
-        TalonFXConfiguration hoodConfiguration = new TalonFXConfiguration();
-        hoodConfiguration.Slot1 = positionGains;
-        hoodConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
-        hoodConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
-        hoodConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        hoodConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        hood.getConfigurator().apply(hoodConfiguration);
-    }
+    Slot1Configs positionGains = new Slot1Configs()
+            .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
+            .withKS(0.1)
+            .withKP(0.1)
+            .withKI(0)
+            .withKD(0);
 
     @Override
     public void registerWithHealthMonitor(HealthMonitor monitor) {
-        monitor.addComponent(getSubsystem(), "Hood", hood);
-        monitor.addComponent(getSubsystem(), "Hood encoder", hoodAbsoluteEncoder);
         monitor.addComponent(getSubsystem(), "Accelerator leader", acceleratorLeader);
         monitor.addComponent(getSubsystem(), "Accelerator follower", acceleratorFollower);
         monitor.addComponent(getSubsystem(), "Shooter leader", shooterLeader);
