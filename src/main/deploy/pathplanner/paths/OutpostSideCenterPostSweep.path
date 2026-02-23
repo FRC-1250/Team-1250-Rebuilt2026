@@ -3,48 +3,57 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.636650602409638,
-        "y": 4.056855421686747
+        "x": 5.865903614457832,
+        "y": 4.209843373493976
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.155831325306337,
-        "y": 5.6304457831323615
+        "x": 5.822192771084336,
+        "y": 3.0624337349397592
       },
       "isLocked": false,
-      "linkedName": "DepotSideStart"
+      "linkedName": "OutpostSideCenterSweep"
     },
     {
       "anchor": {
-        "x": 4.598289156631637,
-        "y": 5.499313253011881
+        "x": 5.614566265060241,
+        "y": 2.2428554216867465
       },
       "prevControl": {
-        "x": 4.275318912666451,
-        "y": 5.482241135359778
+        "x": 6.1609518072289156,
+        "y": 2.1991445783132533
       },
       "nextControl": {
-        "x": 4.921259400596822,
-        "y": 5.516385370663984
+        "x": 4.579682568378139,
+        "y": 2.3256461174213134
       },
       "isLocked": false,
-      "linkedName": "SuperDisruptStart"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.280927710843374,
-        "y": 6.657650602409639
+        "x": 2.3524436536180313,
+        "y": 3.3195136417556355
       },
       "prevControl": {
-        "x": 7.996807228915662,
-        "y": 6.613939759036145
+        "x": 2.65841955723249,
+        "y": 2.9588991839243115
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "OutpostPostShoot"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.1103734439833783,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 1.498755186721996,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -58,13 +67,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.3605389398658
+    "rotation": 16.69924423399358
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 179.35988617075813
+    "rotation": -91.16913932790739
   },
   "useDefaultConstraints": true
 }
