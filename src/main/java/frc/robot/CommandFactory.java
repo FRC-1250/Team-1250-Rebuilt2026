@@ -90,12 +90,20 @@ public class CommandFactory {
                         Commands.waitUntil((() -> intake.isHopperNearPosition(supplier.get(), 1))));
     }
 
-    public Command cmdResetHopperPositionBasedOnAmps() {
+    public Command cmdResetHopperPositionRetract() {
         return Commands.sequence(
                 Commands.runOnce(() -> intake.setHopperSpeed(-0.2), intake),
                 Commands.waitUntil(() -> intake.isHopperAmpNearLimit()),
                 Commands.runOnce(() -> intake.resetHopperPosition(HopperPosition.MIN.rotations)),
                 Commands.runOnce(() -> intake.setHopperPosition(HopperPosition.RETRACTED.rotations)));
+    }
+
+    public Command cmdResetHopperPositionWithExtend() {
+        return Commands.sequence(
+                Commands.runOnce(() -> intake.setHopperSpeed(0.1), intake),
+                Commands.waitUntil(() -> intake.isHopperAmpNearLimit()),
+                Commands.runOnce(() -> intake.resetHopperPosition(HopperPosition.MAX.rotations)),
+                Commands.runOnce(() -> intake.setHopperPosition(HopperPosition.EXTENDED.rotations)));
     }
 
     public Command cmdResetHopperPosition() {

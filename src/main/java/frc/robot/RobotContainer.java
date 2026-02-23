@@ -271,8 +271,10 @@ public class RobotContainer {
                 commandFactory.cmdSetIntakeVelocity(0));
         SmartDashboard.putData("Commands/Intake/Reset hopper position",
                 commandFactory.cmdResetHopperPosition());
-        SmartDashboard.putData("Commands/Intake/Reset hopper position based on amps",
-                commandFactory.cmdResetHopperPositionBasedOnAmps());
+        SmartDashboard.putData("Commands/Intake/Reset hopper position (retract)",
+                commandFactory.cmdResetHopperPositionRetract());
+        SmartDashboard.putData("Commands/Intake/Reset hopper position (extend)",
+                commandFactory.cmdResetHopperPositionWithExtend());
 
         SmartDashboard.putData("Commands/Fuel line/Set roller velocity",
                 commandFactory.cmdSetRollerVelocity(() -> rollerVelocity.get()));
