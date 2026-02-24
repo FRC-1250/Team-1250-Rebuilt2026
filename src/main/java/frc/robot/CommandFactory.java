@@ -3,6 +3,9 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -381,5 +384,10 @@ public class CommandFactory {
     public Command cmdShooterPrep() {
         return cmdSetFuelShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond)
                 .andThen(cmdSetFuelAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond));
+    }
+
+    public Command cmdSetClimberPosition(DoubleSupplier supplier) {
+        return Command.runOnce(
+                () -> climber.setClimberPosition(supplier.getAsDouble()));
     }
 }

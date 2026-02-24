@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
@@ -11,6 +12,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.telemetry.MonitoredSubsystem;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -20,7 +22,6 @@ public class Climber extends SubsystemBase implements MonitoredSubsystem {
     public enum ClimberPosition {
         HOOKOUT(0),
         TOWERL1(0),
-        TOWERL2(0),
         HOME(0);
 
         public final double rotations;
@@ -40,10 +41,6 @@ public class Climber extends SubsystemBase implements MonitoredSubsystem {
         climberFollower.setControl(new Follower(climberLeader.getDeviceID(), MotorAlignmentValue.Opposed));
     }
 
-    public boolean isClimberNearPosition(double position) {
-        return isClimberNearPosition(position);
-    }
-
     @Override
     public void registerWithHealthMonitor(HealthMonitor monitor) {
         monitor.addComponent(getSubsystem(), "Climber leader", climberLeader);
@@ -55,6 +52,13 @@ public class Climber extends SubsystemBase implements MonitoredSubsystem {
                 climberPositionControl
                         .withPosition(rotations)
                         .withFeedForward(Volts.of(0)));
+
     }
 
+    public final double encoderOffset = 0.499267578125;
+    private CANcoder climberAbsoluteEncoder = new CANcoder(52);
+
+    public boolean isClimberNearPosition(double rotations) {
+        return CANcoder.getPosition().isNear(rotations, tolerance);
+    }
 }
