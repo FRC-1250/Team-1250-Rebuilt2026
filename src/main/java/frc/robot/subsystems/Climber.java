@@ -20,7 +20,7 @@ public class Climber extends SubsystemBase implements MonitoredSubsystem {
     public enum ClimberPosition {
         HOOKOUT(0),
         TOWERL1(0),
-        TOWERL2(0),
+        PASS(0),
         HOME(0);
 
         public final double rotations;
