@@ -22,6 +22,7 @@ public class Climber extends SubsystemBase implements MonitoredSubsystem {
     public enum ClimberPosition {
         HOOKOUT(0),
         TOWERL1(0),
+        PASS(0),
         HOME(0);
 
         public final double rotations;
@@ -59,6 +60,6 @@ public class Climber extends SubsystemBase implements MonitoredSubsystem {
     private CANcoder climberAbsoluteEncoder = new CANcoder(52);
 
     public boolean isClimberNearPosition(double rotations) {
-        return CANcoder.getPosition().isNear(rotations, tolerance);
+        return climberAbsoluteEncoder.getPosition().isNear(rotations, 0.01);
     }
 }

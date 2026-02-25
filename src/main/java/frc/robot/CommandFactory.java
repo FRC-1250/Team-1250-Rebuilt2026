@@ -72,6 +72,211 @@ public class CommandFactory {
         }
     }
 
+    /*
+     * Intake
+     */
+    public Command cmdSetIntakeVelocity(double rotationsPerSecond) {
+        return cmdSetIntakeVelocity(() -> rotationsPerSecond);
+    }
+
+    public Command cmdSetIntakeVelocity(DoubleSupplier supplier) {
+        return Commands.runOnce(
+                () -> intake.setIntakeVelocity(supplier.getAsDouble()),
+                intake);
+    }
+
+    public Command cmdSetHopperPosition(double rotations) {
+        return cmdSetHopperPosition(() -> rotations);
+    }
+
+    public Command cmdSetHopperPosition(DoubleSupplier supplier) {
+        return Commands.runOnce(
+                () -> intake.setHopperPosition(supplier.getAsDouble()), intake)
+                .andThen(
+                        Commands.waitUntil((() -> intake.isHopperNearPosition(supplier.getAsDouble(), 1))));
+    }
+
+    public Command cmdResetHopperPositionRetract() {
+        return Commands.sequence(
+                Commands.runOnce(() -> intake.setHopperSpeed(-0.2), intake),
+                Commands.waitUntil(() -> intake.isHopperAmpNearLimit()),
+                Commands.runOnce(() -> intake.resetHopperPosition(HopperPosition.MIN.rotations)),
+                Commands.runOnce(() -> intake.setHopperPosition(HopperPosition.RETRACTED.rotations)));
+    }
+
+    public Command cmdResetHopperPositionWithExtend() {
+        return Commands.sequence(
+                Commands.runOnce(() -> intake.setHopperSpeed(0.1), intake),
+                Commands.waitUntil(() -> intake.isHopperAmpNearLimit()),
+                Commands.runOnce(() -> intake.resetHopperPosition(HopperPosition.MAX.rotations)),
+                Commands.runOnce(() -> intake.setHopperPosition(HopperPosition.EXTENDED.rotations)));
+    }
+
+    public Command cmdResetHopperPosition() {
+        return Commands.runOnce(() -> {
+            intake.resetHopperPosition(0);
+        }).ignoringDisable(true);
+    }
+
+    /*
+     * FuelLine
+     */
+    public Command cmdSetRollerVelocity(double rotationsPerSecond) {
+        return cmdSetRollerVelocity(() -> rotationsPerSecond);
+    }
+
+    public Command cmdSetRollerVelocity(DoubleSupplier supplier) {
+        return Commands.runOnce(
+                () -> fuelLine.setRollerVelocity(supplier.getAsDouble()),
+                fuelLine);
+    }
+
+    public Command cmdSetLoaderPosition(double rotations) {
+        return cmdSetLoaderPosition(() -> rotations);
+    }
+
+    public Command cmdSetLoaderPosition(DoubleSupplier supplier) {
+        return Commands.runOnce(
+                () -> fuelLine.setLoaderPosition(supplier.getAsDouble()), fuelLine);
+    }
+
+    public Command cmdSetLoaderVelocity(double rotationsPerSecond) {
+        return cmdSetLoaderVelocity(() -> rotationsPerSecond);
+    }
+
+    public Command cmdSetLoaderVelocity(DoubleSupplier supplier) {
+        return Commands.runOnce(
+                () -> fuelLine.setLoaderVelocity(supplier.getAsDouble()), fuelLine);
+    }
+
+    /*
+     * shooter
+     */
+
+    public Command cmdSetFuelAcceleratorVelocity(double rotationsPerSecond) {
+        return cmdSetFuelAcceleratorVelocity(() -> rotationsPerSecond);
+
+    }
+
+    public Command cmdSetFuelAcceleratorVelocity(DoubleSupplier supplier) {
+        return Commands.runOnce(
+                () -> shooter.setAcceleratorVelocity(supplier.getAsDouble()));
+
+    }
+
+    public Command cmdSetFuelShooterVelocity(double rotationsPerSecond) {
+        return cmdSetFuelShooterVelocity(() -> rotationsPerSecond);
+
+    }
+
+    public Command cmdSetFuelShooterVelocity(DoubleSupplier supplier) {
+        return Commands.runOnce(
+                () -> shooter.setShooterVelocity(supplier.getAsDouble()));
+
+    }
+
+    /*
+     * Climber
+     */
+    public Command cmdSetClimberPosition(DoubleSupplier supplier) {
+        return Commands.runOnce(
+            () -> climber.setClimberPosition(supplier.getAsDouble())
+        ).andThen(Commands.waitUntil(() -> climber.isNearPosition(supplier.getAsDouble())))
+    }
+
+    /*
+     * Shared
+     */
+    public Command cmdFireFuel(DoubleSupplier shooterVelocitySupplier, DoubleSupplier acceleratorVelocitySupplier,
+            DoubleSupplier loaderVelocitySupplier) {
+        return Commands.runEnd(
+                () -> {
+                    shooter.setAcceleratorVelocity(acceleratorVelocitySupplier.getAsDouble());
+                    shooter.setShooterVelocity(shooterVelocitySupplier.getAsDouble());
+                    if (shooter.isAcceleratorNearRotationsPerSecond(acceleratorVelocitySupplier.getAsDouble(), 2)
+                            && shooter.isShooterNearRotationsPerSecond(shooterVelocitySupplier.getAsDouble(), 2)) {
+                        fuelLine.setLoaderVelocity(LoaderVelocity.FIRE.rotationsPerSecond);
+                        intake.agitateHopper();
+                    } else {
+                        fuelLine.setLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond);
+                    }
+                },
+                () -> {
+                    intake.setHopperPosition(HopperPosition.EXTENDED.rotations);
+                    intake.stopHopper();
+                    intake.resetAgitation();
+                    shooter.setAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond);
+                    shooter.setShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond);
+                    fuelLine.setLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond);
+                }, shooter, fuelLine, intake);
+    }
+
+    public Command cmdFireFuel(double shooterVelocity, double acceleratorVelocity, double loaderVelocity) {
+        return cmdFireFuel(() -> shooterVelocity,
+                () -> acceleratorVelocity,
+                () -> loaderVelocity);
+    }
+
+    public Command cmdPickUpFuel() {
+        return cmdSetHopperPosition(HopperPosition.EXTENDED.rotations)
+                .andThen(() -> intake.stopHopper())
+                .andThen(cmdSetLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond))
+                .andThen(cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond))
+                .andThen(cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond));
+    }
+
+    public Command cmdHome() {
+        return cmdSetRollerVelocity(RollerVelocity.STOP.rotationsPerSecond)
+                .andThen(cmdSetIntakeVelocity(IntakeVelocity.STOP.rotationsPerSecond))
+                .andThen(cmdSetHopperPosition(HopperPosition.RETRACTED.rotations));
+    }
+
+    public Command cmdShooterPrep() {
+        return cmdSetFuelShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond)
+                .andThen(cmdSetFuelAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond));
+    }
+
+    /*
+     * Prove Out
+     */
+
+    public Command shooterTestCommand() {
+        return Commands.sequence(
+                cmdSetFuelShooterVelocity(ShooterVelocity.HUB.shooterRotationsPerSecond).withTimeout(5),
+                cmdSetFuelShooterVelocity(ShooterVelocity.STOP.shooterRotationsPerSecond).withTimeout(5));
+    }
+
+    public Command hopperTestCommand() {
+        return Commands.sequence(
+                cmdSetHopperPosition(HopperPosition.EXTENDED.rotations).withTimeout(5),
+                cmdSetHopperPosition(HopperPosition.RETRACTED.rotations).withTimeout(5));
+    }
+
+    public Command intakeTestCommand() {
+        return Commands.sequence(
+                cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond).withTimeout(5),
+                cmdSetIntakeVelocity(IntakeVelocity.STOP.rotationsPerSecond).withTimeout(5));
+    }
+
+    public Command rollerTestCommand() {
+        return Commands.sequence(
+                cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond).withTimeout(5),
+                cmdSetRollerVelocity(RollerVelocity.STOP.rotationsPerSecond).withTimeout(5));
+    }
+
+    public Command loaderTestCommand() {
+        return Commands.sequence(
+                cmdSetLoaderVelocity(LoaderVelocity.FIRE.rotationsPerSecond).withTimeout(5),
+                cmdSetLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond).withTimeout(5));
+
+    }
+
+    public Command acceleratorTestCommand() {
+        return Commands.sequence(
+                cmdSetFuelAcceleratorVelocity(ShooterVelocity.HUB.acceleratorRotationsPerSecond).withTimeout(5),
+                cmdSetFuelAcceleratorVelocity(ShooterVelocity.HUB.acceleratorRotationsPerSecond).withTimeout(5));
+    }
+
     public Command cmdDriveTest(double maxSpeed, double maxAngularRate) {
         SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
                 .withDeadband(maxSpeed * 0.1).withRotationalDeadband(maxAngularRate * 0.1)
@@ -231,163 +436,15 @@ public class CommandFactory {
 
     }
 
-    /*
-     * Intake
-     */
-    public Command cmdSetIntakeVelocity(double rotationsPerSecond) {
-        return cmdSetIntakeVelocity(() -> rotationsPerSecond);
-    }
-
-    public Command cmdSetIntakeVelocity(DoubleSupplier supplier) {
-        return Commands.runOnce(
-                () -> intake.setIntakeVelocity(supplier.getAsDouble()),
-                intake);
-    }
-
-    public Command cmdSetHopperPosition(double rotations) {
-        return cmdSetHopperPosition(() -> rotations);
-    }
-
-    public Command cmdSetHopperPosition(DoubleSupplier supplier) {
-        return Commands.runOnce(
-                () -> intake.setHopperPosition(supplier.getAsDouble()), intake)
-                .andThen(
-                        Commands.waitUntil((() -> intake.isHopperNearPosition(supplier.getAsDouble(), 1))));
-    }
-
-    public Command cmdResetHopperPositionRetract() {
+    public Command proveOut() {
         return Commands.sequence(
-                Commands.runOnce(() -> intake.setHopperSpeed(-0.2), intake),
-                Commands.waitUntil(() -> intake.isHopperAmpNearLimit()),
-                Commands.runOnce(() -> intake.resetHopperPosition(HopperPosition.MIN.rotations)),
-                Commands.runOnce(() -> intake.setHopperPosition(HopperPosition.RETRACTED.rotations)));
-    }
-
-    public Command cmdResetHopperPositionWithExtend() {
-        return Commands.sequence(
-                Commands.runOnce(() -> intake.setHopperSpeed(0.1), intake),
-                Commands.waitUntil(() -> intake.isHopperAmpNearLimit()),
-                Commands.runOnce(() -> intake.resetHopperPosition(HopperPosition.MAX.rotations)),
-                Commands.runOnce(() -> intake.setHopperPosition(HopperPosition.EXTENDED.rotations)));
-    }
-
-    public Command cmdResetHopperPosition() {
-        return Commands.runOnce(() -> {
-            intake.resetHopperPosition(0);
-        }).ignoringDisable(true);
-    }
-
-    /*
-     * FuelLine
-     */
-    public Command cmdSetRollerVelocity(double rotationsPerSecond) {
-        return cmdSetRollerVelocity(() -> rotationsPerSecond);
-    }
-
-    public Command cmdSetRollerVelocity(DoubleSupplier supplier) {
-        return Commands.runOnce(
-                () -> fuelLine.setRollerVelocity(supplier.getAsDouble()),
-                fuelLine);
-    }
-
-    public Command cmdSetLoaderPosition(double rotations) {
-        return cmdSetLoaderPosition(() -> rotations);
-    }
-
-    public Command cmdSetLoaderPosition(DoubleSupplier supplier) {
-        return Commands.runOnce(
-                () -> fuelLine.setLoaderPosition(supplier.getAsDouble()), fuelLine);
-    }
-
-    public Command cmdSetLoaderVelocity(double rotationsPerSecond) {
-        return cmdSetLoaderVelocity(() -> rotationsPerSecond);
-    }
-
-    public Command cmdSetLoaderVelocity(DoubleSupplier supplier) {
-        return Commands.runOnce(
-                () -> fuelLine.setLoaderVelocity(supplier.getAsDouble()), fuelLine);
-    }
-
-    /*
-     * shooter
-     */
-
-    public Command cmdSetFuelAcceleratorVelocity(double rotationsPerSecond) {
-        return cmdSetFuelAcceleratorVelocity(() -> rotationsPerSecond);
-
-    }
-
-    public Command cmdSetFuelAcceleratorVelocity(DoubleSupplier supplier) {
-        return Commands.runOnce(
-                () -> shooter.setAcceleratorVelocity(supplier.getAsDouble()));
-
-    }
-
-    public Command cmdSetFuelShooterVelocity(double rotationsPerSecond) {
-        return cmdSetFuelShooterVelocity(() -> rotationsPerSecond);
-
-    }
-
-    public Command cmdSetFuelShooterVelocity(DoubleSupplier supplier) {
-        return Commands.runOnce(
-                () -> shooter.setShooterVelocity(supplier.getAsDouble()));
-
-    }
-
-    /*
-     * Shared
-     */
-    public Command cmdFireFuel(DoubleSupplier shooterVelocitySupplier, DoubleSupplier acceleratorVelocitySupplier,
-            DoubleSupplier loaderVelocitySupplier) {
-        return Commands.runEnd(
-                () -> {
-                    shooter.setAcceleratorVelocity(acceleratorVelocitySupplier.getAsDouble());
-                    shooter.setShooterVelocity(shooterVelocitySupplier.getAsDouble());
-                    if (shooter.isAcceleratorNearRotationsPerSecond(acceleratorVelocitySupplier.getAsDouble(), 2)
-                            && shooter.isShooterNearRotationsPerSecond(shooterVelocitySupplier.getAsDouble(), 2)) {
-                        fuelLine.setLoaderVelocity(LoaderVelocity.FIRE.rotationsPerSecond);
-                        intake.agitateHopper();
-                    } else {
-                        fuelLine.setLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond);
-                    }
-                },
-                () -> {
-                    intake.setHopperPosition(HopperPosition.EXTENDED.rotations);
-                    intake.stopHopper();
-                    intake.resetAgitation();
-                    shooter.setAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond);
-                    shooter.setShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond);
-                    fuelLine.setLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond);
-                }, shooter, fuelLine, intake);
-    }
-
-    public Command cmdFireFuel(double shooterVelocity, double acceleratorVelocity, double loaderVelocity) {
-        return cmdFireFuel(() -> shooterVelocity,
-                () -> acceleratorVelocity,
-                () -> loaderVelocity);
-    }
-
-    public Command cmdPickUpFuel() {
-        return cmdSetHopperPosition(HopperPosition.EXTENDED.rotations)
-                .andThen(() -> intake.stopHopper())
-                .andThen(cmdSetLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond))
-                .andThen(cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond))
-                .andThen(cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond));
-    }
-
-    public Command cmdHome() {
-        return cmdSetRollerVelocity(RollerVelocity.STOP.rotationsPerSecond)
-                .andThen(cmdSetIntakeVelocity(IntakeVelocity.STOP.rotationsPerSecond))
-                .andThen(cmdSetHopperPosition(HopperPosition.RETRACTED.rotations));
-    }
-
-    public Command cmdShooterPrep() {
-        return cmdSetFuelShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond)
-                .andThen(cmdSetFuelAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond));
-    }
-
-    public Command cmdSetClimberPosition(DoubleSupplier supplier) {
-        return Command.runOnce(
-                () -> climber.setClimberPosition(supplier.getAsDouble()));
+                cmdDriveTest(0, 0),
+                rollerTestCommand(),
+                loaderTestCommand(),
+                hopperTestCommand(),
+                intakeTestCommand(),
+                acceleratorTestCommand(),
+                shooterTestCommand());
+        // Add Climber Eventually
     }
 }
