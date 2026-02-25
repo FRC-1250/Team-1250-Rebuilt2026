@@ -180,8 +180,8 @@ public class CommandFactory {
      */
     public Command cmdSetClimberPosition(DoubleSupplier supplier) {
         return Commands.runOnce(
-            () -> climber.setClimberPosition(supplier.getAsDouble())
-        ).andThen(Commands.waitUntil(() -> climber.isNearPosition(supplier.getAsDouble())))
+                () -> climber.setClimberPosition(supplier.getAsDouble()))
+                .andThen(Commands.waitUntil(() -> climber.isNearPosition(supplier.getAsDouble())));
     }
 
     /*

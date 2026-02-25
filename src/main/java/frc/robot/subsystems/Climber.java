@@ -12,7 +12,6 @@ import frc.robot.subsystems.Climber;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.telemetry.MonitoredSubsystem;
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -59,7 +58,7 @@ public class Climber extends SubsystemBase implements MonitoredSubsystem {
     public final double encoderOffset = 0.499267578125;
     private CANcoder climberAbsoluteEncoder = new CANcoder(52);
 
-    public boolean isClimberNearPosition(double rotations) {
+    public boolean isNearPosition(double rotations) {
         return climberAbsoluteEncoder.getPosition().isNear(rotations, 0.01);
     }
 }
