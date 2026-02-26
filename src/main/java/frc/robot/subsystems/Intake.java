@@ -49,7 +49,6 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     }
 
     public enum IntakeVelocity {
-        STOP(0),
         GO(75);
 
         public double rotationsPerSecond;
@@ -132,14 +131,6 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         activeAgitiationProfile = wave;
     }
 
-    public void agitateHopper() {
-        setHopperPosition(activeAgitiationProfile.shift());
-    }
-
-    public void resetAgitation() {
-        activeAgitiationProfile.reset();
-    }
-
     public void setIntakeVelocity(double rotationsPerSecond) {
         intake.setControl(
                 intakeVelocityControl
@@ -149,6 +140,18 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
     public double getIntakeVelocity() {
         return intake.getVelocity().getValueAsDouble();
+    }
+
+    public void stopIntake() {
+        intake.stopMotor();
+    }
+
+    public void agitateHopper() {
+        setHopperPosition(activeAgitiationProfile.shift());
+    }
+
+    public void resetAgitation() {
+        activeAgitiationProfile.reset();
     }
 
     public void setHopperPosition(double rotations) {

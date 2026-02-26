@@ -39,13 +39,11 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FuelLine;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.HopperPosition;
-import frc.robot.subsystems.Intake.IntakeVelocity;
 import frc.robot.subsystems.Shooter.ShooterVelocity;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.FuelLine.LoaderVelocity;
-import frc.robot.subsystems.FuelLine.RollerVelocity;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.utility.FieldZones;
 
@@ -280,8 +278,6 @@ public class RobotContainer {
                 commandFactory.cmdSetRollerVelocity(() -> rollerVelocity.get()));
         SmartDashboard.putData("Commands/Fuel line/Set Loader velocity",
                 commandFactory.cmdSetLoaderVelocity(() -> loaderLoaderVelocity.get()));
-        SmartDashboard.putData("Commands/Fuel line/Set Loader position",
-                commandFactory.cmdSetLoaderPosition(() -> loaderLoaderPosition.get()));
         SmartDashboard.putData("Commands/Fuel line/Stop roller velocity",
                 commandFactory.cmdSetRollerVelocity(0));
         SmartDashboard.putData("Commands/Fuel line/Stop Loader velocity",

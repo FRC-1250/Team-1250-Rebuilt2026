@@ -26,7 +26,6 @@ import frc.robot.telemetry.MonitoredSubsystem;
 public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
     public enum ShooterVelocity {
-        STOP(0),
         WARM(10),
         HUB(40),
         MAX(50);
@@ -84,6 +83,14 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
     public boolean isShooterNearRotationsPerSecond(double rotationsPerSecond, double tolerance) {
         return shooterLeader.getVelocity().isNear(rotationsPerSecond, tolerance);
+    }
+
+    public void stopShooter() {
+        shooterLeader.stopMotor();
+    }
+
+    public void stopAccelerator() {
+        acceleratorLeader.stopMotor();
     }
 
     private void configureAccelerator() {

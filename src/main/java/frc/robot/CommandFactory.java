@@ -3,9 +3,6 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -85,6 +82,10 @@ public class CommandFactory {
                 intake);
     }
 
+    public Command cmdStopIntake() {
+        return Commands.runOnce(() -> intake.stopIntake(), intake);
+    }
+
     public Command cmdSetHopperPosition(double rotations) {
         return cmdSetHopperPosition(() -> rotations);
     }
@@ -94,6 +95,10 @@ public class CommandFactory {
                 () -> intake.setHopperPosition(supplier.getAsDouble()), intake)
                 .andThen(
                         Commands.waitUntil((() -> intake.isHopperNearPosition(supplier.getAsDouble(), 1))));
+    }
+
+    public Command cmdStopHopper() {
+        return Commands.runOnce(() -> intake.stopHopper(), intake);
     }
 
     public Command cmdResetHopperPositionRetract() {
@@ -131,13 +136,8 @@ public class CommandFactory {
                 fuelLine);
     }
 
-    public Command cmdSetLoaderPosition(double rotations) {
-        return cmdSetLoaderPosition(() -> rotations);
-    }
-
-    public Command cmdSetLoaderPosition(DoubleSupplier supplier) {
-        return Commands.runOnce(
-                () -> fuelLine.setLoaderPosition(supplier.getAsDouble()), fuelLine);
+    public Command cmdStopRoller() {
+        return Commands.runOnce(() -> fuelLine.stopRoller());
     }
 
     public Command cmdSetLoaderVelocity(double rotationsPerSecond) {
@@ -147,6 +147,10 @@ public class CommandFactory {
     public Command cmdSetLoaderVelocity(DoubleSupplier supplier) {
         return Commands.runOnce(
                 () -> fuelLine.setLoaderVelocity(supplier.getAsDouble()), fuelLine);
+    }
+
+    public Command cmdStopLoader() {
+        return Commands.runOnce(() -> fuelLine.stopLoader());
     }
 
     /*
@@ -164,6 +168,10 @@ public class CommandFactory {
 
     }
 
+    public Command cmdStopAccelerator() {
+        return Commands.runOnce(() -> shooter.stopAccelerator(), shooter);
+    }
+
     public Command cmdSetFuelShooterVelocity(double rotationsPerSecond) {
         return cmdSetFuelShooterVelocity(() -> rotationsPerSecond);
 
@@ -173,6 +181,10 @@ public class CommandFactory {
         return Commands.runOnce(
                 () -> shooter.setShooterVelocity(supplier.getAsDouble()));
 
+    }
+
+    public Command cmdStopShooter() {
+        return Commands.runOnce(() -> shooter.stopShooter(), shooter);
     }
 
     /*
@@ -191,10 +203,13 @@ public class CommandFactory {
             DoubleSupplier loaderVelocitySupplier) {
         return Commands.runEnd(
                 () -> {
-                    shooter.setAcceleratorVelocity(acceleratorVelocitySupplier.getAsDouble());
-                    shooter.setShooterVelocity(shooterVelocitySupplier.getAsDouble());
-                    if (shooter.isAcceleratorNearRotationsPerSecond(acceleratorVelocitySupplier.getAsDouble(), 2)
-                            && shooter.isShooterNearRotationsPerSecond(shooterVelocitySupplier.getAsDouble(), 2)) {
+                    var accelSpeed = acceleratorVelocitySupplier.getAsDouble();
+                    var shooterSpeed = shooterVelocitySupplier.getAsDouble();
+
+                    shooter.setAcceleratorVelocity(accelSpeed);
+                    shooter.setShooterVelocity(shooterSpeed);
+                    if (shooter.isAcceleratorNearRotationsPerSecond(accelSpeed, 2)
+                            && shooter.isShooterNearRotationsPerSecond(shooterSpeed, 2)) {
                         fuelLine.setLoaderVelocity(LoaderVelocity.FIRE.rotationsPerSecond);
                         intake.agitateHopper();
                     } else {
@@ -219,15 +234,15 @@ public class CommandFactory {
 
     public Command cmdPickUpFuel() {
         return cmdSetHopperPosition(HopperPosition.EXTENDED.rotations)
-                .andThen(() -> intake.stopHopper())
+                .andThen(cmdStopHopper())
                 .andThen(cmdSetLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond))
                 .andThen(cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond))
                 .andThen(cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond));
     }
 
     public Command cmdHome() {
-        return cmdSetRollerVelocity(RollerVelocity.STOP.rotationsPerSecond)
-                .andThen(cmdSetIntakeVelocity(IntakeVelocity.STOP.rotationsPerSecond))
+        return cmdStopRoller()
+                .andThen(cmdStopIntake())
                 .andThen(cmdSetHopperPosition(HopperPosition.RETRACTED.rotations));
     }
 
@@ -240,44 +255,55 @@ public class CommandFactory {
      * Prove Out
      */
 
-    public Command shooterTestCommand() {
+    private Command shooterTestCommand() {
         return Commands.sequence(
-                cmdSetFuelShooterVelocity(ShooterVelocity.HUB.shooterRotationsPerSecond).withTimeout(5),
-                cmdSetFuelShooterVelocity(ShooterVelocity.STOP.shooterRotationsPerSecond).withTimeout(5));
+                cmdSetFuelShooterVelocity(ShooterVelocity.HUB.shooterRotationsPerSecond),
+                Commands.waitSeconds(5),
+                cmdStopShooter());
     }
 
-    public Command hopperTestCommand() {
+    private Command hopperTestCommand() {
         return Commands.sequence(
-                cmdSetHopperPosition(HopperPosition.EXTENDED.rotations).withTimeout(5),
-                cmdSetHopperPosition(HopperPosition.RETRACTED.rotations).withTimeout(5));
+                cmdSetHopperPosition(HopperPosition.EXTENDED.rotations),
+                Commands.waitSeconds(5),
+                cmdSetHopperPosition(HopperPosition.RETRACTED.rotations),
+                Commands.waitSeconds(5),
+                cmdSetHopperPosition(HopperPosition.EXTENDED.rotations),
+                cmdStopHopper());
     }
 
-    public Command intakeTestCommand() {
+    private Command intakeTestCommand() {
         return Commands.sequence(
-                cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond).withTimeout(5),
-                cmdSetIntakeVelocity(IntakeVelocity.STOP.rotationsPerSecond).withTimeout(5));
+                cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond),
+                Commands.waitSeconds(5),
+                cmdStopIntake());
     }
 
-    public Command rollerTestCommand() {
+    private Command rollerTestCommand() {
         return Commands.sequence(
-                cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond).withTimeout(5),
-                cmdSetRollerVelocity(RollerVelocity.STOP.rotationsPerSecond).withTimeout(5));
+                cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond),
+                Commands.waitSeconds(5),
+                cmdStopRoller());
     }
 
-    public Command loaderTestCommand() {
+    private Command loaderTestCommand() {
         return Commands.sequence(
-                cmdSetLoaderVelocity(LoaderVelocity.FIRE.rotationsPerSecond).withTimeout(5),
-                cmdSetLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond).withTimeout(5));
+                cmdSetLoaderVelocity(LoaderVelocity.FIRE.rotationsPerSecond),
+                Commands.waitSeconds(5),
+                cmdSetLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond),
+                Commands.waitSeconds(5),
+                cmdStopLoader());
 
     }
 
-    public Command acceleratorTestCommand() {
+    private Command acceleratorTestCommand() {
         return Commands.sequence(
-                cmdSetFuelAcceleratorVelocity(ShooterVelocity.HUB.acceleratorRotationsPerSecond).withTimeout(5),
-                cmdSetFuelAcceleratorVelocity(ShooterVelocity.HUB.acceleratorRotationsPerSecond).withTimeout(5));
+                cmdSetFuelAcceleratorVelocity(ShooterVelocity.HUB.acceleratorRotationsPerSecond),
+                Commands.waitSeconds(5),
+                cmdStopAccelerator());
     }
 
-    public Command cmdDriveTest(double maxSpeed, double maxAngularRate) {
+    private Command driveTest(double maxSpeed, double maxAngularRate) {
         SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
                 .withDeadband(maxSpeed * 0.1).withRotationalDeadband(maxAngularRate * 0.1)
                 .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
@@ -436,9 +462,9 @@ public class CommandFactory {
 
     }
 
-    public Command proveOut() {
+    public Command proveOut(double maxSpeed, double maxAngularRate) {
         return Commands.sequence(
-                cmdDriveTest(0, 0),
+                driveTest(maxSpeed, maxAngularRate),
                 rollerTestCommand(),
                 loaderTestCommand(),
                 hopperTestCommand(),
