@@ -20,8 +20,10 @@ import frc.robot.subsystems.Shooter.ShooterVelocity;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.HopperPosition;
 import frc.robot.subsystems.Intake.IntakeVelocity;
+import frc.robot.subsystems.ReactionBar.ReactionBarPosition;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.ReactionBar;
 import frc.robot.subsystems.Shooter;
 
 public class CommandFactory {
@@ -33,6 +35,7 @@ public class CommandFactory {
     private final Limelight limelight;
     private final Leds leds;
     private final Intake intake;
+    private final ReactionBar reactionBar;
 
     public CommandFactory(
             CommandSwerveDrivetrain swerve,
@@ -41,7 +44,8 @@ public class CommandFactory {
             Shooter shooter,
             Climber climber,
             Limelight limelight,
-            Leds leds) {
+            Leds leds,
+            ReactionBar reactionBar) {
         this.swerve = swerve;
         this.intake = intake;
         this.fuelLine = fuelLine;
@@ -49,6 +53,7 @@ public class CommandFactory {
         this.climber = climber;
         this.limelight = limelight;
         this.leds = leds;
+        this.reactionBar = reactionBar;
     }
 
     /*
@@ -67,6 +72,20 @@ public class CommandFactory {
                             feildHeading.getX() - swerve.getState().Pose.getX()))
                     .plus(swerve.getOperatorForwardDirection());
         }
+    }
+
+    /*
+     * ReactionBar
+     */
+
+    public Command cmdSetReactionBarPosition(DoubleSupplier supplier) {
+        return Commands.runOnce(() -> reactionBar.setReactionBarPosition(supplier.getAsDouble()), reactionBar)
+                .andThen(
+                        Commands.waitUntil((() -> reactionBar.isReactionBarNearPosition(supplier.getAsDouble(), .01))));
+    }
+
+    public Command cmdSetReactionBarPosition(double rotations) {
+        return cmdSetReactionBarPosition(() -> rotations);
     }
 
     /*
@@ -249,6 +268,17 @@ public class CommandFactory {
     public Command cmdShooterPrep() {
         return cmdSetFuelShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond)
                 .andThen(cmdSetFuelAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond));
+    }
+
+    public Command cmdPickUpFuelPrep() {
+        return cmdSetHopperPosition(HopperPosition.EXTENDED.rotations)
+                .andThen(cmdStopHopper())
+                .andThen(cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations));
+    }
+
+    public Command cmdPickUpFuelHome() {
+        return cmdSetReactionBarPosition(ReactionBarPosition.HOME.rotations)
+                .andThen(cmdSetHopperPosition(HopperPosition.RETRACTED.rotations));
     }
 
     /*

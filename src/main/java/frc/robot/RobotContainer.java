@@ -42,6 +42,7 @@ import frc.robot.subsystems.Intake.HopperPosition;
 import frc.robot.subsystems.Shooter.ShooterVelocity;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.ReactionBar;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.FuelLine.LoaderVelocity;
 import frc.robot.telemetry.HealthMonitor;
@@ -58,6 +59,8 @@ public class RobotContainer {
     private final Climber climber = new Climber();
     private final Limelight limelight = new Limelight();
     private final Leds leds = new Leds();
+    private final ReactionBar reactionBar = new ReactionBar();
+
     public final CommandFactory commandFactory = new CommandFactory(
             swerve,
             fuelLine,
@@ -65,7 +68,8 @@ public class RobotContainer {
             shooter,
             climber,
             limelight,
-            leds);
+            leds,
+            reactionBar);
 
     private final Telemetry logger = new Telemetry();
 
