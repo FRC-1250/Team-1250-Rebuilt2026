@@ -139,6 +139,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     public void registerWithHealthMonitor(HealthMonitor monitor) {
         monitor.addComponent(getSubsystem(), "Intake", intake);
         monitor.addComponent(getSubsystem(), "hopper", hopper);
+        monitor.setSubsystemColor(getSubsystem(), systemColor);
     }
 
     private void configureHopperAgitation() {

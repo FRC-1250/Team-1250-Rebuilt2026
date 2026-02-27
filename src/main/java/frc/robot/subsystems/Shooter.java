@@ -158,5 +158,6 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
         monitor.addComponent(getSubsystem(), "Accelerator follower", acceleratorFollower);
         monitor.addComponent(getSubsystem(), "Shooter leader", shooterLeader);
         monitor.addComponent(getSubsystem(), "Shooter follower", shooterFollower);
+        monitor.setSubsystemColor(getSubsystem(), systemColor);
     }
 }

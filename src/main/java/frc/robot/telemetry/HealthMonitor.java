@@ -10,8 +10,11 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.wpilibj.util.Color;
+
 public class HealthMonitor {
     private static HealthMonitor instance;
+    private final Map<String, Color> subsystemColors = new ConcurrentHashMap<>();
     private final Map<String, Map<String, DeviceStatus>> healthStatus = new ConcurrentHashMap<>();
     private final Map<String, Map<String, PhoenixHealthChecker>> subsystems = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -27,6 +30,10 @@ public class HealthMonitor {
             instance = new HealthMonitor(3); // Default 3 seconds interval
         }
         return instance;
+    }
+
+    public void setSubsystemColor(String subsystemName, Color color) {
+        subsystemColors.put(subsystemName, color);
     }
 
     public HealthMonitor addComponent(String subsystemName, String deviceName, TalonFX talonFX) {
@@ -97,6 +104,14 @@ public class HealthMonitor {
                 }
             }
             return aggregateStatus;
+        }
+    }
+
+    public Color getSubsystemColor(String subsystemName) {
+        if (!subsystemColors.containsKey(subsystemName)) {
+            return Color.kBeige;
+        } else {
+            return subsystemColors.get(subsystemName);
         }
     }
 }

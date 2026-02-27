@@ -6,16 +6,21 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.telemetry.HealthMonitor;
+import frc.robot.telemetry.MonitoredSubsystem;
 import frc.robot.utility.AgitationProfile;
 import frc.robot.utility.AgitationStep;
 
-public class ReactionBar extends SubsystemBase {
+public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
     public enum ReactionBarPosition {
         HOME(0),
         EXTENDED(1);
@@ -30,6 +35,9 @@ public class ReactionBar extends SubsystemBase {
     private final TalonFX reactionBar = new TalonFX(35);
     private final PositionVoltage reactionBarPositionControl = new PositionVoltage(0);
     private final CANcoder reactionBarEncoder = new CANcoder(36);
+    private final double MAGNET_OFFSET = 0;
+
+    private final Color systemColor = new Color(0, 0, 0);
 
     private AgitationProfile active;
     private AgitationProfile wave;
@@ -39,6 +47,13 @@ public class ReactionBar extends SubsystemBase {
 
         talonFXConfiguration.Feedback.FeedbackRemoteSensorID = reactionBarEncoder.getDeviceID();
         reactionBar.getConfigurator().apply(talonFXConfiguration);
+
+        CANcoderConfiguration canCoderConfiguration = new CANcoderConfiguration();
+        canCoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
+        canCoderConfiguration.MagnetSensor.MagnetOffset = MAGNET_OFFSET;
+        canCoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+
+        reactionBarEncoder.getConfigurator().apply(canCoderConfiguration);
 
         configureAgitiationProfiles();
         active = wave;
@@ -78,6 +93,13 @@ public class ReactionBar extends SubsystemBase {
         wave = new AgitationProfile();
         wave.addStep(new AgitationStep(0.25, 2));
         wave.addStep(new AgitationStep(0.5, 2));
+    }
+
+    @Override
+    public void registerWithHealthMonitor(HealthMonitor monitor) {
+        monitor.addComponent(getSubsystem(), "Reacton bar", reactionBar);
+        monitor.addComponent(getSubsystem(), "Reaction bar encoder", reactionBarEncoder);
+        monitor.setSubsystemColor(getSubsystem(), systemColor);
     }
 
 }

@@ -89,6 +89,7 @@ public class Climber extends SubsystemBase implements MonitoredSubsystem {
     public void registerWithHealthMonitor(HealthMonitor monitor) {
         monitor.addComponent(getSubsystem(), "Climber leader", climberLeader);
         monitor.addComponent(getSubsystem(), "Climber follower", climberFollower);
+        monitor.setSubsystemColor(getSubsystem(), systemColor);
     }
 
     public void setClimberPosition(double rotations) {

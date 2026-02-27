@@ -100,6 +100,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     public void registerWithHealthMonitor(HealthMonitor monitor) {
         monitor.addComponent(getSubsystem(), "Roller", roller);
         monitor.addComponent(getSubsystem(), "Loader", loader);
+        monitor.setSubsystemColor(getSubsystem(), systemColor);
     }
 
     private void configureLoader() {
