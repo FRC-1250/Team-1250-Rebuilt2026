@@ -7,9 +7,6 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Volts;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
@@ -23,11 +20,12 @@ import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Frequency;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.telemetry.MonitoredSubsystem;
+import frc.robot.utility.AgitationProfile;
+import frc.robot.utility.AgitationStep;
 
 @Logged
 public class Intake extends SubsystemBase implements MonitoredSubsystem {
@@ -58,59 +56,6 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         }
     }
 
-    private class HopperAgitationStep {
-        double hopperPosition;
-        double interval;
-
-        public HopperAgitationStep(HopperPosition hopperPosition, double interval) {
-            this(hopperPosition.rotations, interval);
-        }
-
-        public HopperAgitationStep(double hopperPosition, double interval) {
-            this.hopperPosition = hopperPosition;
-            this.interval = interval;
-        }
-    }
-
-    private class HopperAgitationProfile {
-        private Timer timer;
-        private List<HopperAgitationStep> steps;
-        private int index;
-
-        public HopperAgitationProfile() {
-            this.steps = new ArrayList<>();
-            this.timer = new Timer();
-            index = 0;
-        }
-
-        public void addStep(HopperAgitationStep has) {
-            if (has.interval > 0)
-                this.steps.add(has);
-        }
-
-        public void reset() {
-            timer.stop();
-            timer.reset();
-            index = 0;
-        }
-
-        public double shift() {
-            if (!timer.isRunning()) {
-                timer.start();
-            }
-
-            var currentStep = steps.get(index % steps.size());
-
-            if (timer.advanceIfElapsed(currentStep.interval)) {
-                index++;
-                currentStep = steps.get(index % steps.size());
-                timer.reset();
-            }
-
-            return currentStep.hopperPosition;
-        }
-    }
-
     private final TalonFX intake = new TalonFX(40);
     private final VelocityVoltage intakeVelocityControl = new VelocityVoltage(0).withSlot(0);
 
@@ -119,16 +64,16 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
     private final Color systemColor = new Color(0, 0, 0);
 
-    private HopperAgitationProfile activeAgitiationProfile;
-    private HopperAgitationProfile wave;
-    private HopperAgitationProfile pulse;
-    private HopperAgitationProfile wiggle;
+    private AgitationProfile active;
+    private AgitationProfile wave;
+    private AgitationProfile pulse;
+    private AgitationProfile wiggle;
 
     public Intake() {
         configureHopper();
         configureIntake();
         configureHopperAgitation();
-        activeAgitiationProfile = wave;
+        active = wave;
     }
 
     public void setIntakeVelocity(double rotationsPerSecond) {
@@ -147,11 +92,11 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     }
 
     public void agitateHopper() {
-        setHopperPosition(activeAgitiationProfile.shift());
+        setHopperPosition(active.shift());
     }
 
     public void resetAgitation() {
-        activeAgitiationProfile.reset();
+        active.reset();
     }
 
     public void setHopperPosition(double rotations) {
@@ -197,43 +142,43 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     }
 
     private void configureHopperAgitation() {
-        wave = new HopperAgitationProfile();
-        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_3, 3));
-        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_2, 1));
-        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_1, 1));
-        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_2, 1));
-        wave.addStep(new HopperAgitationStep(HopperPosition.PHASE_3, 1));
-        pulse = new HopperAgitationProfile();
-        pulse.addStep(new HopperAgitationStep(3.7, 3));
-        pulse.addStep(new HopperAgitationStep(3.42, 0.5));
-        pulse.addStep(new HopperAgitationStep(3.09, 0.5));
-        pulse.addStep(new HopperAgitationStep(2.76, 0.5));
-        pulse.addStep(new HopperAgitationStep(2.43, 0.5));
-        pulse.addStep(new HopperAgitationStep(3.09, 1));
-        pulse.addStep(new HopperAgitationStep(2.76, 0.5));
-        pulse.addStep(new HopperAgitationStep(2.43, 0.5));
-        pulse.addStep(new HopperAgitationStep(2.10, 0.5));
-        pulse.addStep(new HopperAgitationStep(1.77, 0.5));
-        pulse.addStep(new HopperAgitationStep(2.43, 1));
-        pulse.addStep(new HopperAgitationStep(2.10, 0.5));
-        pulse.addStep(new HopperAgitationStep(1.77, 0.5));
-        pulse.addStep(new HopperAgitationStep(1.44, 0.5));
-        pulse.addStep(new HopperAgitationStep(1.25, 0.5));
-        wiggle = new HopperAgitationProfile();
-        wiggle.addStep(new HopperAgitationStep(3.7, 3));
-        wiggle.addStep(new HopperAgitationStep(3.2, 0.5));
-        wiggle.addStep(new HopperAgitationStep(3.40, 0.5));
-        wiggle.addStep(new HopperAgitationStep(2.9, 1));
-        wiggle.addStep(new HopperAgitationStep(3.1, 0.5));
-        wiggle.addStep(new HopperAgitationStep(2.6, 0.5));
-        wiggle.addStep(new HopperAgitationStep(2.8, 1));
-        wiggle.addStep(new HopperAgitationStep(2.3, 0.5));
-        wiggle.addStep(new HopperAgitationStep(2.5, 0.5));
-        wiggle.addStep(new HopperAgitationStep(2.0, 1));
-        wiggle.addStep(new HopperAgitationStep(2.2, 0.5));
-        wiggle.addStep(new HopperAgitationStep(1.7, 0.5));
-        wiggle.addStep(new HopperAgitationStep(1.90, 0.5));
-        wiggle.addStep(new HopperAgitationStep(1.25, 0.5));
+        wave = new AgitationProfile();
+        wave.addStep(new AgitationStep(HopperPosition.PHASE_3.rotations, 3));
+        wave.addStep(new AgitationStep(HopperPosition.PHASE_2.rotations, 1));
+        wave.addStep(new AgitationStep(HopperPosition.PHASE_1.rotations, 1));
+        wave.addStep(new AgitationStep(HopperPosition.PHASE_2.rotations, 1));
+        wave.addStep(new AgitationStep(HopperPosition.PHASE_3.rotations, 1));
+        pulse = new AgitationProfile();
+        pulse.addStep(new AgitationStep(3.7, 3));
+        pulse.addStep(new AgitationStep(3.42, 0.5));
+        pulse.addStep(new AgitationStep(3.09, 0.5));
+        pulse.addStep(new AgitationStep(2.76, 0.5));
+        pulse.addStep(new AgitationStep(2.43, 0.5));
+        pulse.addStep(new AgitationStep(3.09, 1));
+        pulse.addStep(new AgitationStep(2.76, 0.5));
+        pulse.addStep(new AgitationStep(2.43, 0.5));
+        pulse.addStep(new AgitationStep(2.10, 0.5));
+        pulse.addStep(new AgitationStep(1.77, 0.5));
+        pulse.addStep(new AgitationStep(2.43, 1));
+        pulse.addStep(new AgitationStep(2.10, 0.5));
+        pulse.addStep(new AgitationStep(1.77, 0.5));
+        pulse.addStep(new AgitationStep(1.44, 0.5));
+        pulse.addStep(new AgitationStep(1.25, 0.5));
+        wiggle = new AgitationProfile();
+        wiggle.addStep(new AgitationStep(3.7, 3));
+        wiggle.addStep(new AgitationStep(3.2, 0.5));
+        wiggle.addStep(new AgitationStep(3.40, 0.5));
+        wiggle.addStep(new AgitationStep(2.9, 1));
+        wiggle.addStep(new AgitationStep(3.1, 0.5));
+        wiggle.addStep(new AgitationStep(2.6, 0.5));
+        wiggle.addStep(new AgitationStep(2.8, 1));
+        wiggle.addStep(new AgitationStep(2.3, 0.5));
+        wiggle.addStep(new AgitationStep(2.5, 0.5));
+        wiggle.addStep(new AgitationStep(2.0, 1));
+        wiggle.addStep(new AgitationStep(2.2, 0.5));
+        wiggle.addStep(new AgitationStep(1.7, 0.5));
+        wiggle.addStep(new AgitationStep(1.90, 0.5));
+        wiggle.addStep(new AgitationStep(1.25, 0.5));
     }
 
     private void configureIntake() {
