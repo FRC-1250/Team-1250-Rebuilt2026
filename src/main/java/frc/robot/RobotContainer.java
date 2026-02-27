@@ -207,8 +207,8 @@ public class RobotContainer {
                 redAlliance,
                 FieldPositions.redOutpostSide);
 
-        primary.rightBumper(singlePlayer).onTrue(commandFactory.cmdPickUpFuel()); // Intake out
-        primary.leftBumper(singlePlayer).onTrue(commandFactory.cmdHome()); // Intake in
+        primary.rightBumper(singlePlayer).onTrue(commandFactory.cmdActivateFuelPickUp()); // Intake out
+        primary.leftBumper(singlePlayer).onTrue(commandFactory.cmdDeactivateFuelPickUp()); // Intake in
         primary.y(singlePlayer).onTrue(Commands.none()); // Climb foeward
         primary.b(singlePlayer).onTrue(Commands.none()); // Climb back
         primary.x(singlePlayer).onTrue(Commands.none()); // drive to tower position
@@ -326,7 +326,7 @@ public class RobotContainer {
                         LoaderVelocity.FIRE.rotationsPerSecond)
                         .withTimeout(fireTimeout));
 
-        NamedCommands.registerCommand("pick_up_fuel", commandFactory.cmdPickUpFuel());
-        NamedCommands.registerCommand("shooter_prep", commandFactory.cmdShooterPrep());
+        NamedCommands.registerCommand("pick_up_fuel", commandFactory.cmdActivateFuelPickUp());
+        NamedCommands.registerCommand("shooter_prep", commandFactory.cmdWarmUpShooter());
     }
 }

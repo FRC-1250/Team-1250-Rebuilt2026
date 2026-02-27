@@ -129,7 +129,7 @@ public class CommandFactory {
                 Commands.runOnce(() -> intake.setHopperSpeed(-0.2), intake),
                 Commands.waitUntil(() -> intake.isHopperAmpNearLimit()),
                 Commands.runOnce(() -> intake.resetHopperPosition(HopperPosition.MIN.rotations)),
-                Commands.runOnce(() -> intake.setHopperPosition(HopperPosition.RETRACTED.rotations)));
+                Commands.runOnce(() -> intake.setHopperPosition(HopperPosition.HOME.rotations)));
     }
 
     public Command cmdResetHopperPositionWithExtend() {
@@ -226,17 +226,18 @@ public class CommandFactory {
             DoubleSupplier loaderVelocitySupplier) {
         return Commands.runEnd(
                 () -> {
-                    var accelSpeed = acceleratorVelocitySupplier.getAsDouble();
-                    var shooterSpeed = shooterVelocitySupplier.getAsDouble();
+                    var accelVelocity = acceleratorVelocitySupplier.getAsDouble();
+                    var shooterVelocity = shooterVelocitySupplier.getAsDouble();
+                    var loaderVelocity = loaderVelocitySupplier.getAsDouble();
 
-                    shooter.setAcceleratorVelocity(accelSpeed);
-                    shooter.setShooterVelocity(shooterSpeed);
-                    if (shooter.isAcceleratorNearRotationsPerSecond(accelSpeed, 2)
-                            && shooter.isShooterNearRotationsPerSecond(shooterSpeed, 2)) {
-                        fuelLine.setLoaderVelocity(LoaderVelocity.FIRE.rotationsPerSecond);
+                    shooter.setAcceleratorVelocity(accelVelocity);
+                    shooter.setShooterVelocity(shooterVelocity);
+                    if (shooter.isAcceleratorNearRotationsPerSecond(accelVelocity, 2)
+                            && shooter.isShooterNearRotationsPerSecond(shooterVelocity, 2)) {
+                        fuelLine.setLoaderVelocity(loaderVelocity);
                         intake.agitateHopper();
                     } else {
-                        fuelLine.setLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond);
+                        fuelLine.setLoaderVelocity(loaderVelocity);
                     }
                 },
                 () -> {
@@ -255,34 +256,26 @@ public class CommandFactory {
                 () -> loaderVelocity);
     }
 
-    public Command cmdPickUpFuel() {
+    public Command cmdActivateFuelPickUp() {
         return cmdSetHopperPosition(HopperPosition.EXTENDED.rotations)
                 .andThen(cmdStopHopper())
+                .andThen(cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations))
                 .andThen(cmdSetLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond))
                 .andThen(cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond))
                 .andThen(cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond));
     }
 
-    public Command cmdHome() {
-        return cmdStopRoller()
-                .andThen(cmdStopIntake())
-                .andThen(cmdSetHopperPosition(HopperPosition.RETRACTED.rotations));
+    public Command cmdDeactivateFuelPickUp() {
+        return cmdStopIntake()
+                .andThen(cmdStopRoller())
+                .andThen(cmdStopLoader())
+                .andThen(cmdSetReactionBarPosition(ReactionBarPosition.HOME.rotations))
+                .andThen(cmdSetHopperPosition(HopperPosition.HOME.rotations));
     }
 
-    public Command cmdShooterPrep() {
+    public Command cmdWarmUpShooter() {
         return cmdSetFuelShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond)
                 .andThen(cmdSetFuelAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond));
-    }
-
-    public Command cmdPickUpFuelPrep() {
-        return cmdSetHopperPosition(HopperPosition.EXTENDED.rotations)
-                .andThen(cmdStopHopper())
-                .andThen(cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations));
-    }
-
-    public Command cmdPickUpFuelHome() {
-        return cmdSetReactionBarPosition(ReactionBarPosition.HOME.rotations)
-                .andThen(cmdSetHopperPosition(HopperPosition.RETRACTED.rotations));
     }
 
     /*
@@ -300,7 +293,7 @@ public class CommandFactory {
         return Commands.sequence(
                 cmdSetHopperPosition(HopperPosition.EXTENDED.rotations),
                 Commands.waitSeconds(5),
-                cmdSetHopperPosition(HopperPosition.RETRACTED.rotations),
+                cmdSetHopperPosition(HopperPosition.HOME.rotations),
                 Commands.waitSeconds(5),
                 cmdSetHopperPosition(HopperPosition.EXTENDED.rotations),
                 cmdStopHopper());
