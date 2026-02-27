@@ -33,7 +33,7 @@ import frc.robot.telemetry.MonitoredSubsystem;
 public class Intake extends SubsystemBase implements MonitoredSubsystem {
     public enum HopperPosition {
         MIN(0),
-        RETRACTED(0.05),
+        HOME(0.05),
         PHASE_1(1.25),
         PHASE_2(2.5),
         PHASE_3(3),
