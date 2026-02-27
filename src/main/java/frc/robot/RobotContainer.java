@@ -300,6 +300,8 @@ public class RobotContainer {
                 commandFactory.cmdFireFuel(shooterVelocity.get(),
                         acceleratorVelocity.get(),
                         loaderLoaderVelocity.get()));
+
+        SmartDashboard.putData("Commands/ProveOut/Drive", commandFactory.driveProveOut());
     }
 
     private void configureAutoCommands() {
