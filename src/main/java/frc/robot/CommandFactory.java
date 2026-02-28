@@ -258,7 +258,6 @@ public class CommandFactory {
 
     public Command cmdActivateFuelPickUp() {
         return cmdSetHopperPosition(HopperPosition.EXTENDED.rotations)
-                .andThen(cmdStopHopper())
                 .andThen(cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations))
                 .andThen(cmdSetLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond))
                 .andThen(cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond))
@@ -295,8 +294,7 @@ public class CommandFactory {
                 Commands.waitSeconds(5),
                 cmdSetHopperPosition(HopperPosition.HOME.rotations),
                 Commands.waitSeconds(5),
-                cmdSetHopperPosition(HopperPosition.EXTENDED.rotations),
-                cmdStopHopper());
+                cmdSetHopperPosition(HopperPosition.EXTENDED.rotations));
     }
 
     private Command intakeTestCommand() {
