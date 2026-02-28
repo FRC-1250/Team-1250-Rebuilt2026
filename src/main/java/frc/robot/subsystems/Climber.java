@@ -28,9 +28,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Climber extends SubsystemBase implements MonitoredSubsystem {
 
     public enum ClimberPosition {
-        CLIMB(0),
+        CLIMB(0.25),
         PASS(0),
-        HOME(0);
+        HOME(-0.024);
 
         public final double rotations;
 
@@ -72,8 +72,8 @@ public class Climber extends SubsystemBase implements MonitoredSubsystem {
 
         CANcoderConfiguration canCoderConfiguration = new CANcoderConfiguration();
         canCoderConfiguration.MagnetSensor.MagnetOffset = encoderOffset;
-        canCoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
-        canCoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+        canCoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
+        canCoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
         climberAbsoluteEncoder.getAbsolutePosition().setUpdateFrequency(200);
         climberAbsoluteEncoder.getConfigurator().apply(canCoderConfiguration);

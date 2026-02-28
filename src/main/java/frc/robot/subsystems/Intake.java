@@ -32,10 +32,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     public enum HopperPosition {
         MIN(0),
         HOME(0.05),
-        PHASE_1(1.25),
-        PHASE_2(2.5),
-        PHASE_3(3),
-        EXTENDED(3.7),
+        EXTENDED(3.9),
         MAX(3.75);
 
         public double rotations;
@@ -101,7 +98,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
                         .withPosition(rotations)
                         // -1 volt to assist with bringing the hopper into the robot
                         // Check the peak and reverse voltage in configuration if this changes
-                        .withFeedForward(Volts.of(-1)));
+                        .withFeedForward(Volts.of(3)));
     }
 
     public void resetHopperPosition(double rotations) {
@@ -168,11 +165,6 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
     private void configureHopperAgitation() {
         wave = new AgitationProfile();
-        wave.addStep(new AgitationStep(HopperPosition.PHASE_3.rotations, 3));
-        wave.addStep(new AgitationStep(HopperPosition.PHASE_2.rotations, 1));
-        wave.addStep(new AgitationStep(HopperPosition.PHASE_1.rotations, 1));
-        wave.addStep(new AgitationStep(HopperPosition.PHASE_2.rotations, 1));
-        wave.addStep(new AgitationStep(HopperPosition.PHASE_3.rotations, 1));
         pulse = new AgitationProfile();
         pulse.addStep(new AgitationStep(3.7, 3));
         pulse.addStep(new AgitationStep(3.42, 0.5));
@@ -236,7 +228,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         Slot1Configs positionGains = new Slot1Configs()
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
                 .withKS(0)
-                .withKP(1)
+                .withKP(1.5)
                 .withKI(0)
                 .withKD(0.01);
 
@@ -250,8 +242,8 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         // talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
         // talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
-        talonFXConfiguration.Voltage.PeakForwardVoltage = 1.5;
-        talonFXConfiguration.Voltage.PeakReverseVoltage = -10;
+        // talonFXConfiguration.Voltage.PeakForwardVoltage = 12;
+        // talonFXConfiguration.Voltage.PeakReverseVoltage = -10;
 
         hopper.setPosition(0);
         hopper.getConfigurator().apply(talonFXConfiguration);

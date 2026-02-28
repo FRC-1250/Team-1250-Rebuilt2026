@@ -118,7 +118,7 @@ public class CommandFactory {
         return Commands.runOnce(
                 () -> intake.setHopperPosition(supplier.getAsDouble()), intake)
                 .andThen(
-                        Commands.waitUntil((() -> intake.isHopperNearPosition(supplier.getAsDouble(), 1))));
+                        Commands.waitUntil(() -> intake.isHopperNearPosition(supplier.getAsDouble(), 1)));
     }
 
     public Command cmdStopHopper() {
