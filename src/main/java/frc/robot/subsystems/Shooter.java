@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.telemetry.MonitoredSubsystem;
 
-@Logged
 public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
     public enum ShooterVelocity {
@@ -50,13 +49,16 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
     private final Color systemColor = new Color(0, 0, 0);
 
+    Slot1Configs positionGains = new Slot1Configs()
+            .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
+            .withKS(0.1)
+            .withKP(0.1)
+            .withKI(0)
+            .withKD(0);
+
     public Shooter() {
         configureAccelerator();
         configureShooter();
-    }
-
-    public double getAcceleratorVelocity() {
-        return acceleratorLeader.getVelocity().getValueAsDouble();
     }
 
     public void setAcceleratorVelocity(double rotationsPerSecond) {
@@ -68,10 +70,6 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
     public boolean isAcceleratorNearRotationsPerSecond(double rotationsPerSecond, double tolerance) {
         return acceleratorLeader.getVelocity().isNear(rotationsPerSecond, tolerance);
-    }
-
-    public double getShooterVelocity() {
-        return shooterLeader.getVelocity().getValueAsDouble();
     }
 
     public void setShooterVelocity(double rotationsPerSecond) {
@@ -91,6 +89,65 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
     public void stopAccelerator() {
         acceleratorLeader.stopMotor();
+    }
+
+    @Logged(name = "Shooter velocity")
+    public double getShooterVelocity() {
+        return shooterLeader.getVelocity().getValueAsDouble();
+    }
+
+    @Logged(name = "Shooter leader stator current")
+    public double getShooterLeaderStatorCurrent() {
+        return shooterLeader.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Shooter leader supply current")
+    public double getShooterLeaderSupplyCurrent() {
+        return shooterLeader.getSupplyCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Shooter follower stator current")
+    public double getShooterFollowerStatorCurrent() {
+        return shooterFollower.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Shooter follower supply current")
+    public double getShooterFollowerSupplyCurrent() {
+        return shooterFollower.getSupplyCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Accelerator velocity")
+    public double getAcceleratorVelocity() {
+        return acceleratorLeader.getVelocity().getValueAsDouble();
+    }
+
+    @Logged(name = "Accelerator leader stator current")
+    public double getAcceleratorLeaderStatorCurrent() {
+        return acceleratorLeader.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Accelerator leader supply current")
+    public double getAcceleratorLeaderSupplyCurrent() {
+        return acceleratorLeader.getSupplyCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Accelerator follower stator current")
+    public double getAcceleratorFollowerStatorCurrent() {
+        return acceleratorFollower.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Accelerator follower supply current")
+    public double getAcceleratorFollowerSupplyCurrent() {
+        return acceleratorFollower.getSupplyCurrent().getValueAsDouble();
+    }
+
+    @Override
+    public void registerWithHealthMonitor(HealthMonitor monitor) {
+        monitor.addComponent(getSubsystem(), "Accelerator leader", acceleratorLeader);
+        monitor.addComponent(getSubsystem(), "Accelerator follower", acceleratorFollower);
+        monitor.addComponent(getSubsystem(), "Shooter leader", shooterLeader);
+        monitor.addComponent(getSubsystem(), "Shooter follower", shooterFollower);
+        monitor.setSubsystemColor(getSubsystem(), systemColor);
     }
 
     private void configureAccelerator() {
@@ -143,21 +200,5 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
         shooterFollower
                 .setControl(new Follower(shooterLeader.getDeviceID(), MotorAlignmentValue.Opposed));
-    }
-
-    Slot1Configs positionGains = new Slot1Configs()
-            .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
-            .withKS(0.1)
-            .withKP(0.1)
-            .withKI(0)
-            .withKD(0);
-
-    @Override
-    public void registerWithHealthMonitor(HealthMonitor monitor) {
-        monitor.addComponent(getSubsystem(), "Accelerator leader", acceleratorLeader);
-        monitor.addComponent(getSubsystem(), "Accelerator follower", acceleratorFollower);
-        monitor.addComponent(getSubsystem(), "Shooter leader", shooterLeader);
-        monitor.addComponent(getSubsystem(), "Shooter follower", shooterFollower);
-        monitor.setSubsystemColor(getSubsystem(), systemColor);
     }
 }

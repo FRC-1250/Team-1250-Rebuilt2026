@@ -10,9 +10,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utility.LimelightHelpers;
 import frc.robot.utility.LimelightHelpers.PoseEstimate;
 
-import edu.wpi.first.epilogue.Logged;
-
-@Logged
 public class Limelight extends SubsystemBase {
 
     private final String name;

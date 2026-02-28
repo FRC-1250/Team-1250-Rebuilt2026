@@ -619,9 +619,9 @@ public class CommandFactory {
                 pointWheelsTest(targetTestVelocity, pointWheelsTestDuration, pointWheelsTestSteps, true));
     }
 
-    public Command proveOut(double maxSpeed, double maxAngularRate) {
+    public Command proveOut() {
         return Commands.sequence(
-                driveTest(maxSpeed, maxAngularRate),
+                driveProveOut(),
                 rollerTestCommand(),
                 loaderTestCommand(),
                 hopperTestCommand(),

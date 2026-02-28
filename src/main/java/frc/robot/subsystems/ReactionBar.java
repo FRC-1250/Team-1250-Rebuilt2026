@@ -13,6 +13,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.telemetry.HealthMonitor;
@@ -73,12 +74,7 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
     }
 
     public boolean isReactionBarNearPosition(double rotations, double tolerance) {
-        return reactionBar.getPosition().isNear(rotations, tolerance);
-
-    }
-
-    public boolean isNearPosition(double rotations) {
-        return reactionBarEncoder.getPosition().isNear(rotations, 0.01);
+        return reactionBarEncoder.getPosition().isNear(rotations, tolerance);
     }
 
     public void agitate() {
@@ -89,10 +85,19 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
         active.reset();
     }
 
-    private void configureAgitiationProfiles() {
-        wave = new AgitationProfile();
-        wave.addStep(new AgitationStep(0.25, 2));
-        wave.addStep(new AgitationStep(0.5, 2));
+    @Logged(name = "Reaction bar abs position")
+    public double getReactionBarPosition() {
+        return reactionBarEncoder.getAbsolutePosition().getValueAsDouble();
+    }
+
+    @Logged(name = "Reaction bar stator current")
+    public double getClimberStatorCurrent() {
+        return reactionBar.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Reaction bar supply current")
+    public double getClimberSupplyCurrent() {
+        return reactionBar.getSupplyCurrent().getValueAsDouble();
     }
 
     @Override
@@ -100,6 +105,12 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
         monitor.addComponent(getSubsystem(), "Reacton bar", reactionBar);
         monitor.addComponent(getSubsystem(), "Reaction bar encoder", reactionBarEncoder);
         monitor.setSubsystemColor(getSubsystem(), systemColor);
+    }
+
+    private void configureAgitiationProfiles() {
+        wave = new AgitationProfile();
+        wave.addStep(new AgitationStep(0.25, 2));
+        wave.addStep(new AgitationStep(0.5, 2));
     }
 
 }

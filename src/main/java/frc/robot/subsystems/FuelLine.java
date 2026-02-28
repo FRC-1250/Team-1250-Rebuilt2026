@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -11,7 +10,6 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Frequency;
@@ -48,17 +46,12 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
     private final TalonFX loader = new TalonFX(30);
     private final VelocityVoltage LoaderVelocityControl = new VelocityVoltage(0).withSlot(0);
-    private final double MAGNET_OFFSET = 0;
 
     private final Color systemColor = new Color(0, 0, 0);
 
     public FuelLine() {
         configureLoader();
         configureRoller();
-    }
-
-    public double getRollerVelocity() {
-        return roller.getVelocity().getValueAsDouble();
     }
 
     public void setRollerVelocity(double rotationsPerSecond) {
@@ -76,10 +69,6 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         return loader.getVelocity().isNear(rotationsPerSecond, tolerance);
     }
 
-    public double getLoaderVelocity() {
-        return loader.getVelocity().getValueAsDouble();
-    }
-
     public void setLoaderVelocity(double rotationsPerSecond) {
         loader.setControl(
                 LoaderVelocityControl
@@ -89,6 +78,36 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
     public void stopLoader() {
         loader.stopMotor();
+    }
+
+    @Logged(name = "Loader velocity")
+    public double getLoaderVelocity() {
+        return loader.getVelocity().getValueAsDouble();
+    }
+
+    @Logged(name = "Loader stator current")
+    public double getLeaderStatorCurrent() {
+        return loader.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Loader supply current")
+    public double getLeaderSupplyCurrent() {
+        return loader.getSupplyCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Roller velocity")
+    public double getRollerVelocity() {
+        return roller.getVelocity().getValueAsDouble();
+    }
+
+    @Logged(name = "Roller stator current")
+    public double getClimberStatorCurrent() {
+        return roller.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Roller supply current")
+    public double getClimberSupplyCurrent() {
+        return roller.getSupplyCurrent().getValueAsDouble();
     }
 
     @Override
@@ -122,11 +141,6 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
         loader.getConfigurator().apply(talonFXConfiguration);
         loader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
-
-        CANcoderConfiguration canCoderConfiguration = new CANcoderConfiguration();
-        canCoderConfiguration.MagnetSensor.MagnetOffset = MAGNET_OFFSET;
-        canCoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
-        canCoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
     }
 
     private void configureRoller() {

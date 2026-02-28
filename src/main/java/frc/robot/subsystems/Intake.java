@@ -83,10 +83,6 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
                         .withFeedForward(Volts.of(0)));
     }
 
-    public double getIntakeVelocity() {
-        return intake.getVelocity().getValueAsDouble();
-    }
-
     public void stopIntake() {
         intake.stopMotor();
     }
@@ -122,12 +118,38 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         hopper.stopMotor();
     }
 
+    public boolean isHopperNearPosition(double rotations, double tolerance) {
+        return hopper.getPosition().isNear(rotations, tolerance);
+    }
+
+    @Logged(name = "Intake velocity")
+    public double getIntakeVelocity() {
+        return intake.getVelocity().getValueAsDouble();
+    }
+
+    @Logged(name = "intake stator current")
+    public double getLeaderStatorCurrent() {
+        return intake.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "intake supply current")
+    public double getLeaderSupplyCurrent() {
+        return intake.getSupplyCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Hopper position")
     public double getHopperPosition() {
         return hopper.getPosition().getValueAsDouble();
     }
 
-    public boolean isHopperNearPosition(double rotations, double tolerance) {
-        return hopper.getPosition().isNear(rotations, tolerance);
+    @Logged(name = "Hopper stator current")
+    public double getClimberStatorCurrent() {
+        return hopper.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Hopper supply current")
+    public double getClimberSupplyCurrent() {
+        return hopper.getSupplyCurrent().getValueAsDouble();
     }
 
     @Override

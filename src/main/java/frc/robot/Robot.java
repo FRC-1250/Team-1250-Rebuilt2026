@@ -21,10 +21,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.utility.LimelightHelpers;
 
-@Logged
 public class Robot extends TimedRobot {
     private Command autonomousCommand;
 
+    @Logged(name = "RobotContainer")
     private final RobotContainer robotContainer;
 
     private final Timer gcTimer;

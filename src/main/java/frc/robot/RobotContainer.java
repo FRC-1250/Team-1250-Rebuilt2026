@@ -15,7 +15,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoubleEntry;
@@ -48,17 +47,27 @@ import frc.robot.subsystems.FuelLine.LoaderVelocity;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.utility.FieldZones;
 
-@Logged
 public class RobotContainer {
 
     /* Subsystems */
     private final CommandSwerveDrivetrain swerve = TunerConstants.createDrivetrain();
+
+    @Logged(name = "Fuel line")
     private final FuelLine fuelLine = new FuelLine();
+
+    @Logged(name = "Intake")
     private final Intake intake = new Intake();
+
+    @Logged(name = "Shooter")
     private final Shooter shooter = new Shooter();
+
+    @Logged(name = "Climber")
     private final Climber climber = new Climber();
+
     private final Limelight limelight = new Limelight();
     private final Leds leds = new Leds();
+
+    @Logged(name = "Reaction bar")
     private final ReactionBar reactionBar = new ReactionBar();
 
     public final CommandFactory commandFactory = new CommandFactory(
@@ -110,10 +119,7 @@ public class RobotContainer {
     private final DoubleEntry climberPosition = commandInputs.getDoubleTopic("climberPosition").getEntry(0.0);
     private final DoubleEntry hopperposition = commandInputs.getDoubleTopic("hopperPosition").getEntry(0.0);
 
-    @NotLogged
     private final Trigger blueAlliance = new Trigger(() -> DriverStation.getAlliance().get() == Alliance.Blue);
-
-    @NotLogged
     private final Trigger redAlliance = new Trigger(() -> DriverStation.getAlliance().get() == Alliance.Red);
     private final Trigger isInBlueSide = new Trigger(() -> FieldZones.blueSide.isRobotInZone(swerve.getState().Pose));
     private final Trigger isInRedSide = new Trigger(() -> FieldZones.redSide.isRobotInZone(swerve.getState().Pose));
@@ -265,6 +271,8 @@ public class RobotContainer {
         climberPosition.set(0);
         hopperposition.set(0);
 
+        SmartDashboard.putData("Commands/Drivetrain/Prove out", commandFactory.driveProveOut());
+
         SmartDashboard.putData("Commands/Intake/Set intake velocity",
                 commandFactory.cmdSetIntakeVelocity(() -> intakeVelocity.get()));
         SmartDashboard.putData("Commands/Intake/Set hopper position",
@@ -301,7 +309,7 @@ public class RobotContainer {
                         acceleratorVelocity.get(),
                         loaderLoaderVelocity.get()));
 
-        SmartDashboard.putData("Commands/ProveOut/Drive", commandFactory.driveProveOut());
+        SmartDashboard.putData("Commands/Shared/Prove out", commandFactory.proveOut());
     }
 
     private void configureAutoCommands() {

@@ -25,7 +25,6 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-@Logged
 public class Climber extends SubsystemBase implements MonitoredSubsystem {
 
     public enum ClimberPosition {
@@ -102,5 +101,30 @@ public class Climber extends SubsystemBase implements MonitoredSubsystem {
 
     public boolean isNearPosition(double rotations) {
         return climberAbsoluteEncoder.getPosition().isNear(rotations, 0.01);
+    }
+
+    @Logged(name = "Abs position")
+    public double getClimberPosition() {
+        return climberAbsoluteEncoder.getAbsolutePosition().getValueAsDouble();
+    }
+
+    @Logged(name = "Leader stator current")
+    public double getLeaderStatorCurrent() {
+        return climberLeader.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Leader supply current")
+    public double getLeaderSupplyCurrent() {
+        return climberLeader.getSupplyCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Follower stator current")
+    public double getClimberStatorCurrent() {
+        return climberFollower.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Follower supply current")
+    public double getClimberSupplyCurrent() {
+        return climberFollower.getSupplyCurrent().getValueAsDouble();
     }
 }
