@@ -99,6 +99,8 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         hopper.setControl(
                 hopperPositionVoltage
                         .withPosition(rotations)
+                        // -1 volt to assist with bringing the hopper into the robot
+                        // Check the peak and reverse voltage in configuration if this changes
                         .withFeedForward(Volts.of(-1)));
     }
 

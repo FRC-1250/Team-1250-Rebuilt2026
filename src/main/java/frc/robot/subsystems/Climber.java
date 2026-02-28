@@ -49,7 +49,7 @@ public class Climber extends SubsystemBase implements MonitoredSubsystem {
 
     public Climber() {
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
-        motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
+        motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
         motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
 
         Slot1Configs positionGains = new Slot1Configs()
@@ -62,13 +62,8 @@ public class Climber extends SubsystemBase implements MonitoredSubsystem {
         FeedbackConfigs feedbackConfigs = new FeedbackConfigs();
         feedbackConfigs.FeedbackRemoteSensorID = climberAbsoluteEncoder.getDeviceID();
 
-        CurrentLimitsConfigs currentLimitsConfigs = new CurrentLimitsConfigs();
-        currentLimitsConfigs.SupplyCurrentLimit = 20;
-        currentLimitsConfigs.SupplyCurrentLimitEnable = true;
-
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
         talonFXConfiguration.Slot1 = positionGains;
-        talonFXConfiguration.CurrentLimits = currentLimitsConfigs;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
         talonFXConfiguration.Feedback = feedbackConfigs;
 
