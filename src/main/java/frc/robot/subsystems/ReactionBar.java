@@ -7,11 +7,16 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.util.Color;
@@ -45,9 +50,21 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
 
     public ReactionBar() {
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
-
+        MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
+        motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
+        motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
+        Slot1Configs positionGains = new Slot1Configs()
+                .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
+                .withKS(0)
+                .withKP(1)
+                .withKI(0)
+                .withKD(0.01);
         talonFXConfiguration.Feedback.FeedbackRemoteSensorID = reactionBarEncoder.getDeviceID();
         reactionBar.getConfigurator().apply(talonFXConfiguration);
+        talonFXConfiguration.Slot1 = positionGains;
+        talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 0;
+        talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = false;
+        talonFXConfiguration.MotorOutput = motorOutputConfigs;
 
         CANcoderConfiguration canCoderConfiguration = new CANcoderConfiguration();
         canCoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
