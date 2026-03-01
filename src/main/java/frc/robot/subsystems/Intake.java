@@ -118,6 +118,10 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         hopper.stopMotor();
     }
 
+    public void setHopperNeutralMode(NeutralModeValue neutralModeValue) {
+        hopper.setNeutralMode(neutralModeValue);
+    }
+
     public boolean isHopperNearPosition(double rotations, double tolerance) {
         return hopper.getPosition().isNear(rotations, tolerance);
     }

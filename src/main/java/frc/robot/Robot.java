@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
@@ -72,6 +73,8 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         HealthMonitor.getInstance().unpause();
+        CommandScheduler.getInstance()
+                .schedule(robotContainer.commandFactory.cmdSetHopperNeutralMode(NeutralModeValue.Coast));
     }
 
     @Override
@@ -81,6 +84,8 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledExit() {
         HealthMonitor.getInstance().pause();
+        CommandScheduler.getInstance()
+                .schedule(robotContainer.commandFactory.cmdSetHopperNeutralMode(NeutralModeValue.Brake));
     }
 
     @Override

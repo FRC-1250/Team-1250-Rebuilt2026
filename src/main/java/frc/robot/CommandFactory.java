@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -115,10 +116,10 @@ public class CommandFactory {
     }
 
     public Command cmdSetHopperPosition(DoubleSupplier supplier) {
-        return Commands.runOnce(
-                () -> intake.setHopperPosition(supplier.getAsDouble()), intake)
-                .andThen(
-                        Commands.waitUntil(() -> intake.isHopperNearPosition(supplier.getAsDouble(), 1)));
+        return Commands.sequence(
+                Commands.runOnce(() -> intake.setHopperPosition(supplier.getAsDouble()), intake),
+                Commands.waitUntil(() -> intake.isHopperNearPosition(supplier.getAsDouble(), 0.1)),
+                Commands.runOnce(() -> intake.stopHopper(), intake));
     }
 
     public Command cmdStopHopper() {
@@ -145,6 +146,10 @@ public class CommandFactory {
         return Commands.runOnce(() -> {
             intake.resetHopperPosition(0);
         }).ignoringDisable(true);
+    }
+
+    public Command cmdSetHopperNeutralMode(NeutralModeValue neutralModeValue) {
+        return Commands.runOnce(() -> intake.setHopperNeutralMode(neutralModeValue), intake);
     }
 
     /*
