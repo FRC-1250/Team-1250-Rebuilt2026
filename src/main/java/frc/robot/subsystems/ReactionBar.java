@@ -50,21 +50,23 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
 
     public ReactionBar() {
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
+
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
         motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
         motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
+
         Slot1Configs positionGains = new Slot1Configs()
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
-                .withKS(0)
-                .withKP(5)
+                .withKS(0.25)
+                .withKP(8)
                 .withKI(0)
                 .withKD(0.01);
         talonFXConfiguration.Feedback.FeedbackRemoteSensorID = reactionBarEncoder.getDeviceID();
-        reactionBar.getConfigurator().apply(talonFXConfiguration);
         talonFXConfiguration.Slot1 = positionGains;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 0;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = false;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
+        reactionBar.getConfigurator().apply(talonFXConfiguration);
 
         CANcoderConfiguration canCoderConfiguration = new CANcoderConfiguration();
         canCoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
