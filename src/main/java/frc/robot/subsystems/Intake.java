@@ -7,9 +7,12 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -96,9 +99,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         hopper.setControl(
                 hopperPositionVoltage
                         .withPosition(rotations)
-                        // -1 volt to assist with bringing the hopper into the robot
-                        // Check the peak and reverse voltage in configuration if this changes
-                        .withFeedForward(Volts.of(3)));
+                        .withFeedForward(Volts.of(0)));
     }
 
     public void resetHopperPosition(double rotations) {
@@ -221,32 +222,66 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     }
 
     private void configureHopper() {
-        MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
+        TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
+
+        MotorOutputConfigs motorOutputConfigs = talonFXConfiguration.MotorOutput;
         motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
         motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
 
-        Slot1Configs positionGains = new Slot1Configs()
-                .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
-                .withKS(0)
-                .withKP(1.5)
-                .withKI(0)
-                .withKD(0.01);
+        Slot1Configs positionGains = talonFXConfiguration.Slot1;
+        positionGains.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
+        positionGains.kS = 3; // output to overcome static friction (output)
+        positionGains.kP = 3; // output per unit of error in position (output/rotation)
+        positionGains.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
+        positionGains.kD = 0.1; // output per unit of error in velocity (output/rps)
 
-        TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
-        talonFXConfiguration.Slot1 = positionGains;
-        talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
-        talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
-        talonFXConfiguration.MotorOutput = motorOutputConfigs;
-        // talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        // talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 3.725;
-        // talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        // talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+        CurrentLimitsConfigs currentLimitsConfigs = talonFXConfiguration.CurrentLimits;
+        currentLimitsConfigs.SupplyCurrentLimit = 30;
+        currentLimitsConfigs.SupplyCurrentLimitEnable = true;
 
-        // talonFXConfiguration.Voltage.PeakForwardVoltage = 12;
-        // talonFXConfiguration.Voltage.PeakReverseVoltage = -10;
+        SoftwareLimitSwitchConfigs softwareLimitSwitchConfigs = talonFXConfiguration.SoftwareLimitSwitch;
+        softwareLimitSwitchConfigs.ForwardSoftLimitEnable = false;
+        softwareLimitSwitchConfigs.ForwardSoftLimitThreshold = 4;
+        softwareLimitSwitchConfigs.ReverseSoftLimitEnable = false;
+        softwareLimitSwitchConfigs.ReverseSoftLimitThreshold = 0;
 
         hopper.setPosition(0);
         hopper.getConfigurator().apply(talonFXConfiguration);
+        hopper.getPosition().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
+    }
+
+    private void configureMotionMagicHopper() {
+        TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
+
+        MotorOutputConfigs motorOutputConfigs = talonFXConfiguration.MotorOutput;
+        motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
+        motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
+
+        Slot1Configs positionGains = talonFXConfiguration.Slot1;
+        positionGains.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
+        positionGains.kS = 3; // output to overcome static friction (output)
+        positionGains.kV = 0.12; // output per unit of target velocity (output/rps)
+        positionGains.kA = 0.01; // output per unit of target acceleration (output/(rps/s))
+        positionGains.kP = 3; // output per unit of error in position (output/rotation)
+        positionGains.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
+        positionGains.kD = 0.1; // output per unit of error in velocity (output/rps)
+
+        CurrentLimitsConfigs currentLimitsConfigs = talonFXConfiguration.CurrentLimits;
+        currentLimitsConfigs.SupplyCurrentLimit = 30;
+        currentLimitsConfigs.SupplyCurrentLimitEnable = true;
+
+        SoftwareLimitSwitchConfigs softwareLimitSwitchConfigs = talonFXConfiguration.SoftwareLimitSwitch;
+        softwareLimitSwitchConfigs.ForwardSoftLimitEnable = false;
+        softwareLimitSwitchConfigs.ForwardSoftLimitThreshold = 4;
+        softwareLimitSwitchConfigs.ReverseSoftLimitEnable = false;
+        softwareLimitSwitchConfigs.ReverseSoftLimitThreshold = 0;
+
+        MotionMagicConfigs motionMagicConfigs = talonFXConfiguration.MotionMagic;
+        motionMagicConfigs.MotionMagicCruiseVelocity = 4;
+        motionMagicConfigs.MotionMagicAcceleration = 8;
+
+        hopper.getConfigurator().apply(talonFXConfiguration);
+        hopper.setPosition(0);
         hopper.getPosition().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
     }
 
