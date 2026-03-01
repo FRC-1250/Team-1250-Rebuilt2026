@@ -35,8 +35,8 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     public enum HopperPosition {
         MIN(0),
         HOME(0.05),
-        EXTENDED(3.9),
-        MAX(3.75);
+        EXTENDED(3.95),
+        MAX(4);
 
         public double rotations;
 
@@ -264,25 +264,26 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         Slot1Configs positionGains = talonFXConfiguration.Slot1;
         positionGains.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
         positionGains.kS = 3; // output to overcome static friction (output)
-        positionGains.kV = 0.12; // output per unit of target velocity (output/rps)
-        positionGains.kA = 0.01; // output per unit of target acceleration (output/(rps/s))
-        positionGains.kP = 3; // output per unit of error in position (output/rotation)
+        positionGains.kV = 0.15; // output per unit of target velocity (output/rps)
+        positionGains.kA = 0; // output per unit of target acceleration (output/(rps/s))
+        positionGains.kP = 4; // output per unit of error in position (output/rotation)
         positionGains.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
-        positionGains.kD = 0.1; // output per unit of error in velocity (output/rps)
+        positionGains.kD = 0.03; // output per unit of error in velocity (output/rps)
 
         CurrentLimitsConfigs currentLimitsConfigs = talonFXConfiguration.CurrentLimits;
         currentLimitsConfigs.SupplyCurrentLimit = 30;
         currentLimitsConfigs.SupplyCurrentLimitEnable = true;
 
         SoftwareLimitSwitchConfigs softwareLimitSwitchConfigs = talonFXConfiguration.SoftwareLimitSwitch;
-        softwareLimitSwitchConfigs.ForwardSoftLimitEnable = false;
+        softwareLimitSwitchConfigs.ForwardSoftLimitEnable = true;
         softwareLimitSwitchConfigs.ForwardSoftLimitThreshold = 4;
-        softwareLimitSwitchConfigs.ReverseSoftLimitEnable = false;
+        softwareLimitSwitchConfigs.ReverseSoftLimitEnable = true;
         softwareLimitSwitchConfigs.ReverseSoftLimitThreshold = 0;
 
         MotionMagicConfigs motionMagicConfigs = talonFXConfiguration.MotionMagic;
-        motionMagicConfigs.MotionMagicCruiseVelocity = 4;
-        motionMagicConfigs.MotionMagicAcceleration = 8;
+        motionMagicConfigs.MotionMagicCruiseVelocity = 8;
+        motionMagicConfigs.MotionMagicAcceleration = 128;
+        motionMagicConfigs.MotionMagicAcceleration = 512;
 
         hopper.getConfigurator().apply(talonFXConfiguration);
         hopper.setPosition(0);
