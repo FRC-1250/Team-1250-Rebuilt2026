@@ -86,12 +86,12 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     }
 
     @Logged(name = "Loader stator current")
-    public double getLeaderStatorCurrent() {
+    public double getLoaderStatorCurrent() {
         return loader.getStatorCurrent().getValueAsDouble();
     }
 
     @Logged(name = "Loader supply current")
-    public double getLeaderSupplyCurrent() {
+    public double getLoaderSupplyCurrent() {
         return loader.getSupplyCurrent().getValueAsDouble();
     }
 
@@ -101,12 +101,12 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     }
 
     @Logged(name = "Roller stator current")
-    public double getClimberStatorCurrent() {
+    public double getRollerStatorCurrent() {
         return roller.getStatorCurrent().getValueAsDouble();
     }
 
     @Logged(name = "Roller supply current")
-    public double getClimberSupplyCurrent() {
+    public double getRollerSupplyCurrent() {
         return roller.getSupplyCurrent().getValueAsDouble();
     }
 
