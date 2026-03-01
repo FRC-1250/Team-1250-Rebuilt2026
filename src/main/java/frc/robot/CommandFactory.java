@@ -225,6 +225,10 @@ public class CommandFactory {
                 .andThen(Commands.waitUntil(() -> climber.isNearPosition(supplier.getAsDouble())));
     }
 
+    public Command cmdSetClimberPosition(double rotations) {
+        return cmdSetClimberPosition(() -> rotations);
+    }
+
     /*
      * Shared
      */
@@ -331,6 +335,17 @@ public class CommandFactory {
                 cmdSetFuelAcceleratorVelocity(ShooterVelocity.HUB.acceleratorRotationsPerSecond),
                 Commands.waitSeconds(5),
                 cmdStopAccelerator());
+    }
+
+    private Command climberTestCommand() {
+        return Commands.sequence(
+                cmdSetClimberPosition(ClimberPosition.PASS.rotations),
+                Commands.waitSeconds(2),
+                cmdSetClimberPosition(ClimberPosition.HOME.rotations),
+                Commands.waitSeconds(2),
+                cmdSetClimberPosition(ClimberPosition.CLIMB.rotations),
+                Commands.waitSeconds(2),
+                cmdSetClimberPosition(ClimberPosition.HOME.rotations));
     }
 
     private Command driveTest(double targetVelocityX, double targetVelocityY, double duration, int steps) {
@@ -472,7 +487,7 @@ public class CommandFactory {
                 hopperTestCommand(),
                 intakeTestCommand(),
                 acceleratorTestCommand(),
-                shooterTestCommand());
-        // Add Climber Eventually
+                shooterTestCommand(),
+                climberTestCommand());
     }
 }

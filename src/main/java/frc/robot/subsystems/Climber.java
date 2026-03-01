@@ -28,9 +28,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Climber extends SubsystemBase implements MonitoredSubsystem {
 
     public enum ClimberPosition {
+        MAX(0.26),
         CLIMB(0.25),
+        HOME(-0.033),
         PASS(-0.1),
-        HOME(-0.033);
+        MIN(-0.11);
 
         public final double rotations;
 
@@ -54,8 +56,8 @@ public class Climber extends SubsystemBase implements MonitoredSubsystem {
 
         Slot1Configs positionGains = new Slot1Configs()
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
-                .withKS(0)
-                .withKP(1)
+                .withKS(0.25)
+                .withKP(8)
                 .withKI(0)
                 .withKD(0.01);
 
