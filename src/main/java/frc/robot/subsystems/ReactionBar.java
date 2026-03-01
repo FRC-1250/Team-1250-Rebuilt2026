@@ -108,12 +108,12 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
     }
 
     @Logged(name = "Reaction bar stator current")
-    public double getClimberStatorCurrent() {
+    public double getReactionBarStatorCurrent() {
         return reactionBar.getStatorCurrent().getValueAsDouble();
     }
 
     @Logged(name = "Reaction bar supply current")
-    public double getClimberSupplyCurrent() {
+    public double getReactionBarSupplyCurrent() {
         return reactionBar.getSupplyCurrent().getValueAsDouble();
     }
 
