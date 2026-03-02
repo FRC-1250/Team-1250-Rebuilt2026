@@ -128,8 +128,9 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
 
     private void configureAgitiationProfiles() {
         wave = new AgitationProfile();
-        wave.addStep(new AgitationStep(0.25, 2));
-        wave.addStep(new AgitationStep(0.5, 2));
+        wave.addStep(new AgitationStep(ReactionBarPosition.EXTENDED.rotations, 3));
+        wave.addStep(new AgitationStep(0.0, 1));
+        wave.addStep(new AgitationStep(0.2, 1));
     }
 
 }
