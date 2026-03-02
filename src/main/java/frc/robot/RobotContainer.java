@@ -43,6 +43,7 @@ import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.ReactionBar;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Climber.ClimberPosition;
 import frc.robot.subsystems.FuelLine.LoaderVelocity;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.utility.FieldZones;
@@ -215,8 +216,8 @@ public class RobotContainer {
 
         primary.rightBumper(singlePlayer).onTrue(commandFactory.cmdActivateFuelPickUp()); // Intake out
         primary.leftBumper(singlePlayer).onTrue(commandFactory.cmdDeactivateFuelPickUp()); // Intake in
-        primary.y(singlePlayer).onTrue(Commands.none()); // Climb foeward
-        primary.b(singlePlayer).onTrue(Commands.none()); // Climb back
+        primary.y(singlePlayer).onTrue(commandFactory.cmdSetClimberPosition(ClimberPosition.CLIMB.rotations)); // Climb
+        primary.b(singlePlayer).onTrue(commandFactory.cmdSetClimberPosition(ClimberPosition.HOME.rotations)); // Unclimb
         primary.x(singlePlayer).onTrue(Commands.none()); // drive to tower position
     }
 
