@@ -335,7 +335,9 @@ public class RobotContainer {
                         LoaderVelocity.FIRE.rotationsPerSecond)
                         .withTimeout(fireTimeout));
 
-        NamedCommands.registerCommand("pick_up_fuel", commandFactory.cmdActivateFuelPickUp());
+        NamedCommands.registerCommand("climb", commandFactory.cmdSetClimberPosition(ClimberPosition.CLIMB.rotations));
+        NamedCommands.registerCommand("deactivate_fuel_pick_up", commandFactory.cmdDeactivateFuelPickUp());
+        NamedCommands.registerCommand("activate_fuel_pick_up", commandFactory.cmdActivateFuelPickUp());
         NamedCommands.registerCommand("shooter_prep", commandFactory.cmdWarmUpShooter());
         NamedCommands.registerCommand("reset_starting_fuel", commandFactory.cmdResetStartingFuel());
     }

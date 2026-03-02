@@ -39,7 +39,7 @@
       "command": null
     },
     {
-      "name": "pick_up_fuel",
+      "name": "activate_fuel_pick_up",
       "waypointRelativePos": 0.28287841191066937,
       "endWaypointRelativePos": null,
       "command": null

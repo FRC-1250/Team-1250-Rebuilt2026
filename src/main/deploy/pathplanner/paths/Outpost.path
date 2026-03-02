@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "pick_up_fuel",
+      "name": "activate_fuel_pick_up",
       "waypointRelativePos": 0.3999999999999944,
       "endWaypointRelativePos": null,
       "command": null
