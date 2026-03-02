@@ -171,7 +171,7 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
     private void configureShooter() {
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
         motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
-        motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
+        motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
 
         shooterLeader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
 

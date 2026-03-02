@@ -12,6 +12,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -63,7 +64,8 @@ public class Climber extends SubsystemBase implements MonitoredSubsystem {
 
         FeedbackConfigs feedbackConfigs = new FeedbackConfigs();
         feedbackConfigs.FeedbackRemoteSensorID = climberAbsoluteEncoder.getDeviceID();
-
+        feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+        feedbackConfigs.RotorToSensorRatio = 166.66;
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
         talonFXConfiguration.Slot1 = positionGains;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;

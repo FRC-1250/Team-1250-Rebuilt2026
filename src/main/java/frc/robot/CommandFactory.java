@@ -15,6 +15,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.commands.SwerveVisionLogic;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -118,8 +119,7 @@ public class CommandFactory {
     public Command cmdSetHopperPosition(DoubleSupplier supplier) {
         return Commands.sequence(
                 Commands.runOnce(() -> intake.setHopperPosition(supplier.getAsDouble()), intake),
-                Commands.waitUntil(() -> intake.isHopperNearPosition(supplier.getAsDouble(), 0.1)),
-                Commands.runOnce(() -> intake.stopHopper(), intake));
+                Commands.waitUntil(() -> intake.isHopperNearPosition(supplier.getAsDouble(), 0.1)));
     }
 
     public Command cmdStopHopper() {
@@ -266,19 +266,23 @@ public class CommandFactory {
     }
 
     public Command cmdActivateFuelPickUp() {
-        return cmdSetHopperPosition(HopperPosition.EXTENDED.rotations)
-                .andThen(cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations))
-                .andThen(cmdSetLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond))
-                .andThen(cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond))
-                .andThen(cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond));
+        return Commands.sequence(
+                cmdSetHopperPosition(HopperPosition.EXTENDED.rotations),
+                cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations),
+                cmdSetLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond),
+                cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond),
+                cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond))
+                .withName("Activate fuel pick up")
+                .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
 
     public Command cmdDeactivateFuelPickUp() {
-        return cmdStopIntake()
-                .andThen(cmdStopRoller())
-                .andThen(cmdStopLoader())
-                .andThen(cmdSetReactionBarPosition(ReactionBarPosition.HOME.rotations))
-                .andThen(cmdSetHopperPosition(HopperPosition.HOME.rotations));
+        return Commands.sequence(
+                cmdStopIntake(),
+                cmdStopRoller(),
+                cmdSetReactionBarPosition(ReactionBarPosition.HOME.rotations),
+                cmdSetHopperPosition(HopperPosition.HOME.rotations)).withName("Deactivate fuel pick up")
+                .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
     }
 
     public Command cmdWarmUpShooter() {

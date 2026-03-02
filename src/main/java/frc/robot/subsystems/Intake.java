@@ -35,8 +35,8 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     public enum HopperPosition {
         MIN(0),
         HOME(0.05),
-        EXTENDED(3.95),
-        MAX(4);
+        EXTENDED(3.85),
+        MAX(3.9);
 
         public double rotations;
 
@@ -71,7 +71,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     private AgitationProfile wiggle;
 
     public Intake() {
-        configureHopper();
+        configureMotionMagicHopper();
         configureIntake();
         configureHopperAgitation();
         active = wave;
@@ -257,6 +257,8 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
     private void configureMotionMagicHopper() {
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
+        talonFXConfiguration.Voltage.PeakReverseVoltage = -8;
+        talonFXConfiguration.Voltage.PeakForwardVoltage = 16;
 
         MotorOutputConfigs motorOutputConfigs = talonFXConfiguration.MotorOutput;
         motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
@@ -264,10 +266,10 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
         Slot1Configs positionGains = talonFXConfiguration.Slot1;
         positionGains.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
-        positionGains.kS = 3; // output to overcome static friction (output)
+        positionGains.kS = 0; // output to overcome static friction (output)
         positionGains.kV = 0.15; // output per unit of target velocity (output/rps)
         positionGains.kA = 0; // output per unit of target acceleration (output/(rps/s))
-        positionGains.kP = 4; // output per unit of error in position (output/rotation)
+        positionGains.kP = 5; // output per unit of error in position (output/rotation)
         positionGains.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
         positionGains.kD = 0.03; // output per unit of error in velocity (output/rps)
 
