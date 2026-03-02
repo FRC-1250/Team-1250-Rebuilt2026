@@ -336,5 +336,6 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("pick_up_fuel", commandFactory.cmdActivateFuelPickUp());
         NamedCommands.registerCommand("shooter_prep", commandFactory.cmdWarmUpShooter());
+        NamedCommands.registerCommand("reset_starting_fuel", commandFactory.cmdResetStartingFuel());
     }
 }

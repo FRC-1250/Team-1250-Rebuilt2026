@@ -21,6 +21,7 @@ import frc.robot.telemetry.MonitoredSubsystem;
 @Logged
 public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     public enum RollerVelocity {
+        UNJAM(-20),
         GO(25);
 
         public double rotationsPerSecond;
@@ -31,6 +32,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     }
 
     public enum LoaderVelocity {
+        UNJAM(-10),
         STALL(-12.5),
         FIRE(15);
 

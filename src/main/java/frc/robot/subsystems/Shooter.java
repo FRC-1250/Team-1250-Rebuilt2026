@@ -23,6 +23,7 @@ import frc.robot.telemetry.MonitoredSubsystem;
 public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
     public enum ShooterVelocity {
+        UNJAM(-10),
         WARM(10),
         HUB(40),
         MAX(50);

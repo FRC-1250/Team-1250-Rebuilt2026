@@ -47,6 +47,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     }
 
     public enum IntakeVelocity {
+        UNJAM(-10),
         GO(75);
 
         public double rotationsPerSecond;
