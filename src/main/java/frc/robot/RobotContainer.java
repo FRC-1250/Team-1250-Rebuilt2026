@@ -318,7 +318,7 @@ public class RobotContainer {
          * default
          */
         autoChooser.setDefaultOption("Do nothing", new WaitCommand(15));
-        addPathAuto("DepotOutpostClimb", "DepotOutpostClimb");
+        addPathAuto("TestAuto", "TestAuto");
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
