@@ -272,17 +272,17 @@ public class CommandFactory {
                 cmdSetLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond),
                 cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond),
                 cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond))
-                .withName("Activate fuel pick up")
-                .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+                .withName("Activate fuel pick up");
     }
 
     public Command cmdDeactivateFuelPickUp() {
         return Commands.sequence(
                 cmdStopIntake(),
                 cmdStopRoller(),
+                cmdStopLoader(),
                 cmdSetReactionBarPosition(ReactionBarPosition.HOME.rotations),
-                cmdSetHopperPosition(HopperPosition.HOME.rotations)).withName("Deactivate fuel pick up")
-                .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+                cmdSetHopperPosition(HopperPosition.HOME.rotations))
+                .withName("Deactivate fuel pick up");
     }
 
     public Command cmdWarmUpShooter() {
