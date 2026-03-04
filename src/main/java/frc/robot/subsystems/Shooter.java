@@ -23,18 +23,17 @@ import frc.robot.telemetry.MonitoredSubsystem;
 public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
     public enum ShooterVelocity {
-        UNJAM(-10),
-        WARM(20),
-        HUB(50),
-        MAX(100);
+        UNJAM(-10, -10),
+        WARM(25, 25),
+        HUB(50, 50),
+        MAX(80, 80);
 
         public double shooterRotationsPerSecond;
         public double acceleratorRotationsPerSecond;
-        private double feedForwardPercentage = 0.10;
 
-        ShooterVelocity(double rotationsPerSecond) {
-            this.shooterRotationsPerSecond = rotationsPerSecond;
-            this.acceleratorRotationsPerSecond = rotationsPerSecond + (rotationsPerSecond * feedForwardPercentage);
+        ShooterVelocity(double shooterRotationsPerSecond, double acceleratorRotationsPerSecond) {
+            this.shooterRotationsPerSecond = shooterRotationsPerSecond;
+            this.acceleratorRotationsPerSecond = acceleratorRotationsPerSecond;
         }
     }
 
