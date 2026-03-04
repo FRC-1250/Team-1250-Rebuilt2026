@@ -30,7 +30,6 @@ import frc.robot.telemetry.MonitoredSubsystem;
 import frc.robot.utility.AgitationProfile;
 import frc.robot.utility.AgitationStep;
 
-@Logged
 public class Intake extends SubsystemBase implements MonitoredSubsystem {
     public enum HopperPosition {
         MIN(0),
