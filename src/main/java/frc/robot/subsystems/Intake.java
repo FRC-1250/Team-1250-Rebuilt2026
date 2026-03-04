@@ -35,8 +35,8 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     public enum HopperPosition {
         MIN(0),
         HOME(0.05),
-        EXTENDED(3.85),
-        MAX(3.9);
+        EXTENDED(4),
+        MAX(4.05);
 
         public double rotations;
 
@@ -66,15 +66,15 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     private final Color systemColor = new Color(0, 0, 0);
 
     private AgitationProfile active;
-    private AgitationProfile wave;
     private AgitationProfile pulse;
     private AgitationProfile wiggle;
+    private AgitationProfile minorWiggle;
 
     public Intake() {
         configureMotionMagicHopper();
         configureIntake();
         configureHopperAgitation();
-        active = wave;
+        active = minorWiggle;
     }
 
     public void setIntakeVelocity(double rotationsPerSecond) {
@@ -88,7 +88,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         intake.stopMotor();
     }
 
-    public void agitateHopper() {
+    public void agitate() {
         setHopperPosition(active.shift());
     }
 
@@ -170,7 +170,6 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     }
 
     private void configureHopperAgitation() {
-        wave = new AgitationProfile();
         pulse = new AgitationProfile();
         pulse.addStep(new AgitationStep(3.7, 3));
         pulse.addStep(new AgitationStep(3.42, 0.5));
@@ -187,6 +186,15 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         pulse.addStep(new AgitationStep(1.77, 0.5));
         pulse.addStep(new AgitationStep(1.44, 0.5));
         pulse.addStep(new AgitationStep(1.25, 0.5));
+
+        minorWiggle = new AgitationProfile();
+        minorWiggle.addStep(new AgitationStep(HopperPosition.EXTENDED.rotations, 3));
+
+        for (int i = 1; i <= 3; i++) {
+            minorWiggle.addStep(new AgitationStep(HopperPosition.EXTENDED.rotations - (i * 0.2), 0.5));
+            minorWiggle.addStep(new AgitationStep(HopperPosition.EXTENDED.rotations - (i * 0.1), 0.5));
+        }
+
         wiggle = new AgitationProfile();
         wiggle.addStep(new AgitationStep(3.7, 3));
         wiggle.addStep(new AgitationStep(3.2, 0.5));

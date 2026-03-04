@@ -244,18 +244,35 @@ public class CommandFactory {
                     if (shooter.isAcceleratorNearRotationsPerSecond(accelVelocity, 2)
                             && shooter.isShooterNearRotationsPerSecond(shooterVelocity, 2)) {
                         fuelLine.setLoaderVelocity(loaderVelocity);
-                        reactionBar.agitate();
                     } else {
                         fuelLine.setLoaderVelocity(loaderVelocity);
                     }
                 },
                 () -> {
-                    reactionBar.setReactionBarPosition(ReactionBarPosition.EXTENDED.rotations);
-                    reactionBar.resetAgitation();
                     shooter.setAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond);
                     shooter.setShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond);
                     fuelLine.setLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond);
-                }, shooter, fuelLine, intake);
+                }, shooter, fuelLine);
+    }
+
+    public Command cmdAgitateFuelWithHopper() {
+        return Commands.runEnd(
+                () -> {
+                    intake.agitate();
+                }, () -> {
+                    intake.resetAgitation();
+                }, intake)
+                .andThen(cmdSetHopperPosition(HopperPosition.EXTENDED.rotations));
+    }
+
+    public Command cmdAgitateFuelWithReactionBar() {
+        return Commands.runEnd(
+                () -> {
+                    reactionBar.agitate();
+                }, () -> {
+                    reactionBar.resetAgitation();
+                }, reactionBar)
+                .andThen(cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations));
     }
 
     public Command cmdFireFuel(double shooterVelocity, double acceleratorVelocity, double loaderVelocity) {

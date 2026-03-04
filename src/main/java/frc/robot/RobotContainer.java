@@ -216,9 +216,12 @@ public class RobotContainer {
 
         primary.rightBumper(singlePlayer).onTrue(commandFactory.cmdActivateFuelPickUp()); // Intake out
         primary.leftBumper(singlePlayer).onTrue(commandFactory.cmdDeactivateFuelPickUp()); // Intake in
-        primary.y(singlePlayer).onTrue(commandFactory.cmdSetClimberPosition(ClimberPosition.CLIMB.rotations)); // Climb
-        primary.b(singlePlayer).onTrue(commandFactory.cmdSetClimberPosition(ClimberPosition.HOME.rotations)); // Unclimb
-        primary.x(singlePlayer).onTrue(Commands.none()); // drive to tower position
+
+        primary.a(singlePlayer).whileTrue(commandFactory.cmdAgitateFuelWithHopper());
+        primary.b(singlePlayer).whileTrue(commandFactory.cmdAgitateFuelWithReactionBar());
+
+        primary.pov(0, 0, singlePlayer).onTrue(Commands.none()); // Climb
+        primary.pov(0, 180, singlePlayer).onTrue(Commands.none()); // Unclim
     }
 
     private void primaryLeftTriggerPointToPosition(
