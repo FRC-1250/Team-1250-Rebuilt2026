@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot1Configs;
@@ -32,8 +31,7 @@ public class Climber extends SubsystemBase implements MonitoredSubsystem {
         MAX(0.26),
         CLIMB(0.25),
         HOME(-0.033),
-        PASS(-0.1),
-        MIN(-0.11);
+        MIN(-0.043);
 
         public final double rotations;
 

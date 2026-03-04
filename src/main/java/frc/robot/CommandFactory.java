@@ -15,7 +15,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.commands.SwerveVisionLogic;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -353,8 +352,6 @@ public class CommandFactory {
 
     private Command climberTestCommand() {
         return Commands.sequence(
-                cmdSetClimberPosition(ClimberPosition.PASS.rotations),
-                Commands.waitSeconds(2),
                 cmdSetClimberPosition(ClimberPosition.HOME.rotations),
                 Commands.waitSeconds(2),
                 cmdSetClimberPosition(ClimberPosition.CLIMB.rotations),
