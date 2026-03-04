@@ -24,9 +24,9 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
     public enum ShooterVelocity {
         UNJAM(-10),
-        WARM(10),
-        HUB(40),
-        MAX(50);
+        WARM(20),
+        HUB(50),
+        MAX(100);
 
         public double shooterRotationsPerSecond;
         public double acceleratorRotationsPerSecond;
