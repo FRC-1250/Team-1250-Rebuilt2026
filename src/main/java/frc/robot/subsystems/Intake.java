@@ -257,8 +257,8 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
     private void configureMotionMagicHopper() {
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
-        talonFXConfiguration.Voltage.PeakReverseVoltage = -8;
-        talonFXConfiguration.Voltage.PeakForwardVoltage = 16;
+        talonFXConfiguration.Voltage.PeakReverseVoltage = -12;
+        talonFXConfiguration.Voltage.PeakForwardVoltage = 12;
 
         MotorOutputConfigs motorOutputConfigs = talonFXConfiguration.MotorOutput;
         motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
@@ -269,9 +269,9 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         positionGains.kS = 0; // output to overcome static friction (output)
         positionGains.kV = 0.15; // output per unit of target velocity (output/rps)
         positionGains.kA = 0; // output per unit of target acceleration (output/(rps/s))
-        positionGains.kP = 5; // output per unit of error in position (output/rotation)
+        positionGains.kP = 2; // output per unit of error in position (output/rotation)
         positionGains.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
-        positionGains.kD = 0.03; // output per unit of error in velocity (output/rps)
+        positionGains.kD = 0.01; // output per unit of error in velocity (output/rps)
 
         CurrentLimitsConfigs currentLimitsConfigs = talonFXConfiguration.CurrentLimits;
         currentLimitsConfigs.SupplyCurrentLimit = 30;
@@ -285,8 +285,8 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
         MotionMagicConfigs motionMagicConfigs = talonFXConfiguration.MotionMagic;
         motionMagicConfigs.MotionMagicCruiseVelocity = 8;
-        motionMagicConfigs.MotionMagicAcceleration = 128;
-        motionMagicConfigs.MotionMagicAcceleration = 512;
+        motionMagicConfigs.MotionMagicAcceleration = 64;
+        motionMagicConfigs.MotionMagicAcceleration = 256;
 
         hopper.getConfigurator().apply(talonFXConfiguration);
         hopper.setPosition(0);
