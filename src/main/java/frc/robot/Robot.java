@@ -74,7 +74,7 @@ public class Robot extends TimedRobot {
     public void disabledInit() {
         HealthMonitor.getInstance().unpause();
         CommandScheduler.getInstance()
-                .schedule(robotContainer.commandFactory.cmdSetHopperNeutralMode(NeutralModeValue.Coast));
+                .schedule(robotContainer.commandFactory.cmdSetHopperNeutralMode(NeutralModeValue.Brake));
     }
 
     @Override
@@ -85,7 +85,7 @@ public class Robot extends TimedRobot {
     public void disabledExit() {
         HealthMonitor.getInstance().pause();
         CommandScheduler.getInstance()
-                .schedule(robotContainer.commandFactory.cmdSetHopperNeutralMode(NeutralModeValue.Brake));
+                .schedule(robotContainer.commandFactory.cmdSetHopperNeutralMode(NeutralModeValue.Coast));
     }
 
     @Override

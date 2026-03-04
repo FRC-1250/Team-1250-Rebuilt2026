@@ -284,6 +284,7 @@ public class CommandFactory {
     public Command cmdActivateFuelPickUp() {
         return Commands.sequence(
                 cmdSetHopperPosition(HopperPosition.EXTENDED.rotations),
+                cmdStopHopper(),
                 cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations),
                 cmdSetLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond),
                 cmdSetRollerVelocity(RollerVelocity.GO.rotationsPerSecond),
@@ -309,6 +310,7 @@ public class CommandFactory {
     public Command cmdResetStartingFuel() {
         return Commands.sequence(
                 cmdSetHopperPosition(HopperPosition.EXTENDED.rotations),
+                cmdStopHopper(),
                 cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations),
                 cmdSetFuelShooterVelocity(ShooterVelocity.UNJAM.shooterRotationsPerSecond),
                 cmdSetFuelAcceleratorVelocity(ShooterVelocity.UNJAM.acceleratorRotationsPerSecond),
