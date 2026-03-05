@@ -29,8 +29,8 @@ import frc.robot.utility.AgitationStep;
 
 public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
     public enum ReactionBarPosition {
-        HOME(-0.25),
-        EXTENDED(0.29);
+        HOME(0.02),
+        EXTENDED(0.439);
 
         public double rotations;
 
@@ -42,7 +42,7 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
     private final TalonFX reactionBar = new TalonFX(35);
     private final PositionVoltage reactionBarPositionControl = new PositionVoltage(0).withSlot(1);
     private final CANcoder reactionBarEncoder = new CANcoder(36);
-    private final double MAGNET_OFFSET = -0.2;
+    private final double MAGNET_OFFSET = 0.1;
 
     private final Color systemColor = new Color(0, 0, 0);
 
@@ -54,12 +54,12 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
 
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
         motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
-        motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
+        motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
         Slot1Configs positionGains = new Slot1Configs()
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
-                .withKS(0.25)
-                .withKP(8)
+                .withKS(0.1)
+                .withKP(5)
                 .withKI(0)
                 .withKD(0.01);
         talonFXConfiguration.Feedback.FeedbackRemoteSensorID = reactionBarEncoder.getDeviceID();
@@ -70,9 +70,9 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
         reactionBar.getConfigurator().apply(talonFXConfiguration);
 
         CANcoderConfiguration canCoderConfiguration = new CANcoderConfiguration();
-        canCoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
+        canCoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
         canCoderConfiguration.MagnetSensor.MagnetOffset = MAGNET_OFFSET;
-        canCoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+        canCoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
         reactionBarEncoder.getConfigurator().apply(canCoderConfiguration);
 

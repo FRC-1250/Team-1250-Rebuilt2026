@@ -87,7 +87,7 @@ public class CommandFactory {
     public Command cmdSetReactionBarPosition(DoubleSupplier supplier) {
         return Commands.runOnce(() -> reactionBar.setReactionBarPosition(supplier.getAsDouble()), reactionBar)
                 .andThen(
-                        Commands.waitUntil((() -> reactionBar.isReactionBarNearPosition(supplier.getAsDouble(), .01))));
+                        Commands.waitUntil((() -> reactionBar.isReactionBarNearPosition(supplier.getAsDouble(), .08))));
     }
 
     public Command cmdSetReactionBarPosition(double rotations) {
