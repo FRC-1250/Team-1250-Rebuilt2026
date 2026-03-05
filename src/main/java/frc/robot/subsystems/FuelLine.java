@@ -33,9 +33,10 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
     public enum LoaderVelocity {
         UNJAM(-10),
-        STALL(-12.5),
-        FIRE(15);
+        STALL(-RollerVelocity.GO.rotationsPerSecond / LOADER_ROLLER_RATIO),
+        FIRE(RollerVelocity.GO.rotationsPerSecond / LOADER_ROLLER_RATIO);
 
+        public double ratio;
         public double rotationsPerSecond;
 
         private LoaderVelocity(double rotationsPerSecond) {
@@ -43,6 +44,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         }
     }
 
+    private final static double LOADER_ROLLER_RATIO = 2.215;
     private final TalonFX roller = new TalonFX(31);
     private final VelocityVoltage rollerVelocityControl = new VelocityVoltage(0).withSlot(0);
 
