@@ -17,6 +17,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
@@ -190,8 +191,8 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         minorWiggle.addStep(new AgitationStep(HopperPosition.EXTENDED.rotations, 3));
 
         for (int i = 1; i <= 3; i++) {
-            minorWiggle.addStep(new AgitationStep(HopperPosition.EXTENDED.rotations - (i * 0.2), 0.5));
-            minorWiggle.addStep(new AgitationStep(HopperPosition.EXTENDED.rotations - (i * 0.1), 0.5));
+            minorWiggle.addStep(new AgitationStep(HopperPosition.EXTENDED.rotations - (i * 0.2), 1));
+            minorWiggle.addStep(new AgitationStep(HopperPosition.EXTENDED.rotations - (i * 0.1), 1));
         }
 
         wiggle = new AgitationProfile();
@@ -233,35 +234,6 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         intake.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
     }
 
-    private void configureHopper() {
-        TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
-
-        MotorOutputConfigs motorOutputConfigs = talonFXConfiguration.MotorOutput;
-        motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
-        motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
-
-        Slot1Configs positionGains = talonFXConfiguration.Slot1;
-        positionGains.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
-        positionGains.kS = 3; // output to overcome static friction (output)
-        positionGains.kP = 3; // output per unit of error in position (output/rotation)
-        positionGains.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
-        positionGains.kD = 0.1; // output per unit of error in velocity (output/rps)
-
-        CurrentLimitsConfigs currentLimitsConfigs = talonFXConfiguration.CurrentLimits;
-        currentLimitsConfigs.SupplyCurrentLimit = 30;
-        currentLimitsConfigs.SupplyCurrentLimitEnable = true;
-
-        SoftwareLimitSwitchConfigs softwareLimitSwitchConfigs = talonFXConfiguration.SoftwareLimitSwitch;
-        softwareLimitSwitchConfigs.ForwardSoftLimitEnable = false;
-        softwareLimitSwitchConfigs.ForwardSoftLimitThreshold = 4;
-        softwareLimitSwitchConfigs.ReverseSoftLimitEnable = false;
-        softwareLimitSwitchConfigs.ReverseSoftLimitThreshold = 0;
-
-        hopper.setPosition(0);
-        hopper.getConfigurator().apply(talonFXConfiguration);
-        hopper.getPosition().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
-    }
-
     private void configureMotionMagicHopper() {
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
         talonFXConfiguration.Voltage.PeakReverseVoltage = -12;
@@ -272,9 +244,11 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
 
         Slot1Configs positionGains = talonFXConfiguration.Slot1;
+        positionGains.GravityType = GravityTypeValue.Elevator_Static;
         positionGains.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
-        positionGains.kS = 0; // output to overcome static friction (output)
+        positionGains.kS = 0.4; // output to overcome static friction (output)
         positionGains.kV = 0.15; // output per unit of target velocity (output/rps)
+        positionGains.kG = -0.7;
         positionGains.kA = 0; // output per unit of target acceleration (output/(rps/s))
         positionGains.kP = 2; // output per unit of error in position (output/rotation)
         positionGains.kI = 0; // output per unit of integrated error in position (output/(rotation*s))

@@ -132,8 +132,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
         Slot0Configs velocityGains = new Slot0Configs()
-                .withKS(0.1)
-                .withKV(0.08)
+                .withKV(0.11)
                 .withKP(0.1)
                 .withKI(0)
                 .withKD(0);
@@ -153,8 +152,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
 
         Slot0Configs velocityGains = new Slot0Configs()
-                .withKS(0.1)
-                .withKV(0.08)
+                .withKV(0.128)
                 .withKP(0.1)
                 .withKI(0)
                 .withKD(0);
