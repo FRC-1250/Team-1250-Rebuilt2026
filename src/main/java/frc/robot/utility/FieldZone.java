@@ -26,4 +26,5 @@ public class FieldZone {
     public Boolean isRobotInZone(Pose2d pose) {
         return isRobotInZone(pose.getX(), pose.getY());
     }
+
 }
