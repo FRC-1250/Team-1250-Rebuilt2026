@@ -29,8 +29,8 @@ import frc.robot.utility.AgitationStep;
 
 public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
     public enum ReactionBarPosition {
-        HOME(0.02),
-        EXTENDED(0.439);
+        HOME(0.125),
+        EXTENDED(0.515);
 
         public double rotations;
 
@@ -42,7 +42,7 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
     private final TalonFX reactionBar = new TalonFX(35);
     private final PositionVoltage reactionBarPositionControl = new PositionVoltage(0).withSlot(1);
     private final CANcoder reactionBarEncoder = new CANcoder(36);
-    private final double MAGNET_OFFSET = 0.1;
+    private final double MAGNET_OFFSET = 0.2;
 
     private final Color systemColor = new Color(0, 0, 0);
 
@@ -58,8 +58,8 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
 
         Slot1Configs positionGains = new Slot1Configs()
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
-                .withKS(0.1)
-                .withKP(5)
+                .withKS(0.25)
+                .withKP(8)
                 .withKI(0)
                 .withKD(0.01);
         talonFXConfiguration.Feedback.FeedbackRemoteSensorID = reactionBarEncoder.getDeviceID();
@@ -129,9 +129,8 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
 
     private void configureAgitiationProfiles() {
         wave = new AgitationProfile();
-        wave.addStep(new AgitationStep(ReactionBarPosition.EXTENDED.rotations, 3));
-        wave.addStep(new AgitationStep(0.0, 1));
-        wave.addStep(new AgitationStep(0.2, 1));
+        wave.addStep(new AgitationStep(ReactionBarPosition.EXTENDED.rotations, 1));
+        wave.addStep(new AgitationStep(0.3, 1));
     }
 
 }
