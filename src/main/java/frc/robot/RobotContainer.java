@@ -255,6 +255,7 @@ public class RobotContainer {
                         .withRotationalRate(-primary.getRightX() * MaxAngularRate))
                         .withName("Field centric swerve"));
 
+        limelight.setDefaultCommand(commandFactory.cmdSwerveVisionLogic());
         configureDevBindings();
     }
 
