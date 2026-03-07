@@ -29,14 +29,9 @@ public class Robot extends TimedRobot {
     private final RobotContainer robotContainer;
 
     private final Timer gcTimer;
-    private final Command visionCommand;
 
     public Robot() {
         robotContainer = new RobotContainer();
-        visionCommand = Commands.sequence(
-                Commands.waitSeconds(1),
-                robotContainer.commandFactory.cmdSwerveVisionLogic());
-        ;
         DriverStation.startDataLog(DataLogManager.getLog());
         Epilogue.bind(this);
         DriverStation.silenceJoystickConnectionWarning(true);
@@ -95,10 +90,6 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null) {
             CommandScheduler.getInstance().schedule(autonomousCommand);
         }
-
-        if (!visionCommand.isScheduled()) {
-            CommandScheduler.getInstance().schedule(visionCommand);
-        }
     }
 
     @Override
@@ -113,10 +104,6 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
-        }
-
-        if (!visionCommand.isScheduled()) {
-            CommandScheduler.getInstance().schedule(visionCommand);
         }
     }
 
