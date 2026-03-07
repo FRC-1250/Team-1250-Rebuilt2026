@@ -261,8 +261,7 @@ public class CommandFactory {
                     intake.agitate();
                 }, () -> {
                     intake.resetAgitation();
-                }, intake)
-                .andThen(cmdSetHopperPosition(HopperPosition.EXTENDED.rotations));
+                }, intake);
     }
 
     public Command cmdAgitateFuelWithReactionBar() {
@@ -271,8 +270,7 @@ public class CommandFactory {
                     reactionBar.agitate();
                 }, () -> {
                     reactionBar.resetAgitation();
-                }, reactionBar)
-                .andThen(cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations));
+                }, reactionBar);
     }
 
     public Command cmdFireFuel(double shooterVelocity, double acceleratorVelocity, double loaderVelocity) {
