@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.83811733474488,
-        "y": 4.694097088265727
+        "x": 3.1769872981077802,
+        "y": 4.29
       },
       "isLocked": false,
       "linkedName": null
@@ -17,15 +17,15 @@
     {
       "anchor": {
         "x": 2.4,
-        "y": 5.4
+        "y": 5.3
       },
       "prevControl": {
-        "x": 2.304416845739966,
-        "y": 5.631006191738885
+        "x": 2.4,
+        "y": 5.55
       },
       "nextControl": {
-        "x": 2.5069940025136264,
-        "y": 5.141415971769116
+        "x": 2.4,
+        "y": 5.05
       },
       "isLocked": false,
       "linkedName": null
@@ -33,43 +33,27 @@
     {
       "anchor": {
         "x": 2.4,
-        "y": 3.4588661084040253
+        "y": 4.0
       },
       "prevControl": {
-        "x": 2.2629355559794444,
-        "y": 3.7566465012207657
+        "x": 2.4,
+        "y": 4.25
       },
       "nextControl": {
-        "x": 2.504530193576809,
-        "y": 3.2317682470517113
+        "x": 2.4,
+        "y": 3.75
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.905495732012223,
-        "y": 3.9065221073338776
+        "x": 2.28,
+        "y": 4.04
       },
       "prevControl": {
-        "x": 3.1545475597882997,
-        "y": 3.9282749710854734
-      },
-      "nextControl": {
-        "x": 2.6564439042361463,
-        "y": 3.884769243582282
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 1.6842225392296717,
-        "y": 4.03
-      },
-      "prevControl": {
-        "x": 2.827392694873835,
-        "y": 3.9595610559241736
+        "x": 2.5299999999999945,
+        "y": 4.04
       },
       "nextControl": null,
       "isLocked": false,
@@ -78,11 +62,11 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.504842615012093,
+      "waypointRelativePos": 0.9987893462470104,
       "rotationDegrees": -90.0
     },
     {
-      "waypointRelativePos": 1.9903147699758401,
+      "waypointRelativePos": 1.997578692493947,
       "rotationDegrees": -90.0
     }
   ],
@@ -98,12 +82,6 @@
     {
       "name": "activate_fuel_pick_up",
       "waypointRelativePos": 0.7462897526501722,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "shooter_prep",
-      "waypointRelativePos": 1.9971731448763466,
       "endWaypointRelativePos": null,
       "command": null
     }
