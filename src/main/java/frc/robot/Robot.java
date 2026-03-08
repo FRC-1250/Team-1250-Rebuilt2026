@@ -6,8 +6,6 @@ package frc.robot;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.commands.FollowPathCommand;
-import com.pathplanner.lib.pathfinding.LocalADStar;
-import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
@@ -18,7 +16,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.utility.LimelightHelpers;
 
@@ -55,7 +52,6 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         HealthMonitor.getInstance().start();
         CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
-        Pathfinding.setPathfinder(new LocalADStar());
         LimelightHelpers.setupPortForwardingUSB(0);
     }
 
