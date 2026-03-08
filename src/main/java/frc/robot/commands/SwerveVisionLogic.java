@@ -17,10 +17,9 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.utility.LimelightHelpers.PoseEstimate;
 import frc.robot.utility.LimelightHelpers.RawFiducial;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class SwerveVisionLogic extends Command {
     public Limelight cmdLimelight;
-    public CommandSwerveDrivetrain cmdSwerveDriveState;
+    public CommandSwerveDrivetrain cmdSwerveDrivetrain;
     private double tagAmbiguous = 0;
     private double tagTooSmall = 0;
     private double resultOutOfBounds = 0;
@@ -40,10 +39,9 @@ public class SwerveVisionLogic extends Command {
     private double fieldWidth = Units.feetToMeters(27);
 
     /** Creates a new SwerveVisionLogic. */
-    public SwerveVisionLogic(Limelight Limelight, CommandSwerveDrivetrain SwerveDriveState) {
-        // Use addRequirements() here to declare subsystem dependencies.
+    public SwerveVisionLogic(Limelight Limelight, CommandSwerveDrivetrain swerveDrivetrain) {
         cmdLimelight = Limelight;
-        cmdSwerveDriveState = SwerveDriveState;
+        cmdSwerveDrivetrain = swerveDrivetrain;
         addRequirements(Limelight);
     }
 
@@ -56,13 +54,12 @@ public class SwerveVisionLogic extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-
-        SwerveDriveState driveState = cmdSwerveDriveState.getState();
+        SwerveDriveState driveState = cmdSwerveDrivetrain.getState();
         cmdLimelight.setRobotOrientation(driveState.Pose.getRotation().getDegrees());
         PoseEstimate megaTag = cmdLimelight.getBotPoseEstimate_wpiBlue_MegaTag2();
         framesProcessed++;
 
-        if (Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond) > maxRadiansPerSecond)
+        if (Math.abs(Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond)) > maxRadiansPerSecond)
             return;
 
         if (megaTag == null)
@@ -98,22 +95,15 @@ public class SwerveVisionLogic extends Command {
 
         xTrust = yTrust = calculateTrust(megaTag);
 
-        cmdSwerveDriveState.setVisionMeasurementStdDevs(VecBuilder.fill(xTrust, yTrust, 9999999));
-        cmdSwerveDriveState.addVisionMeasurement(megaTag.pose, Utils.fpgaToCurrentTime(megaTag.timestampSeconds));
+        cmdSwerveDrivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(xTrust, yTrust, 9999999));
+        cmdSwerveDrivetrain.addVisionMeasurement(megaTag.pose, Utils.fpgaToCurrentTime(megaTag.timestampSeconds));
         frameRejectionRate = (tagAmbiguous + tagTooSmall + resultOutOfBounds + resultTeleported)
                 / framesProcessed;
         SmartDashboard.putNumber("Rejection rate", frameRejectionRate);
-
     }
 
     private double calculateTrust(PoseEstimate estimate) {
-        double averageDistance = 0;
-        for (RawFiducial tag : estimate.rawFiducials) {
-            averageDistance += tag.distToRobot;
-        }
-        averageDistance /= estimate.tagCount;
-
-        double trust = 0.1 + (0.2 * averageDistance);
+        double trust = 0.1 + (0.2 * estimate.avgTagDist);
 
         if (estimate.tagCount > 1) {
             return trust * 0.5;
@@ -160,21 +150,13 @@ public class SwerveVisionLogic extends Command {
             // it's probably real just let it jump.
             if (teleportFrameCounter > maxFramesBeforeTeleport) {
                 teleportFrameCounter = 0;
-                cmdSwerveDriveState.resetPose(visionPose);
+                cmdSwerveDrivetrain.resetPose(visionPose);
                 return false;
             }
             return true;
         }
         teleportFrameCounter = 0;
         return false;
-    }
-    /*
-     * Limelight
-     */
-
-    // Called once the command ends or is interrupted.
-    @Override
-    public void end(boolean interrupted) {
     }
 
     // Returns true when the command should end.
