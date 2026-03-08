@@ -2,20 +2,20 @@ package frc.robot.utility;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
-public class FieldZone {
-    public Double xUpper;
-    public Double xLower;
-    public Double yUpper;
-    public Double yLower;
+public class FieldZoneRectangle {
+    public double xUpper;
+    public double xLower;
+    public double yUpper;
+    public double yLower;
 
-    public FieldZone(Double xUpper, Double xLower, Double yUpper, Double yLower) {
+    public FieldZoneRectangle(double xUpper, double xLower, double yUpper, double yLower) {
         this.xUpper = xUpper;
         this.xLower = xLower;
         this.yUpper = yUpper;
         this.yLower = yLower;
     }
 
-    public Boolean isRobotInZone(Double x, Double y) {
+    public boolean isRobotInZone(double x, double y) {
         if (x >= xLower && x < xUpper && y >= yLower && y < yUpper) {
             return true;
         } else {
@@ -23,7 +23,7 @@ public class FieldZone {
         }
     }
 
-    public Boolean isRobotInZone(Pose2d pose) {
+    public boolean isRobotInZone(Pose2d pose) {
         return isRobotInZone(pose.getX(), pose.getY());
     }
 
