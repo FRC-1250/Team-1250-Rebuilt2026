@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.telemetry.MonitoredSubsystem;
 
-@Logged
 public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
     public enum RollerVelocity {
         UNJAM(-20),
@@ -139,7 +138,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
         talonFXConfiguration.Slot0 = velocityGains;
-        talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
+        talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 40;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
         loader.getConfigurator().apply(talonFXConfiguration);
@@ -159,7 +158,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
         talonFXConfiguration.Slot0 = velocityGains;
-        talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
+        talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 40;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
 

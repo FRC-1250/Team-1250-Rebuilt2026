@@ -220,13 +220,13 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         Slot0Configs velocityGains = new Slot0Configs()
                 .withKS(0.1)
                 .withKV(0.11)
-                .withKP(0.1)
+                .withKP(0.5)
                 .withKI(0)
                 .withKD(0);
 
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
         talonFXConfiguration.Slot0 = velocityGains;
-        talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
+        talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 40;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
 
@@ -255,7 +255,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         positionGains.kD = 0.01; // output per unit of error in velocity (output/rps)
 
         CurrentLimitsConfigs currentLimitsConfigs = talonFXConfiguration.CurrentLimits;
-        currentLimitsConfigs.SupplyCurrentLimit = 30;
+        currentLimitsConfigs.SupplyCurrentLimit = 20;
         currentLimitsConfigs.SupplyCurrentLimitEnable = true;
 
         SoftwareLimitSwitchConfigs softwareLimitSwitchConfigs = talonFXConfiguration.SoftwareLimitSwitch;

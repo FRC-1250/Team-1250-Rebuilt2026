@@ -157,7 +157,7 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
         talonFXConfiguration.Slot0 = velocityGains;
-        talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
+        talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 50;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
         acceleratorLeader.getConfigurator().apply(talonFXConfiguration);
@@ -183,7 +183,7 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
         talonFXConfiguration.Slot0 = velocityGains;
-        talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
+        talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 50;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
         shooterLeader.getConfigurator().apply(talonFXConfiguration);
