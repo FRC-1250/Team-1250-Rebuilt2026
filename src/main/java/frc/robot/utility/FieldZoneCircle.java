@@ -24,7 +24,7 @@ public class FieldZoneCircle {
     }
 
     private double distanceToTarget(double x, double y) {
-        return 0;
+        return Math.sqrt(Math.pow(target.getX() - x, 2) + Math.pow(target.getY() - y, 2));
     }
 
 }

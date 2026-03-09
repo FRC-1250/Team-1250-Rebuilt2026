@@ -129,6 +129,12 @@ public class RobotContainer {
             () -> FieldZones.centerBlueOutpostRedDepot.isRobotInZone(swerve.getState().Pose));
     private final Trigger isInCenterBlueDepotRedOutpostZone = new Trigger(
             () -> FieldZones.centerBlueDepotRedOutpost.isRobotInZone(swerve.getState().Pose));
+    private final Trigger isInMinZone = new Trigger(() -> FieldZones.min.isRobotInZone(swerve.getState().Pose));
+    private final Trigger isInMidZone = new Trigger(() -> FieldZones.mid.isRobotInZone(swerve.getState().Pose));
+    private final Trigger isInSemiMaxZone = new Trigger(() -> FieldZones.semimax.isRobotInZone(swerve.getState().Pose));
+    private final Trigger isInMaxZone = new Trigger(() -> FieldZones.max.isRobotInZone(swerve.getState().Pose));
+    private final Trigger isInSuperMaxZone = new Trigger(
+            () -> FieldZones.supermax.isRobotInZone(swerve.getState().Pose));
     /* Auto */
     private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
@@ -176,8 +182,7 @@ public class RobotContainer {
         primary.rightTrigger(0.5, singlePlayer)
                 .whileTrue(commandFactory.cmdFireFuel(
                         ShooterVelocity.HUB.shooterRotationsPerSecond,
-                        ShooterVelocity.HUB.acceleratorRotationsPerSecond,
-                        LoaderVelocity.FIRE.rotationsPerSecond)); // Shoot
+                        ShooterVelocity.HUB.acceleratorRotationsPerSecond)); // Shoot
 
         primaryLeftTriggerPointToPosition(
                 singlePlayer,
@@ -314,8 +319,7 @@ public class RobotContainer {
 
         SmartDashboard.putData("Commands/Shared/Fire fuel",
                 commandFactory.cmdFireFuel(shooterVelocity.get(),
-                        acceleratorVelocity.get(),
-                        loaderLoaderVelocity.get()));
+                        acceleratorVelocity.get()));
 
         SmartDashboard.putData("Commands/Shared/Prove out", commandFactory.proveOut());
     }
@@ -338,8 +342,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("fire_fuel_with_timeout",
                 commandFactory.cmdFireFuel(ShooterVelocity.HUB.shooterRotationsPerSecond,
-                        ShooterVelocity.HUB.acceleratorRotationsPerSecond,
-                        LoaderVelocity.FIRE.rotationsPerSecond)
+                        ShooterVelocity.HUB.acceleratorRotationsPerSecond)
                         .withTimeout(fireTimeout));
 
         NamedCommands.registerCommand("climb", commandFactory.cmdSetClimberPosition(ClimberPosition.CLIMB.rotations));
@@ -347,5 +350,10 @@ public class RobotContainer {
         NamedCommands.registerCommand("activate_fuel_pick_up", commandFactory.cmdActivateFuelPickUp());
         NamedCommands.registerCommand("shooter_prep", commandFactory.cmdWarmUpShooter());
         NamedCommands.registerCommand("reset_starting_fuel", commandFactory.cmdResetStartingFuel());
+
+    }
+
+    private double distanceToTarget(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
     }
 }

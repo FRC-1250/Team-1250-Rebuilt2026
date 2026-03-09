@@ -26,7 +26,12 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
         UNJAM(-10, -10),
         WARM(0, 0),
         HUB(50, 50),
-        MAX(80, 80);
+        MINZONE(40, 40),
+        MIDZONE(50, 50),
+        SEMIMAXZONE(60, 60),
+        MAXZONE(70, 70),
+        SUPERMAXZONE(75, 75),
+        MAXSPEED(80, 80); // Do not go any faster than this
 
         public double shooterRotationsPerSecond;
         public double acceleratorRotationsPerSecond;

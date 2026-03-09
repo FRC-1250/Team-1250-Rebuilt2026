@@ -231,21 +231,19 @@ public class CommandFactory {
     /*
      * Shared
      */
-    public Command cmdFireFuel(DoubleSupplier shooterVelocitySupplier, DoubleSupplier acceleratorVelocitySupplier,
-            DoubleSupplier loaderVelocitySupplier) {
+    public Command cmdFireFuel(DoubleSupplier shooterVelocitySupplier, DoubleSupplier acceleratorVelocitySupplier) {
         return Commands.runEnd(
                 () -> {
                     var accelVelocity = acceleratorVelocitySupplier.getAsDouble();
                     var shooterVelocity = shooterVelocitySupplier.getAsDouble();
-                    var loaderVelocity = loaderVelocitySupplier.getAsDouble();
 
                     shooter.setAcceleratorVelocity(accelVelocity);
                     shooter.setShooterVelocity(shooterVelocity);
                     if (shooter.isAcceleratorNearRotationsPerSecond(accelVelocity, 2)
                             && shooter.isShooterNearRotationsPerSecond(shooterVelocity, 2)) {
-                        fuelLine.setLoaderVelocity(loaderVelocity);
+                        fuelLine.setLoaderVelocity(LoaderVelocity.FIRE.rotationsPerSecond);
                     } else {
-                        fuelLine.setLoaderVelocity(loaderVelocity);
+                        fuelLine.setLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond);
                     }
                 },
                 () -> {
@@ -273,10 +271,9 @@ public class CommandFactory {
                 }, reactionBar);
     }
 
-    public Command cmdFireFuel(double shooterVelocity, double acceleratorVelocity, double loaderVelocity) {
+    public Command cmdFireFuel(double shooterVelocity, double acceleratorVelocity) {
         return cmdFireFuel(() -> shooterVelocity,
-                () -> acceleratorVelocity,
-                () -> loaderVelocity);
+                () -> acceleratorVelocity);
     }
 
     public Command cmdActivateFuelPickUp() {
