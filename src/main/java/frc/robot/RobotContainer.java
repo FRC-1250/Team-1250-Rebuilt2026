@@ -176,8 +176,7 @@ public class RobotContainer {
         primary.rightTrigger(0.5, singlePlayer)
                 .whileTrue(commandFactory.cmdFireFuel(
                         ShooterVelocity.HUB.shooterRotationsPerSecond,
-                        ShooterVelocity.HUB.acceleratorRotationsPerSecond,
-                        LoaderVelocity.FIRE.rotationsPerSecond)); // Shoot
+                        ShooterVelocity.HUB.acceleratorRotationsPerSecond)); // Shoot
 
         primaryLeftTriggerPointToPosition(
                 singlePlayer,
@@ -314,8 +313,7 @@ public class RobotContainer {
 
         SmartDashboard.putData("Commands/Shared/Fire fuel",
                 commandFactory.cmdFireFuel(shooterVelocity.get(),
-                        acceleratorVelocity.get(),
-                        loaderLoaderVelocity.get()));
+                        acceleratorVelocity.get()));
 
         SmartDashboard.putData("Commands/Shared/Prove out", commandFactory.proveOut());
     }
@@ -338,8 +336,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("fire_fuel_with_timeout",
                 commandFactory.cmdFireFuel(ShooterVelocity.HUB.shooterRotationsPerSecond,
-                        ShooterVelocity.HUB.acceleratorRotationsPerSecond,
-                        LoaderVelocity.FIRE.rotationsPerSecond)
+                        ShooterVelocity.HUB.acceleratorRotationsPerSecond)
                         .withTimeout(fireTimeout));
 
         NamedCommands.registerCommand("climb", commandFactory.cmdSetClimberPosition(ClimberPosition.CLIMB.rotations));
