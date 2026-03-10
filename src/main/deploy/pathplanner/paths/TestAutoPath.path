@@ -36,23 +36,23 @@
         "y": 4.0
       },
       "prevControl": {
-        "x": 2.4,
-        "y": 4.25
+        "x": 2.396110933512354,
+        "y": 4.249969748493404
       },
       "nextControl": {
-        "x": 2.4,
-        "y": 3.75
+        "x": 2.4039735099337753,
+        "y": 3.744602649006622
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.28,
+        "x": 1.5255215231788082,
         "y": 4.04
       },
       "prevControl": {
-        "x": 2.5299999999999945,
+        "x": 1.7755215231788082,
         "y": 4.04
       },
       "nextControl": null,
@@ -74,14 +74,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "reset_starting_fuel",
-      "waypointRelativePos": 0.25441696113075046,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
       "name": "activate_fuel_pick_up",
-      "waypointRelativePos": 0.7462897526501722,
+      "waypointRelativePos": 0.3,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -96,7 +90,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -0.6576421714524615
   },
   "reversed": false,
   "folder": null,
