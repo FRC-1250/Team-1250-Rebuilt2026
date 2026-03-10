@@ -75,7 +75,7 @@
   "eventMarkers": [
     {
       "name": "activate_fuel_pick_up",
-      "waypointRelativePos": 0.3,
+      "waypointRelativePos": 0.7462897526501792,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
