@@ -90,13 +90,12 @@ public class SwerveVisionLogic extends Command {
             resultTeleported++;
             SmartDashboard.putNumber("Teleported", resultTeleported);
             return;
-
         }
 
         xTrust = yTrust = calculateTrust(megaTag);
 
         cmdSwerveDrivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(xTrust, yTrust, 9999999));
-        cmdSwerveDrivetrain.addVisionMeasurement(megaTag.pose, Utils.fpgaToCurrentTime(megaTag.timestampSeconds));
+        cmdSwerveDrivetrain.addVisionMeasurement(megaTag.pose, megaTag.timestampSeconds);
         frameRejectionRate = (tagAmbiguous + tagTooSmall + resultOutOfBounds + resultTeleported)
                 / framesProcessed;
         SmartDashboard.putNumber("Rejection rate", frameRejectionRate);
