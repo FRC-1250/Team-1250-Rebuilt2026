@@ -284,7 +284,7 @@ public class CommandFactory {
         return Commands.sequence(
                 cmdSetHopperPosition(HopperPosition.EXTENDED.rotations),
                 cmdStopHopper(),
-                cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations),
+                // cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations),
                 cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond))
                 .withName("Activate fuel pick up");
     }
@@ -292,7 +292,7 @@ public class CommandFactory {
     public Command cmdDeactivateFuelPickUp() {
         return Commands.sequence(
                 cmdStopIntake(),
-                cmdSetReactionBarPosition(ReactionBarPosition.HOME.rotations),
+                // cmdSetReactionBarPosition(ReactionBarPosition.HOME.rotations),
                 cmdSetHopperPosition(HopperPosition.HOME.rotations))
                 .withName("Deactivate fuel pick up");
     }
@@ -306,7 +306,7 @@ public class CommandFactory {
         return Commands.sequence(
                 cmdSetHopperPosition(HopperPosition.EXTENDED.rotations),
                 cmdStopHopper(),
-                cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations),
+                // cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations),
                 cmdSetFuelShooterVelocity(ShooterVelocity.UNJAM.shooterRotationsPerSecond),
                 cmdSetFuelAcceleratorVelocity(ShooterVelocity.UNJAM.acceleratorRotationsPerSecond),
                 cmdSetLoaderVelocity(LoaderVelocity.UNJAM.rotationsPerSecond),
