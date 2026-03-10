@@ -225,8 +225,8 @@ public class RobotContainer {
 
         primary.a(singlePlayer).whileTrue(commandFactory.cmdAgitateFuelWithHopper())
                 .onFalse(commandFactory.cmdSetHopperPosition(HopperPosition.EXTENDED.rotations));
-        primary.b(singlePlayer).whileTrue(commandFactory.cmdAgitateFuelWithReactionBar())
-                .onFalse(commandFactory.cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations));
+        // primary.b(singlePlayer).whileTrue(commandFactory.cmdAgitateFuelWithReactionBar())
+        // .onFalse(commandFactory.cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations));
 
         primary.pov(0, 0, singlePlayer).onTrue(Commands.none()); // Climb
         primary.pov(0, 180, singlePlayer).onTrue(Commands.none()); // Unclim
@@ -260,7 +260,7 @@ public class RobotContainer {
                         .withRotationalRate(-primary.getRightX() * MaxAngularRate))
                         .withName("Field centric swerve"));
 
-        limelight.setDefaultCommand(commandFactory.cmdSwerveVisionLogic());
+        limelight.setDefaultCommand(commandFactory.cmdSwerveVisionLogic().ignoringDisable(true));
         configureDevBindings();
     }
 
