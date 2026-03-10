@@ -77,7 +77,12 @@
       "name": "activate_fuel_pick_up",
       "waypointRelativePos": 0.3,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "activate_fuel_pick_up"
+        }
+      }
     }
   ],
   "globalConstraints": {
