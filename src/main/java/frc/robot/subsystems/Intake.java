@@ -191,8 +191,8 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         minorWiggle.addStep(new AgitationStep(HopperPosition.EXTENDED.rotations, 0.5));
 
         for (int i = 1; i <= 5; i++) {
-            minorWiggle.addStep(new AgitationStep(HopperPosition.EXTENDED.rotations - (i * 0.4), 0.25));
-            minorWiggle.addStep(new AgitationStep(HopperPosition.EXTENDED.rotations - (i * 0.2), 0.25));
+            minorWiggle.addStep(new AgitationStep(HopperPosition.EXTENDED.rotations - (i * 0.5), 0.25));
+            minorWiggle.addStep(new AgitationStep(HopperPosition.EXTENDED.rotations - (i * 0.25), 0.25));
         }
 
         wiggle = new AgitationProfile();

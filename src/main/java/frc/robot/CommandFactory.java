@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
@@ -8,7 +9,9 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -22,6 +25,7 @@ import frc.robot.subsystems.FuelLine;
 import frc.robot.subsystems.FuelLine.LoaderVelocity;
 import frc.robot.subsystems.FuelLine.RollerVelocity;
 import frc.robot.subsystems.Shooter.ShooterVelocity;
+import frc.robot.utility.LimelightHelpers.PoseEstimate;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.HopperPosition;
 import frc.robot.subsystems.Intake.IntakeVelocity;
@@ -244,6 +248,7 @@ public class CommandFactory {
                             && shooter.isShooterNearRotationsPerSecond(shooterVelocity, 2)) {
                         fuelLine.setLoaderVelocity(LoaderVelocity.FIRE.rotationsPerSecond);
                         fuelLine.setRollerVelocity(RollerVelocity.GO.rotationsPerSecond);
+                        intake.agitate();
                     } else {
                         fuelLine.stopLoader();
                         fuelLine.stopRoller();
@@ -254,6 +259,7 @@ public class CommandFactory {
                     shooter.setShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond);
                     fuelLine.stopLoader();
                     fuelLine.stopRoller();
+                    intake.resetAgitation();
                 }, shooter, fuelLine);
     }
 

@@ -25,7 +25,7 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
     public enum ShooterVelocity {
         UNJAM(-10, -10),
         WARM(0, 0),
-        HUB(50, 50),
+        HUB(48, 48),
         MINZONE(40, 40),
         MIDZONE(50, 50),
         SEMIMAXZONE(60, 60),
