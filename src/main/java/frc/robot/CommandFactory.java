@@ -352,8 +352,6 @@ public class CommandFactory {
         return Commands.sequence(
                 cmdSetLoaderVelocity(LoaderVelocity.FIRE.rotationsPerSecond),
                 Commands.waitSeconds(5),
-                cmdSetLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond),
-                Commands.waitSeconds(5),
                 cmdStopLoader());
 
     }

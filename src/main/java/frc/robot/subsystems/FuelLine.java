@@ -32,7 +32,6 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
     public enum LoaderVelocity {
         UNJAM(-10),
-        STALL(-RollerVelocity.GO.rotationsPerSecond / LOADER_ROLLER_RATIO),
         FIRE(RollerVelocity.GO.rotationsPerSecond / LOADER_ROLLER_RATIO);
 
         public double ratio;
