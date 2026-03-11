@@ -29,7 +29,6 @@ import frc.robot.utility.FieldZoneToTarget;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.HopperPosition;
 import frc.robot.subsystems.Intake.IntakeVelocity;
-import frc.robot.subsystems.ReactionBar.ReactionBarPosition;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.ReactionBar;
@@ -282,6 +281,7 @@ public class CommandFactory {
                             && shooter.isShooterNearRotationsPerSecond(shooterVelocity, 2)) {
                         fuelLine.setLoaderVelocity(LoaderVelocity.FIRE.rotationsPerSecond);
                         fuelLine.setRollerVelocity(RollerVelocity.GO.rotationsPerSecond);
+                        intake.agitate();
                     } else {
                         fuelLine.stopLoader();
                         fuelLine.stopRoller();
@@ -292,6 +292,7 @@ public class CommandFactory {
                     shooter.setShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond);
                     fuelLine.stopLoader();
                     fuelLine.stopRoller();
+                    intake.resetAgitation();
                 }, shooter, fuelLine);
     }
 
@@ -357,7 +358,7 @@ public class CommandFactory {
 
     private Command shooterTestCommand() {
         return Commands.sequence(
-                cmdSetFuelShooterVelocity(ShooterVelocity.HUB.shooterRotationsPerSecond),
+                cmdSetFuelShooterVelocity(ShooterVelocity.TOWER.shooterRotationsPerSecond),
                 Commands.waitSeconds(5),
                 cmdStopShooter());
     }
@@ -389,15 +390,13 @@ public class CommandFactory {
         return Commands.sequence(
                 cmdSetLoaderVelocity(LoaderVelocity.FIRE.rotationsPerSecond),
                 Commands.waitSeconds(5),
-                cmdSetLoaderVelocity(LoaderVelocity.STALL.rotationsPerSecond),
-                Commands.waitSeconds(5),
                 cmdStopLoader());
 
     }
 
     private Command acceleratorTestCommand() {
         return Commands.sequence(
-                cmdSetFuelAcceleratorVelocity(ShooterVelocity.HUB.acceleratorRotationsPerSecond),
+                cmdSetFuelAcceleratorVelocity(ShooterVelocity.TOWER.acceleratorRotationsPerSecond),
                 Commands.waitSeconds(5),
                 cmdStopAccelerator());
     }

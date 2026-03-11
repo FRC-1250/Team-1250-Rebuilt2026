@@ -25,13 +25,12 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
     public enum ShooterVelocity {
         UNJAM(-10, -10),
         WARM(0, 0),
-        HUB(50, 50),
-        MINZONE(40, 40),
-        MIDZONE(50, 50),
-        SEMIMAXZONE(60, 60),
-        MAXZONE(70, 70),
-        SUPERMAXZONE(75, 75),
-        MAXSPEED(80, 80); // Do not go any faster than this
+        HUB(35, 35),
+        TOWER(48, 48),
+        TRENCH(55, 55),
+        PASS_MIN(60, 60),
+        PASS_MAX(75, 75),
+        MAX(80, 80); // Do not go any faster than this
 
         public double shooterRotationsPerSecond;
         public double acceleratorRotationsPerSecond;
