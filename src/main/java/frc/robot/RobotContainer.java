@@ -159,6 +159,7 @@ public class RobotContainer {
         intake.registerWithHealthMonitor(hm);
         shooter.registerWithHealthMonitor(hm);
         climber.registerWithHealthMonitor(hm);
+        swerve.registerWithHealthMonitor(hm);
         swerve.registerTelemetry(logger::telemeterize);
     }
 
