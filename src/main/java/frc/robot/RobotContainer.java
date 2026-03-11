@@ -165,8 +165,8 @@ public class RobotContainer {
 
         primary.rightTrigger(0.5, singlePlayer)
                 .whileTrue(commandFactory.cmdFireFuel(
-                        ShooterVelocity.HUB.shooterRotationsPerSecond,
-                        ShooterVelocity.HUB.acceleratorRotationsPerSecond)); // Shoot
+                        ShooterVelocity.TOWER.shooterRotationsPerSecond,
+                        ShooterVelocity.TOWER.acceleratorRotationsPerSecond)); // Shoot
 
         primaryLeftTriggerPointToPosition(
                 singlePlayer,
@@ -314,8 +314,8 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("shooter_prep", commandFactory.cmdWarmUpShooter());
         NamedCommands.registerCommand("fire_fuel_with_timeout",
-                commandFactory.cmdFireFuel(ShooterVelocity.HUB.shooterRotationsPerSecond,
-                        ShooterVelocity.HUB.acceleratorRotationsPerSecond)
+                commandFactory.cmdFireFuel(ShooterVelocity.TOWER.shooterRotationsPerSecond,
+                        ShooterVelocity.TOWER.acceleratorRotationsPerSecond)
                         .withTimeout(fireTimeout));
 
         NamedCommands.registerCommand("climb", commandFactory.cmdSetClimberPosition(ClimberPosition.CLIMB.rotations));

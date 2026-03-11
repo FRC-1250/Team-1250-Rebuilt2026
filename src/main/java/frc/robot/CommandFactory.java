@@ -320,7 +320,7 @@ public class CommandFactory {
 
     private Command shooterTestCommand() {
         return Commands.sequence(
-                cmdSetFuelShooterVelocity(ShooterVelocity.HUB.shooterRotationsPerSecond),
+                cmdSetFuelShooterVelocity(ShooterVelocity.TOWER.shooterRotationsPerSecond),
                 Commands.waitSeconds(5),
                 cmdStopShooter());
     }
@@ -358,7 +358,7 @@ public class CommandFactory {
 
     private Command acceleratorTestCommand() {
         return Commands.sequence(
-                cmdSetFuelAcceleratorVelocity(ShooterVelocity.HUB.acceleratorRotationsPerSecond),
+                cmdSetFuelAcceleratorVelocity(ShooterVelocity.TOWER.acceleratorRotationsPerSecond),
                 Commands.waitSeconds(5),
                 cmdStopAccelerator());
     }
