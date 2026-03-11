@@ -2,10 +2,13 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -22,6 +25,7 @@ import frc.robot.subsystems.FuelLine;
 import frc.robot.subsystems.FuelLine.LoaderVelocity;
 import frc.robot.subsystems.FuelLine.RollerVelocity;
 import frc.robot.subsystems.Shooter.ShooterVelocity;
+import frc.robot.utility.FieldZoneToTarget;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.HopperPosition;
 import frc.robot.subsystems.Intake.IntakeVelocity;
@@ -70,6 +74,8 @@ public class CommandFactory {
         return new SwerveVisionLogic(limelight, swerve);
     }
 
+    private Translation2d firingTarget = Translation2d.kZero;
+
     public Rotation2d determineHeading(Translation2d feildHeading) {
         {
             return Rotation2d.fromRadians(
@@ -77,6 +83,38 @@ public class CommandFactory {
                             feildHeading.getY() - swerve.getState().Pose.getY(),
                             feildHeading.getX() - swerve.getState().Pose.getX()))
                     .plus(swerve.getOperatorForwardDirection());
+        }
+    }
+
+    private double distanceToTarget(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    }
+
+    public Rotation2d getRotationTargetBasedOnZone() {
+        Optional<Translation2d> targetOpt = FieldZoneToTarget.getTarget(swerve.getState().Pose);
+
+        targetOpt.ifPresentOrElse(
+                target -> firingTarget = target,
+                () -> firingTarget = Translation2d.kZero);
+
+        return targetOpt
+                .map(target -> determineHeading(target))
+                .orElse(swerve.getOperatorForwardDirection());
+    }
+
+    public ShooterVelocity getShooterVelocityBasedOnDistance() {
+        if (Double.compare(firingTarget.getX(), Translation2d.kZero.getX()) == 0
+                && Double.compare(firingTarget.getY(), Translation2d.kZero.getY()) == 0) {
+            return ShooterVelocity.HUB;
+        }
+
+        var pose = swerve.getState().Pose;
+        var distanceToTarget = distanceToTarget(firingTarget.getX(), firingTarget.getY(), pose.getX(), pose.getY());
+
+        if (distanceToTarget >= 3) {
+            return ShooterVelocity.MAXZONE;
+        } else {
+            return ShooterVelocity.HUB;
         }
     }
 

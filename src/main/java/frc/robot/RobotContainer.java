@@ -45,9 +45,8 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.ReactionBar;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Climber.ClimberPosition;
-import frc.robot.subsystems.FuelLine.LoaderVelocity;
 import frc.robot.telemetry.HealthMonitor;
-import frc.robot.utility.FieldZones;
+import frc.robot.utility.FieldPositions;
 
 public class RobotContainer {
 
@@ -123,18 +122,6 @@ public class RobotContainer {
 
     private final Trigger blueAlliance = new Trigger(() -> DriverStation.getAlliance().get() == Alliance.Blue);
     private final Trigger redAlliance = new Trigger(() -> DriverStation.getAlliance().get() == Alliance.Red);
-    private final Trigger isInBlueSide = new Trigger(() -> FieldZones.blueSide.isRobotInZone(swerve.getState().Pose));
-    private final Trigger isInRedSide = new Trigger(() -> FieldZones.redSide.isRobotInZone(swerve.getState().Pose));
-    private final Trigger isInCenterBlueOutpostRedDepotZone = new Trigger(
-            () -> FieldZones.centerBlueOutpostRedDepot.isRobotInZone(swerve.getState().Pose));
-    private final Trigger isInCenterBlueDepotRedOutpostZone = new Trigger(
-            () -> FieldZones.centerBlueDepotRedOutpost.isRobotInZone(swerve.getState().Pose));
-    private final Trigger isInMinZone = new Trigger(() -> FieldZones.min.isRobotInZone(swerve.getState().Pose));
-    private final Trigger isInMidZone = new Trigger(() -> FieldZones.mid.isRobotInZone(swerve.getState().Pose));
-    private final Trigger isInSemiMaxZone = new Trigger(() -> FieldZones.semimax.isRobotInZone(swerve.getState().Pose));
-    private final Trigger isInMaxZone = new Trigger(() -> FieldZones.max.isRobotInZone(swerve.getState().Pose));
-    private final Trigger isInSuperMaxZone = new Trigger(
-            () -> FieldZones.supermax.isRobotInZone(swerve.getState().Pose));
     /* Auto */
     private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
@@ -181,44 +168,18 @@ public class RobotContainer {
 
         primary.rightTrigger(0.5, singlePlayer)
                 .whileTrue(commandFactory.cmdFireFuel(
-                        ShooterVelocity.HUB.shooterRotationsPerSecond,
-                        ShooterVelocity.HUB.acceleratorRotationsPerSecond)); // Shoot
+                        () -> commandFactory.getShooterVelocityBasedOnDistance().shooterRotationsPerSecond,
+                        () -> commandFactory.getShooterVelocityBasedOnDistance().acceleratorRotationsPerSecond)); // Shoot
 
-        primaryLeftTriggerPointToPosition(
-                singlePlayer,
-                isInBlueSide,
-                blueAlliance,
-                FieldPositions.blueHub);
-
-        primaryLeftTriggerPointToPosition(
-                singlePlayer,
-                isInCenterBlueOutpostRedDepotZone,
-                blueAlliance,
-                FieldPositions.blueOutpostSide);
-
-        primaryLeftTriggerPointToPosition(
-                singlePlayer,
-                isInCenterBlueDepotRedOutpostZone,
-                blueAlliance,
-                FieldPositions.blueDepotSide);
-
-        primaryLeftTriggerPointToPosition(
-                singlePlayer,
-                isInRedSide,
-                redAlliance,
-                FieldPositions.redHub);
-
-        primaryLeftTriggerPointToPosition(
-                singlePlayer,
-                isInCenterBlueOutpostRedDepotZone,
-                redAlliance,
-                FieldPositions.redDepotSide);
-
-        primaryLeftTriggerPointToPosition(
-                singlePlayer,
-                isInCenterBlueDepotRedOutpostZone,
-                redAlliance,
-                FieldPositions.redOutpostSide);
+        primary.leftTrigger(0.5, singlePlayer)
+                .whileTrue(
+                        swerve.applyRequest(
+                                () -> driveWithAngle
+                                        .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
+                                        .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
+                                        .withHeadingPID(8, 0, 0)
+                                        .withTargetDirection(commandFactory.getRotationTargetBasedOnZone()))
+                                .withName("Point centric swerve"));
 
         primary.rightBumper(singlePlayer).onTrue(commandFactory.cmdActivateFuelPickUp()); // Intake out
         primary.leftBumper(singlePlayer).onTrue(commandFactory.cmdDeactivateFuelPickUp()); // Intake in
@@ -230,22 +191,6 @@ public class RobotContainer {
 
         primary.pov(0, 0, singlePlayer).onTrue(Commands.none()); // Climb
         primary.pov(0, 180, singlePlayer).onTrue(Commands.none()); // Unclim
-    }
-
-    private void primaryLeftTriggerPointToPosition(
-            EventLoop eventLoop,
-            Trigger zoneTrigger,
-            Trigger allianceTrigger,
-            Translation2d t2d) {
-        primary.leftTrigger(0.5, eventLoop).and(zoneTrigger).and(allianceTrigger)
-                .whileTrue(
-                        swerve.applyRequest(
-                                () -> driveWithAngle
-                                        .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
-                                        .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
-                                        .withHeadingPID(8, 0, 0)
-                                        .withTargetDirection(commandFactory.determineHeading(t2d)))
-                                .withName("Point centric swerve"));
     }
 
     private void configureTwoPlayerBindings() {
@@ -353,7 +298,4 @@ public class RobotContainer {
 
     }
 
-    private double distanceToTarget(double x1, double y1, double x2, double y2) {
-        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
-    }
 }
