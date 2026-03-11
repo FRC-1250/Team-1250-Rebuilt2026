@@ -10,7 +10,6 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentricFacingAngle;
-import com.ctre.phoenix6.swerve.SwerveRequest.SwerveDriveBrake;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
@@ -37,15 +36,12 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FuelLine;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Intake.HopperPosition;
-import frc.robot.subsystems.ReactionBar.ReactionBarPosition;
 import frc.robot.subsystems.Shooter.ShooterVelocity;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.ReactionBar;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Climber.ClimberPosition;
-import frc.robot.subsystems.FuelLine.LoaderVelocity;
 import frc.robot.telemetry.HealthMonitor;
 import frc.robot.utility.FieldZones;
 
@@ -96,17 +92,12 @@ public class RobotContainer {
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveDriveBrake()
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-
     private final SendableChooser<EventLoop> robotOperationModeChooser = new SendableChooser<>();
     private final EventLoop singlePlayer = new EventLoop();
-    private final EventLoop twoPlayer = new EventLoop();
 
     private final SlewRateLimiter xLimiter = new SlewRateLimiter(14, -18, 0);
     private final SlewRateLimiter yLimiter = new SlewRateLimiter(14, -18, 0);
     private final CommandXboxController primary = new CommandXboxController(0);
-    private final CommandXboxController operator = new CommandXboxController(1);
 
     private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
     private final NetworkTable commandInputs = inst.getTable("SmartDashboard/Commands/Inputs");
@@ -129,19 +120,12 @@ public class RobotContainer {
             () -> FieldZones.centerBlueOutpostRedDepot.isRobotInZone(swerve.getState().Pose));
     private final Trigger isInCenterBlueDepotRedOutpostZone = new Trigger(
             () -> FieldZones.centerBlueDepotRedOutpost.isRobotInZone(swerve.getState().Pose));
-    private final Trigger isInMinZone = new Trigger(() -> FieldZones.min.isRobotInZone(swerve.getState().Pose));
-    private final Trigger isInMidZone = new Trigger(() -> FieldZones.mid.isRobotInZone(swerve.getState().Pose));
-    private final Trigger isInSemiMaxZone = new Trigger(() -> FieldZones.semimax.isRobotInZone(swerve.getState().Pose));
-    private final Trigger isInMaxZone = new Trigger(() -> FieldZones.max.isRobotInZone(swerve.getState().Pose));
-    private final Trigger isInSuperMaxZone = new Trigger(
-            () -> FieldZones.supermax.isRobotInZone(swerve.getState().Pose));
     /* Auto */
     private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
     public RobotContainer() {
         configureRobotOperationMode();
         configureSinglePlayerBindings();
-        configureTwoPlayerBindings();
         configureDevBindings();
         changeEventLoop(singlePlayer);
         configureNamedCommands();
@@ -169,7 +153,6 @@ public class RobotContainer {
 
     private void configureRobotOperationMode() {
         robotOperationModeChooser.setDefaultOption("Single player", singlePlayer);
-        robotOperationModeChooser.addOption("Two player", twoPlayer);
         robotOperationModeChooser.onChange(this::changeEventLoop);
         SmartDashboard.putData("Robot operation mode", robotOperationModeChooser);
     }
@@ -224,11 +207,6 @@ public class RobotContainer {
         primary.rightBumper(singlePlayer).onTrue(commandFactory.cmdActivateFuelPickUp()); // Intake out
         primary.leftBumper(singlePlayer).onTrue(commandFactory.cmdDeactivateFuelPickUp()); // Intake in
 
-        primary.a(singlePlayer).whileTrue(commandFactory.cmdAgitateFuelWithHopper())
-                .onFalse(commandFactory.cmdSetHopperPosition(HopperPosition.EXTENDED.rotations));
-        // primary.b(singlePlayer).whileTrue(commandFactory.cmdAgitateFuelWithReactionBar())
-        // .onFalse(commandFactory.cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations));
-
         primary.pov(0, 0, singlePlayer).onTrue(Commands.none()); // Climb
         primary.pov(0, 180, singlePlayer).onTrue(Commands.none()); // Unclim
     }
@@ -247,10 +225,6 @@ public class RobotContainer {
                                         .withHeadingPID(8, 0, 0)
                                         .withTargetDirection(commandFactory.determineHeading(t2d)))
                                 .withName("Point centric swerve"));
-    }
-
-    private void configureTwoPlayerBindings() {
-        configureCommonBindings(twoPlayer);
     }
 
     private void configureCommonBindings(EventLoop loop) {
@@ -338,9 +312,7 @@ public class RobotContainer {
     private void configureNamedCommands() {
         final double fireTimeout = 5;
 
-        NamedCommands.registerCommand("extend_hopper",
-                commandFactory.cmdSetHopperPosition(HopperPosition.EXTENDED.rotations));
-
+        NamedCommands.registerCommand("shooter_prep", commandFactory.cmdWarmUpShooter());
         NamedCommands.registerCommand("fire_fuel_with_timeout",
                 commandFactory.cmdFireFuel(ShooterVelocity.HUB.shooterRotationsPerSecond,
                         ShooterVelocity.HUB.acceleratorRotationsPerSecond)
@@ -349,12 +321,5 @@ public class RobotContainer {
         NamedCommands.registerCommand("climb", commandFactory.cmdSetClimberPosition(ClimberPosition.CLIMB.rotations));
         NamedCommands.registerCommand("deactivate_fuel_pick_up", commandFactory.cmdDeactivateFuelPickUp());
         NamedCommands.registerCommand("activate_fuel_pick_up", commandFactory.cmdActivateFuelPickUp());
-        NamedCommands.registerCommand("shooter_prep", commandFactory.cmdWarmUpShooter());
-        NamedCommands.registerCommand("reset_starting_fuel", commandFactory.cmdResetStartingFuel());
-
-    }
-
-    private double distanceToTarget(double x1, double y1, double x2, double y2) {
-        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
     }
 }
