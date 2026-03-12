@@ -4,28 +4,21 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class FieldZoneCircle extends FieldZone {
-    public Translation2d target;
-    public double innerRadius;
-    public double outerRadius;
+    private final Translation2d target;
+    private final double radius;
 
     public FieldZoneCircle(
-            double priority,
             Translation2d target,
-            double outerRadius,
-            double innerRadius) {
+            double radius) {
         this.target = target;
-        this.innerRadius = innerRadius;
-        this.outerRadius = outerRadius;
-        this.priority = priority;
+        this.radius = radius;
     }
 
     public FieldZoneCircle(
-            double priority,
             double x,
             double y,
-            double outerRadius,
-            double innerRadius) {
-        this(priority, new Translation2d(x, y), outerRadius, innerRadius);
+            double radius) {
+        this(new Translation2d(x, y), radius);
     }
 
     @Override
@@ -35,8 +28,7 @@ public class FieldZoneCircle extends FieldZone {
 
     @Override
     public boolean isRobotInZone(double x, double y) {
-        double distanceToTarget = distanceToTarget(x, y);
-        return distanceToTarget >= innerRadius && distanceToTarget < outerRadius;
+        return distanceToTarget(x, y) <= radius;
     }
 
     private double distanceToTarget(double x, double y) {

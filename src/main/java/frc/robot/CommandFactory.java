@@ -1,14 +1,13 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -18,14 +17,14 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.SwerveVisionLogic;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FuelLine;
 import frc.robot.subsystems.FuelLine.LoaderVelocity;
 import frc.robot.subsystems.FuelLine.RollerVelocity;
 import frc.robot.subsystems.Shooter.ShooterVelocity;
-import frc.robot.utility.FieldZoneToTarget;
+import frc.robot.utility.RobotLocalization;
+import frc.robot.utility.TargetManager;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.HopperPosition;
 import frc.robot.subsystems.Intake.IntakeVelocity;
@@ -45,6 +44,8 @@ public class CommandFactory {
     private final Leds leds;
     private final Intake intake;
     private final ReactionBar reactionBar;
+    public final RobotLocalization robotLocalization;
+    public final TargetManager targetManager;
 
     public CommandFactory(
             CommandSwerveDrivetrain swerve,
@@ -63,58 +64,26 @@ public class CommandFactory {
         this.limelight = limelight;
         this.leds = leds;
         this.reactionBar = reactionBar;
+        robotLocalization = new RobotLocalization(limelight, swerve);
+        targetManager = new TargetManager(swerve);
     }
 
     /*
      * Drive
      */
 
-    public Command cmdSwerveVisionLogic() {
-        return new SwerveVisionLogic(limelight, swerve);
+    public void updateTargetState() {
+        targetManager.updateTargetState(robotLocalization.getActiveZones(),
+                DriverStation.getAlliance().orElse(Alliance.Blue));
+        SmartDashboard.putString("Targeting State", targetManager.getTargetingState().toString());
     }
 
-    private Translation2d firingTarget = Translation2d.kZero;
-
-    public Rotation2d determineHeading(Translation2d feildHeading) {
-        {
-            return Rotation2d.fromRadians(
-                    Math.atan2(
-                            feildHeading.getY() - swerve.getState().Pose.getY(),
-                            feildHeading.getX() - swerve.getState().Pose.getX()))
-                    .plus(swerve.getOperatorForwardDirection());
-        }
+    public Rotation2d getRotationToTargetBasedOnZone() {
+        return targetManager.getTargetingState().rotation();
     }
 
-    private double distanceToTarget(double x1, double y1, double x2, double y2) {
-        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
-    }
-
-    public Rotation2d getRotationTargetBasedOnZone() {
-        Optional<Translation2d> targetOpt = FieldZoneToTarget.getTarget(swerve.getState().Pose);
-
-        targetOpt.ifPresentOrElse(
-                target -> firingTarget = target,
-                () -> firingTarget = Translation2d.kZero);
-
-        return targetOpt
-                .map(target -> determineHeading(target))
-                .orElse(swerve.getOperatorForwardDirection());
-    }
-
-    public ShooterVelocity getShooterVelocityBasedOnDistance() {
-        if (Double.compare(firingTarget.getX(), Translation2d.kZero.getX()) == 0
-                && Double.compare(firingTarget.getY(), Translation2d.kZero.getY()) == 0) {
-            return ShooterVelocity.HUB;
-        }
-
-        var pose = swerve.getState().Pose;
-        var distanceToTarget = distanceToTarget(firingTarget.getX(), firingTarget.getY(), pose.getX(), pose.getY());
-
-        if (distanceToTarget >= 3) {
-            return ShooterVelocity.MAXZONE;
-        } else {
-            return ShooterVelocity.HUB;
-        }
+    public double getVelocityBasedOnTargetDistance() {
+        return shooter.getTargetVelocity(targetManager.getTargetingState().distance());
     }
 
     /*
@@ -268,17 +237,15 @@ public class CommandFactory {
     /*
      * Shared
      */
-    public Command cmdFireFuel(DoubleSupplier shooterVelocitySupplier,
-            DoubleSupplier acceleratorVelocitySupplier) {
+
+    public Command cmdFireFuel(DoubleSupplier supplier) {
         return Commands.runEnd(
                 () -> {
-                    var accelVelocity = acceleratorVelocitySupplier.getAsDouble();
-                    var shooterVelocity = shooterVelocitySupplier.getAsDouble();
-
-                    shooter.setAcceleratorVelocity(accelVelocity);
-                    shooter.setShooterVelocity(shooterVelocity);
-                    if (shooter.isAcceleratorNearRotationsPerSecond(accelVelocity, 2)
-                            && shooter.isShooterNearRotationsPerSecond(shooterVelocity, 2)) {
+                    var rotationsPerSecond = supplier.getAsDouble();
+                    shooter.setAcceleratorVelocity(rotationsPerSecond);
+                    shooter.setShooterVelocity(rotationsPerSecond);
+                    if (shooter.isAcceleratorNearRotationsPerSecond(rotationsPerSecond, 2)
+                            && shooter.isShooterNearRotationsPerSecond(rotationsPerSecond, 2)) {
                         fuelLine.setLoaderVelocity(LoaderVelocity.FIRE.rotationsPerSecond);
                         fuelLine.setRollerVelocity(RollerVelocity.GO.rotationsPerSecond);
                         intake.agitate();
@@ -288,8 +255,8 @@ public class CommandFactory {
                     }
                 },
                 () -> {
-                    shooter.setAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond);
-                    shooter.setShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond);
+                    shooter.setAcceleratorVelocity(ShooterVelocity.WARM.rotationsPerSecond);
+                    shooter.setShooterVelocity(ShooterVelocity.WARM.rotationsPerSecond);
                     fuelLine.stopLoader();
                     fuelLine.stopRoller();
                     intake.resetAgitation();
@@ -314,9 +281,8 @@ public class CommandFactory {
                 }, reactionBar);
     }
 
-    public Command cmdFireFuel(double shooterVelocity, double acceleratorVelocity) {
-        return cmdFireFuel(() -> shooterVelocity,
-                () -> acceleratorVelocity);
+    public Command cmdFireFuel(double rotationsPerSecond) {
+        return cmdFireFuel(() -> rotationsPerSecond);
     }
 
     public Command cmdActivateFuelPickUp() {
@@ -337,8 +303,8 @@ public class CommandFactory {
     }
 
     public Command cmdWarmUpShooter() {
-        return cmdSetFuelShooterVelocity(ShooterVelocity.WARM.shooterRotationsPerSecond)
-                .andThen(cmdSetFuelAcceleratorVelocity(ShooterVelocity.WARM.acceleratorRotationsPerSecond));
+        return cmdSetFuelShooterVelocity(ShooterVelocity.WARM.rotationsPerSecond)
+                .andThen(cmdSetFuelAcceleratorVelocity(ShooterVelocity.WARM.rotationsPerSecond));
     }
 
     public Command cmdResetStartingFuel() {
@@ -346,8 +312,8 @@ public class CommandFactory {
                 cmdSetHopperPosition(HopperPosition.EXTENDED.rotations),
                 cmdStopHopper(),
                 // cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations),
-                cmdSetFuelShooterVelocity(ShooterVelocity.UNJAM.shooterRotationsPerSecond),
-                cmdSetFuelAcceleratorVelocity(ShooterVelocity.UNJAM.acceleratorRotationsPerSecond),
+                cmdSetFuelShooterVelocity(ShooterVelocity.UNJAM.rotationsPerSecond),
+                cmdSetFuelAcceleratorVelocity(ShooterVelocity.UNJAM.rotationsPerSecond),
                 cmdSetLoaderVelocity(LoaderVelocity.UNJAM.rotationsPerSecond),
                 cmdSetRollerVelocity(RollerVelocity.UNJAM.rotationsPerSecond));
     }
@@ -358,7 +324,7 @@ public class CommandFactory {
 
     private Command shooterTestCommand() {
         return Commands.sequence(
-                cmdSetFuelShooterVelocity(ShooterVelocity.TOWER.shooterRotationsPerSecond),
+                cmdSetFuelShooterVelocity(ShooterVelocity.TOWER.rotationsPerSecond),
                 Commands.waitSeconds(5),
                 cmdStopShooter());
     }
@@ -396,7 +362,7 @@ public class CommandFactory {
 
     private Command acceleratorTestCommand() {
         return Commands.sequence(
-                cmdSetFuelAcceleratorVelocity(ShooterVelocity.TOWER.acceleratorRotationsPerSecond),
+                cmdSetFuelAcceleratorVelocity(ShooterVelocity.TOWER.rotationsPerSecond),
                 Commands.waitSeconds(5),
                 cmdStopAccelerator());
     }

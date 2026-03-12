@@ -57,6 +57,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
+        robotContainer.commandFactory.robotLocalization.processMegaTag2Measurement();
+        robotContainer.commandFactory.robotLocalization.processActiveZone();
+        robotContainer.commandFactory.updateTargetState();
         CommandScheduler.getInstance().run();
         SmartDashboard.putNumber("Match time", DriverStation.getMatchTime());
     }

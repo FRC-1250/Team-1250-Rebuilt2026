@@ -2,60 +2,58 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.utility;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Limelight;
 import frc.robot.utility.LimelightHelpers.PoseEstimate;
 import frc.robot.utility.LimelightHelpers.RawFiducial;
 
-public class SwerveVisionLogic extends Command {
-    public Limelight cmdLimelight;
-    public CommandSwerveDrivetrain cmdSwerveDrivetrain;
+public class RobotLocalization {
+    private final Limelight limelight;
+    private final CommandSwerveDrivetrain swerveDrivetrain;
+
     private double tagAmbiguous = 0;
     private double tagTooSmall = 0;
     private double resultOutOfBounds = 0;
     private double resultTeleported = 0;
     private double framesProcessed = 0;
     private double frameRejectionRate = 0;
+    private int teleportFrameCounter = 0;
     private double xTrust, yTrust = 10.0;
 
-    private double maxRadiansPerSecond = 2;
-    private double minAllowedViewableTagDecimal = 0.05; // 0 to 100 so 0.05 is 5%
-    private double maxTeleportDistance = 4.5;
-    private double maxAllowedTagAmbiguity = 0.6;
-    private int maxFramesBeforeTeleport = 10;
-    private int teleportFrameCounter = 0;
-    private double fieldBuffer = Units.feetToMeters(0);
-    private double fieldLength = Units.feetToMeters(52);
-    private double fieldWidth = Units.feetToMeters(27);
+    private final double maxRadiansPerSecond = 2;
+    private final double minAllowedViewableTagDecimal = 0.05; // 0 to 100 so 0.05 is 5%
+    private final double maxTeleportDistance = 4.5;
+    private final double maxAllowedTagAmbiguity = 0.6;
+    private final int maxFramesBeforeTeleport = 10;
+    private final double fieldBuffer = Units.feetToMeters(0);
+    private final double fieldLength = Units.feetToMeters(52);
+    private final double fieldWidth = Units.feetToMeters(27);
+
+    private List<FieldLocalization.Zones> activeZones = new ArrayList<>();
 
     /** Creates a new SwerveVisionLogic. */
-    public SwerveVisionLogic(Limelight Limelight, CommandSwerveDrivetrain swerveDrivetrain) {
-        cmdLimelight = Limelight;
-        cmdSwerveDrivetrain = swerveDrivetrain;
-        addRequirements(Limelight);
+    public RobotLocalization(Limelight limelight, CommandSwerveDrivetrain swerveDrivetrain) {
+        this.limelight = limelight;
+        this.swerveDrivetrain = swerveDrivetrain;
     }
 
-    // Called when the command is initially scheduled.
-    @Override
-    public void initialize() {
-
-    }
-
-    // Called every time the scheduler runs while the command is scheduled.
-    @Override
-    public void execute() {
-        SwerveDriveState driveState = cmdSwerveDrivetrain.getState();
-        cmdLimelight.setRobotOrientation(driveState.Pose.getRotation().getDegrees());
-        PoseEstimate megaTag = cmdLimelight.getBotPoseEstimate_wpiBlue_MegaTag2();
+    public void processMegaTag2Measurement() {
+        SwerveDriveState driveState = swerveDrivetrain.getState();
+        limelight.setRobotOrientation(driveState.Pose.getRotation().getDegrees());
+        PoseEstimate megaTag = limelight.getBotPoseEstimate_wpiBlue_MegaTag2();
         framesProcessed++;
 
         if (Math.abs(Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond)) > maxRadiansPerSecond)
@@ -93,8 +91,8 @@ public class SwerveVisionLogic extends Command {
 
         xTrust = yTrust = calculateTrust(megaTag);
 
-        cmdSwerveDrivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(xTrust, yTrust, 9999999));
-        cmdSwerveDrivetrain.addVisionMeasurement(megaTag.pose, megaTag.timestampSeconds);
+        swerveDrivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(xTrust, yTrust, 9999999));
+        swerveDrivetrain.addVisionMeasurement(megaTag.pose, megaTag.timestampSeconds);
         frameRejectionRate = (tagAmbiguous + tagTooSmall + resultOutOfBounds + resultTeleported)
                 / framesProcessed;
         SmartDashboard.putNumber("Rejection rate", frameRejectionRate);
@@ -148,7 +146,7 @@ public class SwerveVisionLogic extends Command {
             // it's probably real just let it jump.
             if (teleportFrameCounter > maxFramesBeforeTeleport) {
                 teleportFrameCounter = 0;
-                cmdSwerveDrivetrain.resetPose(visionPose);
+                swerveDrivetrain.resetPose(visionPose);
                 return false;
             }
             return true;
@@ -157,9 +155,17 @@ public class SwerveVisionLogic extends Command {
         return false;
     }
 
-    // Returns true when the command should end.
-    @Override
-    public boolean isFinished() {
-        return false;
+    public void processActiveZone() {
+        Pose2d robotPose = swerveDrivetrain.getState().Pose;
+
+        activeZones = Arrays.stream(FieldLocalization.Zones.values())
+                .filter(z -> z.area.isRobotInZone(robotPose))
+                .toList();
+
+        SmartDashboard.putString("Zones", activeZones.toString());
+    }
+
+    public List<FieldLocalization.Zones> getActiveZones() {
+        return activeZones;
     }
 }

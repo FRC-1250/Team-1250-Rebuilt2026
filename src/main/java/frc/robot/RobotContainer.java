@@ -15,13 +15,12 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -43,7 +42,6 @@ import frc.robot.subsystems.ReactionBar;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Climber.ClimberPosition;
 import frc.robot.telemetry.HealthMonitor;
-import frc.robot.utility.FieldPositions;
 
 public class RobotContainer {
 
@@ -112,8 +110,8 @@ public class RobotContainer {
     private final DoubleEntry climberPosition = commandInputs.getDoubleTopic("climberPosition").getEntry(0.0);
     private final DoubleEntry hopperposition = commandInputs.getDoubleTopic("hopperPosition").getEntry(0.0);
 
-    private final Trigger blueAlliance = new Trigger(() -> DriverStation.getAlliance().get() == Alliance.Blue);
-    private final Trigger redAlliance = new Trigger(() -> DriverStation.getAlliance().get() == Alliance.Red);
+    private Trigger robotIsAligned;
+
     /* Auto */
     private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
@@ -154,26 +152,43 @@ public class RobotContainer {
     private void configureSinglePlayerBindings() {
         configureCommonBindings(singlePlayer);
 
+        robotIsAligned = new Trigger(singlePlayer,
+                () -> commandFactory.targetManager.getTargetingState().isAligned());
+
         primary.start()
-                .onTrue(swerve.runOnce(() -> swerve.seedFieldCentric()).withName("Reseed drive"));
+                .onTrue(swerve.runOnce(() -> swerve.seedFieldCentric()).withName("Reseed swerve"));
 
-        primary.rightTrigger(0.5, singlePlayer)
+        primary.rightTrigger(0.5, singlePlayer).and(primary.leftTrigger(0.5, singlePlayer)).and(robotIsAligned)
                 .whileTrue(commandFactory.cmdFireFuel(
-                        () -> commandFactory.getShooterVelocityBasedOnDistance().shooterRotationsPerSecond,
-                        () -> commandFactory.getShooterVelocityBasedOnDistance().acceleratorRotationsPerSecond)); // Shoot
+                        () -> commandFactory.getVelocityBasedOnTargetDistance())
+                        .withName("Fire by distance")); // Shoot
 
-        primary.leftTrigger(0.5, singlePlayer)
-                .whileTrue(
-                        swerve.applyRequest(
-                                () -> driveWithAngle
-                                        .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
-                                        .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
-                                        .withHeadingPID(8, 0, 0)
-                                        .withTargetDirection(commandFactory.getRotationTargetBasedOnZone()))
-                                .withName("Point centric swerve"));
+        primary.rightTrigger(0.5, singlePlayer).and(primary.leftTrigger(0.5, singlePlayer).negate())
+                .whileTrue(commandFactory.cmdFireFuel(ShooterVelocity.TOWER.rotationsPerSecond)
+                        .withName("Fire")); // Shoot
 
-        primary.rightBumper(singlePlayer).onTrue(commandFactory.cmdActivateFuelPickUp()); // Intake out
-        primary.leftBumper(singlePlayer).onTrue(commandFactory.cmdDeactivateFuelPickUp()); // Intake in
+        primary.leftTrigger(0.5, singlePlayer).whileTrue(
+                swerve.applyRequest(
+                        () -> driveWithAngle
+                                .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
+                                .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
+                                .withHeadingPID(15, 0, 0)
+                                .withTargetDirection(commandFactory.getRotationToTargetBasedOnZone()))
+                        .withName("Point centric swerve"));
+
+        primary.a(singlePlayer).whileTrue(
+                swerve.applyRequest(
+                        () -> driveWithAngle
+                                .withVelocityX(yLimiter.calculate(-primary.getLeftY() * (MaxSpeed / 3)))
+                                .withVelocityY(xLimiter.calculate(-primary.getLeftX() * (MaxSpeed / 3)))
+                                .withHeadingPID(15, 0, 0)
+                                .withTargetDirection(Rotation2d.kZero))
+                        .withName("Snap forward"));
+
+        primary.rightBumper(singlePlayer)
+                .onTrue(commandFactory.cmdActivateFuelPickUp().withName("Activate fuel pick up")); // Intake out
+        primary.leftBumper(singlePlayer)
+                .onTrue(commandFactory.cmdDeactivateFuelPickUp().withName("Deactivate fuel pick up")); // Intake in
 
         primary.pov(0, 0, singlePlayer).onTrue(Commands.none()); // Climb
         primary.pov(0, 180, singlePlayer).onTrue(Commands.none()); // Unclim
@@ -187,7 +202,6 @@ public class RobotContainer {
                         .withRotationalRate(-primary.getRightX() * MaxAngularRate))
                         .withName("Field centric swerve"));
 
-        limelight.setDefaultCommand(commandFactory.cmdSwerveVisionLogic().ignoringDisable(true));
         configureDevBindings();
     }
 
@@ -245,8 +259,7 @@ public class RobotContainer {
                 commandFactory.cmdSetFuelShooterVelocity(0));
 
         SmartDashboard.putData("Commands/Shared/Fire fuel",
-                commandFactory.cmdFireFuel(shooterVelocity.get(),
-                        acceleratorVelocity.get()));
+                commandFactory.cmdFireFuel(shooterVelocity.get()));
 
         SmartDashboard.putData("Commands/Shared/Prove out", commandFactory.proveOut());
     }
@@ -266,8 +279,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("shooter_prep", commandFactory.cmdWarmUpShooter());
         NamedCommands.registerCommand("fire_fuel_with_timeout",
-                commandFactory.cmdFireFuel(ShooterVelocity.TOWER.shooterRotationsPerSecond,
-                        ShooterVelocity.TOWER.acceleratorRotationsPerSecond)
+                commandFactory.cmdFireFuel(ShooterVelocity.TOWER.rotationsPerSecond)
                         .withTimeout(fireTimeout));
 
         NamedCommands.registerCommand("climb", commandFactory.cmdSetClimberPosition(ClimberPosition.CLIMB.rotations));
