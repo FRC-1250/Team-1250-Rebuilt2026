@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.3524436536180313,
-        "y": 3.3195136417556355
+        "x": 1.5,
+        "y": 4.020480132450331
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.10244856017954,
-        "y": 3.317947354208637
+        "x": 1.25,
+        "y": 4.020480132450331
       },
       "isLocked": false,
       "linkedName": "OutpostPostShoot"
@@ -20,8 +20,8 @@
         "y": 3.3087544483985765
       },
       "prevControl": {
-        "x": 1.7416579846309208,
-        "y": 3.3137642079883953
+        "x": 1.741708185053381,
+        "y": 3.3087544483985765
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 16.69924423399358
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

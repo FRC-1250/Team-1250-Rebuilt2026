@@ -39,12 +39,6 @@
           "data": {
             "name": "fire_fuel_with_timeout"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "OutpostClimbPrep"
-          }
         }
       ]
     }
