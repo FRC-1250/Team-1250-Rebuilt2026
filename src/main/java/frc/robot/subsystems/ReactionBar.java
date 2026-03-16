@@ -29,8 +29,9 @@ import frc.robot.utility.AgitationStep;
 
 public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
     public enum ReactionBarPosition {
-        HOME(0.125),
-        EXTENDED(0.515);
+        HOME(0.515625),
+        EXTENDED(0.656738),
+        THREAD(0.515625);
 
         public double rotations;
 
@@ -53,7 +54,7 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
 
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
-        motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
+        motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
         motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
         Slot1Configs positionGains = new Slot1Configs()
@@ -78,6 +79,10 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
 
         configureAgitiationProfiles();
         active = wave;
+    }
+
+    public void stopReactionBar() {
+        reactionBar.stopMotor();
     }
 
     @Override
