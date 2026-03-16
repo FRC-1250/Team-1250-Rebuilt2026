@@ -31,11 +31,11 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
     public enum ShooterVelocity {
         UNJAM(-10),
-        WARM(0),
-        MIN(35),
+        WARM(10),
+        MIN(40),
         TOWER(48),
         TRENCH(55),
-        MAX(75); // Do not go any faster than this
+        MAX(80); // Do not go any faster than this
 
         public double rotationsPerSecond;
 
