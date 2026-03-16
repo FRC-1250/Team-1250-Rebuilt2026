@@ -176,6 +176,15 @@ public class RobotContainer {
                                 .withTargetDirection(commandFactory.getRotationToTargetBasedOnZone()))
                         .withName("Point centric swerve"));
 
+        primary.b(singlePlayer).whileTrue(
+                swerve.applyRequest(
+                        () -> driveWithAngle
+                                .withVelocityX(yLimiter.calculate(-primary.getLeftY() * (MaxSpeed / 3)))
+                                .withVelocityY(xLimiter.calculate(-primary.getLeftX() * (MaxSpeed / 3)))
+                                .withHeadingPID(15, 0, 0)
+                                .withTargetDirection(Rotation2d.k180deg))
+                        .withName("Snap forward"));
+
         primary.a(singlePlayer).whileTrue(
                 swerve.applyRequest(
                         () -> driveWithAngle
