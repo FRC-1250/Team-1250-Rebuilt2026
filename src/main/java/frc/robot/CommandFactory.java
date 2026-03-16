@@ -31,6 +31,7 @@ import frc.robot.subsystems.Intake.IntakeVelocity;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.ReactionBar;
+import frc.robot.subsystems.ReactionBar.ReactionBarPosition;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Climber.ClimberPosition;
 
@@ -124,7 +125,7 @@ public class CommandFactory {
     public Command cmdSetHopperPosition(DoubleSupplier supplier) {
         return Commands.sequence(
                 Commands.runOnce(() -> intake.setHopperPosition(supplier.getAsDouble()), intake),
-                Commands.waitUntil(() -> intake.isHopperNearPosition(supplier.getAsDouble(), 0.1)));
+                Commands.waitUntil(() -> intake.isHopperNearPosition(supplier.getAsDouble(), 0.2)));
     }
 
     public Command cmdStopHopper() {
@@ -260,6 +261,8 @@ public class CommandFactory {
                     fuelLine.stopLoader();
                     fuelLine.stopRoller();
                     intake.resetAgitation();
+                    intake.setHopperPosition(HopperPosition.EXTENDED.rotations);
+                    intake.stopHopper();
                 }, shooter, fuelLine);
     }
 
@@ -297,25 +300,18 @@ public class CommandFactory {
     public Command cmdDeactivateFuelPickUp() {
         return Commands.sequence(
                 cmdStopIntake(),
-                // cmdSetReactionBarPosition(ReactionBarPosition.HOME.rotations),
+                cmdStopReactionBar(),
                 cmdSetHopperPosition(HopperPosition.HOME.rotations))
                 .withName("Deactivate fuel pick up");
+    }
+
+    public Command cmdStopReactionBar() {
+        return Commands.runOnce(() -> reactionBar.stopReactionBar(), reactionBar);
     }
 
     public Command cmdWarmUpShooter() {
         return cmdSetFuelShooterVelocity(ShooterVelocity.WARM.rotationsPerSecond)
                 .andThen(cmdSetFuelAcceleratorVelocity(ShooterVelocity.WARM.rotationsPerSecond));
-    }
-
-    public Command cmdResetStartingFuel() {
-        return Commands.sequence(
-                cmdSetHopperPosition(HopperPosition.EXTENDED.rotations),
-                cmdStopHopper(),
-                // cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations),
-                cmdSetFuelShooterVelocity(ShooterVelocity.UNJAM.rotationsPerSecond),
-                cmdSetFuelAcceleratorVelocity(ShooterVelocity.UNJAM.rotationsPerSecond),
-                cmdSetLoaderVelocity(LoaderVelocity.UNJAM.rotationsPerSecond),
-                cmdSetRollerVelocity(RollerVelocity.UNJAM.rotationsPerSecond));
     }
 
     /*
