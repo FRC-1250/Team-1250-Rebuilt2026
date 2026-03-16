@@ -298,5 +298,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("climb", commandFactory.cmdSetClimberPosition(ClimberPosition.CLIMB.rotations));
         NamedCommands.registerCommand("deactivate_fuel_pick_up", commandFactory.cmdDeactivateFuelPickUp());
         NamedCommands.registerCommand("activate_fuel_pick_up", commandFactory.cmdActivateFuelPickUp());
+        NamedCommands.registerCommand("reset_starting_fuel", commandFactory.cmdResetStartingFuel());
+
     }
 }

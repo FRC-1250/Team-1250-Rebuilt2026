@@ -314,6 +314,16 @@ public class CommandFactory {
                 .andThen(cmdSetFuelAcceleratorVelocity(ShooterVelocity.WARM.rotationsPerSecond));
     }
 
+    public Command cmdResetStartingFuel() {
+        return Commands.sequence(
+                cmdSetHopperPosition(HopperPosition.EXTENDED.rotations),
+                cmdStopHopper(),
+                cmdSetFuelShooterVelocity(ShooterVelocity.UNJAM.rotationsPerSecond),
+                cmdSetFuelAcceleratorVelocity(ShooterVelocity.UNJAM.rotationsPerSecond),
+                cmdSetLoaderVelocity(LoaderVelocity.UNJAM.rotationsPerSecond),
+                cmdSetRollerVelocity(RollerVelocity.UNJAM.rotationsPerSecond));
+    }
+
     /*
      * Prove Out
      */
