@@ -7,25 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DepotSideCenterStart"
+            "pathName": "LeftAllianceZoneToNeutralZone"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "DepotSideCenterCollect"
+            "pathName": "LeftNeutralZoneCollect"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "DepotSideCenterSweep"
+            "pathName": "LeftNeutralZoneToAllianceZone"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "DepotSideCenterPostSweep"
+            "pathName": "LeftFiringPosition"
           }
         },
         {

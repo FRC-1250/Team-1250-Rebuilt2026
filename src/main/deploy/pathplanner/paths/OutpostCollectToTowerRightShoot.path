@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.636650602409638,
-        "y": 4.056855421686747
+        "x": 0.75,
+        "y": 0.65
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.636650602409638,
-        "y": 4.056855421686747
+        "x": 1.75,
+        "y": 0.65
       },
       "isLocked": false,
-      "linkedName": "DepotSideStart"
+      "linkedName": "OutpostCollectEnd"
     },
     {
       "anchor": {
-        "x": 0.85,
-        "y": 7.16
+        "x": 1.6,
+        "y": 3.31
       },
       "prevControl": {
-        "x": 2.1490381056766594,
-        "y": 6.41
+        "x": 2.242787609686539,
+        "y": 2.543955556881022
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "DepotIntake"
+      "linkedName": "TowerRightShoot"
     }
   ],
   "rotationTargets": [],
@@ -33,20 +33,20 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "activate_fuel_pick_up",
-      "waypointRelativePos": 0.4975265017668047,
+      "name": "shooter_prep",
+      "waypointRelativePos": 0.5003533568904647,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "activate_fuel_pick_up"
+          "name": "shooter_prep"
         }
       }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 5.23,
-    "maxAcceleration": 5.23,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -54,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -135.0
+    "rotation": 11.848
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

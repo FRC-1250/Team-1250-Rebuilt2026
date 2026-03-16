@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DepotSideCenterStart"
+            "pathName": "RightBumpToOutpostCollect"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "DepotSideCenterCollect"
+            "pathName": "OutpostCollect"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "DepotSideCenterFinish"
+            "pathName": "OutpostCollectToTowerRightShoot"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DepotClimbPrep"
+            "pathName": "TowerRightShootToTowerRight"
           }
         }
       ]

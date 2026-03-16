@@ -3,35 +3,42 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.712686746987952,
-        "y": 5.991060240963854
+        "x": 3.64,
+        "y": 4.049519867549668
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.7557235204161845,
-        "y": 6.30307684831854
+        "x": 2.8900000000000006,
+        "y": 5.348557973226326
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "CenterHub"
     },
     {
       "anchor": {
-        "x": 7.6997627520759195,
-        "y": 4.728967971530249
+        "x": 0.9,
+        "y": 7.16
       },
       "prevControl": {
-        "x": 7.689003558718861,
-        "y": 5.18085409252669
+        "x": 2.128728066433486,
+        "y": 6.2996353454734315
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "DepotCollectStart"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "activate_fuel_pick_up",
+      "waypointRelativePos": 0.2501766784452377,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 2.0,
     "maxAcceleration": 2.0,
@@ -41,14 +48,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -90.0
+    "velocity": 0.75,
+    "rotation": -135.0
   },
   "reversed": false,
-  "folder": "unused",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

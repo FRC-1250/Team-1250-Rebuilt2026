@@ -7,31 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "OutpostSideCenterStart"
+            "pathName": "RightAllianceZoneToNeutralZone"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "OutpostSideCenterCollect"
+            "pathName": "RightNeutralZoneCollect"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "OutpostSideCenterFinish"
+            "pathName": "RightNeutralZoneToAllianceZone"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightFiringPosition"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "fire_fuel_with_timeout"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "OutpostClimbPrep"
           }
         }
       ]

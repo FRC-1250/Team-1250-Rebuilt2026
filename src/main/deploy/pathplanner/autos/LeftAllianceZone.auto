@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Outpost"
+            "pathName": "LeftBumpToDepotCollectStart"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "OutpostCenterRightBump"
+            "pathName": "DepotCollect"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "CenterRightShoot"
+            "pathName": "DepotCollectEndToTowerLeft"
           }
         },
         {

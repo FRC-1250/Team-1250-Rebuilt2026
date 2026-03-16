@@ -7,25 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "OutpostSideCenterStart"
+            "pathName": "CenterToDepotCollectStart"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "OutpostSideCenterCollect"
+            "pathName": "DepotCollect"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "OutpostSideCenterSweep"
+            "pathName": "DepotToOutpost"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "OutpostSideCenterPostSweep"
+            "pathName": "OutpostCollect"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "OutpostCollectToTowerRightShoot"
           }
         },
         {

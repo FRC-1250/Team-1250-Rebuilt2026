@@ -12,7 +12,7 @@
         "y": 4.450253012048193
       },
       "isLocked": false,
-      "linkedName": "OutpostSideCenterCollect"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -25,7 +25,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "OutpostSideCenterSweep"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 5.23,
-    "maxAcceleration": 5.23,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -45,7 +45,7 @@
     "rotation": -91.16913932790739
   },
   "reversed": false,
-  "folder": null,
+  "folder": "unused",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 90.0
