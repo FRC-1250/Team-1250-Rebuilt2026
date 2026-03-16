@@ -183,7 +183,7 @@ public class RobotContainer {
                                 .withVelocityY(xLimiter.calculate(-primary.getLeftX() * (MaxSpeed / 3)))
                                 .withHeadingPID(15, 0, 0)
                                 .withTargetDirection(Rotation2d.k180deg))
-                        .withName("Snap forward"));
+                        .withName("Snap backwards"));
 
         primary.a(singlePlayer).whileTrue(
                 swerve.applyRequest(
