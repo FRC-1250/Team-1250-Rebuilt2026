@@ -31,7 +31,6 @@ import frc.robot.subsystems.Intake.IntakeVelocity;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.ReactionBar;
-import frc.robot.subsystems.ReactionBar.ReactionBarPosition;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Climber.ClimberPosition;
 
@@ -544,7 +543,6 @@ public class CommandFactory {
                 hopperTestCommand(),
                 intakeTestCommand(),
                 acceleratorTestCommand(),
-                shooterTestCommand(),
-                climberTestCommand());
+                shooterTestCommand());
     }
 }
