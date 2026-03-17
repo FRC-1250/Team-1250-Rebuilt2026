@@ -102,10 +102,6 @@ public class RobotContainer {
     private final DoubleEntry intakeVelocity = commandInputs.getDoubleTopic("intakeVelocity").getEntry(0.0);
     private final DoubleEntry rollerVelocity = commandInputs.getDoubleTopic("rollerVelocity").getEntry(0.0);
     private final DoubleEntry loaderLoaderVelocity = commandInputs.getDoubleTopic("loaderLoaderVelocity").getEntry(0.0);
-    private final DoubleEntry loaderLoaderPosition = commandInputs.getDoubleTopic("loaderLoaderPosition")
-            .getEntry(0.0);;
-    private final DoubleEntry acceleratorVelocity = commandInputs.getDoubleTopic("acceleratorVelocity")
-            .getEntry(0.0);
     private final DoubleEntry shooterVelocity = commandInputs.getDoubleTopic("shooterVelocity").getEntry(0.0);
     private final DoubleEntry climberPosition = commandInputs.getDoubleTopic("climberPosition").getEntry(0.0);
     private final DoubleEntry hopperposition = commandInputs.getDoubleTopic("hopperPosition").getEntry(0.0);
@@ -228,13 +224,9 @@ public class RobotContainer {
         intakeVelocity.set(0);
         rollerVelocity.set(0);
         loaderLoaderVelocity.set(0);
-        loaderLoaderPosition.set(0);
-        acceleratorVelocity.set(0);
         shooterVelocity.set(0);
         climberPosition.set(0);
         hopperposition.set(0);
-
-        SmartDashboard.putData("Commands/Drivetrain/Prove out", commandFactory.driveProveOut());
 
         SmartDashboard.putData("Commands/Intake/Set intake velocity",
                 commandFactory.cmdSetIntakeVelocity(() -> intakeVelocity.get()));
@@ -258,19 +250,17 @@ public class RobotContainer {
         SmartDashboard.putData("Commands/Fuel line/Stop Loader velocity",
                 commandFactory.cmdSetLoaderVelocity(0));
 
-        SmartDashboard.putData("Commands/Shooter/Set accel velocity",
-                commandFactory.cmdSetFuelAcceleratorVelocity(() -> acceleratorVelocity.get()));
         SmartDashboard.putData("Commands/Shooter/Set shoot velocity",
-                commandFactory.cmdSetFuelShooterVelocity(() -> shooterVelocity.get()));
-        SmartDashboard.putData("Commands/Shooter/Stop accel",
-                commandFactory.cmdSetFuelAcceleratorVelocity(0));
+                commandFactory.cmdSetFuelShooterVelocity(() -> shooterVelocity.get())
+                        .andThen(commandFactory.cmdSetFuelAcceleratorVelocity(() -> shooterVelocity.get())));
         SmartDashboard.putData("Commands/Shooter/Stop shooter",
-                commandFactory.cmdSetFuelShooterVelocity(0));
+                commandFactory.cmdSetFuelShooterVelocity(0).andThen(commandFactory.cmdSetFuelAcceleratorVelocity(0)));
 
         SmartDashboard.putData("Commands/Shared/Fire fuel",
                 commandFactory.cmdFireFuel(shooterVelocity.get()));
 
         SmartDashboard.putData("Commands/Shared/Prove out", commandFactory.proveOut());
+        SmartDashboard.putData("Commands/Drivetrain/Prove out", commandFactory.driveProveOut());
     }
 
     private void configureAutoCommands() {
