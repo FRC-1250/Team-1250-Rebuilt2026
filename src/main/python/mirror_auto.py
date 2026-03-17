@@ -9,6 +9,23 @@ AUTO_DIR = os.path.join(BASE_PP_DIR, 'autos')
 PATH_DIR = os.path.join(BASE_PP_DIR, 'paths')
 FIELD_WIDTH = 8.21
 
+def swap_side_string(text, direction):
+    """
+    Swaps 'Left' for 'Right' (or vice versa) while keeping the same 
+    Capitalization (e.g., Left -> Right, left -> right).
+    """
+    if not text:
+        return text
+    
+    src, dest = ("Left", "Right") if direction == "LtoR" else ("Right", "Left")
+    
+    # Handle Title Case (Left -> Right)
+    text = text.replace(src, dest)
+    # Handle lowercase (left -> right)
+    text = text.replace(src.lower(), dest.lower())
+    
+    return text
+
 def mirror_y_coords(obj):
     if isinstance(obj, dict):
         if "y" in obj and isinstance(obj["y"], (int, float)):
@@ -30,17 +47,26 @@ def mirror_path_file(path_name, direction):
     with open(old_path, 'r') as f:
         data = json.load(f)
 
+    # 1. Flip all Y coordinates
     mirror_y_coords(data)
 
+    # 2. Flip all rotations
     for rt in data.get("rotationTargets", []):
         rt["rotationDegrees"] *= -1
     for key in ["goalEndState", "idealStartingState"]:
         if key in data:
             data[key]["rotation"] *= -1
 
-    src, dest = ("Left", "Right") if direction == "LtoR" else ("Right", "Left")
-    new_path_name = path_name.replace(src, dest).replace(src.lower(), dest.lower())
-    
+    # 3. FIX: Update linked waypoint names (e.g., 'LeftStation' -> 'RightStation')
+    for wp in data.get("waypoints", []):
+        if wp.get("linkedName"):
+            original_link = wp["linkedName"]
+            wp["linkedName"] = swap_side_string(original_link, direction)
+            if original_link != wp["linkedName"]:
+                print(f"    🔗 Updated link: {original_link} -> {wp['linkedName']}")
+
+    # 4. Determine the new filename
+    new_path_name = swap_side_string(path_name, direction)
     if new_path_name == path_name:
         new_path_name = f"{path_name}_mirrored"
 
@@ -55,9 +81,8 @@ def process_auto(auto_filename, direction):
         auto_filename += '.auto'
 
     auto_path = os.path.join(AUTO_DIR, auto_filename)
-    
     if not os.path.exists(auto_path):
-        print(f"❌ Error: Could not find '{auto_filename}' in {AUTO_DIR}")
+        print(f"❌ Error: Could not find '{auto_filename}'")
         return
 
     print(f"\n🚀 Mirroring Auto: {auto_filename} ({direction})")
@@ -81,9 +106,8 @@ def process_auto(auto_filename, direction):
 
     update_paths(auto_data.get("command", {}))
 
-    src, dest = ("Left", "Right") if direction == "LtoR" else ("Right", "Left")
-    new_auto_name = auto_filename.replace(src, dest).replace(src.lower(), dest.lower())
-    
+    # Rename the Auto file itself
+    new_auto_name = swap_side_string(auto_filename, direction)
     if new_auto_name == auto_filename:
         new_auto_name = f"mirrored_{auto_filename}"
 
@@ -94,23 +118,12 @@ def process_auto(auto_filename, direction):
     print(f"🎉 SUCCESS! New Auto created: {new_auto_name}\n")
 
 if __name__ == "__main__":
-    # Customizing the help menu for students
     parser = argparse.ArgumentParser(
-        description="FRC Path Mirror Tool: Flips a Left auto to the Right side (or vice versa).",
+        description="FRC Path Mirror Tool: Flips an auto and updates all linked waypoints.",
         formatter_class=argparse.RawTextHelpFormatter
     )
-    
-    parser.add_argument(
-        "filename", 
-        metavar="AUTO_FILE", 
-        help="The name of your .auto file (e.g., 'LeftScore.auto')"
-    )
-    
-    parser.add_argument(
-        "direction", 
-        choices=["LtoR", "RtoL"], 
-        help="LtoR: Flip from Left to Right\nRtoL: Flip from Right to Left"
-    )
+    parser.add_argument("filename", help="The name of your .auto file")
+    parser.add_argument("direction", choices=["LtoR", "RtoL"], help="LtoR: Left to Right\nRtoL: Flip from Right to Left")
     
     args = parser.parse_args()
     process_auto(args.filename, args.direction)
