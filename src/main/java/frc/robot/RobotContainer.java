@@ -277,6 +277,7 @@ public class RobotContainer {
         addPathAuto("RightCenterQuadrant", "RightCenterQuadrant");
         addPathAuto("LeftAllianceZone", "LeftAllianceZone");
         addPathAuto("RightAllianceZone", "RightAllianceZone");
+        addPathAuto("TestDriveBump", "TestDriveBump");
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
