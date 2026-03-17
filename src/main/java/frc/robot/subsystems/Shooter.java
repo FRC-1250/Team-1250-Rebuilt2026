@@ -19,6 +19,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
@@ -205,7 +206,26 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
     }
 
     private void configureVelocityMap() {
-        shooterVelocityLUT.put(5.0, ShooterVelocity.TRENCH.rotationsPerSecond);
+        /*
+         * In code we assume center to center for distance!
+         * 
+         * Assuming the below input LUT values are measured from front of hub to front
+         * of robot bumper, the offset should be added to each value to account for the
+         * missing distance.
+         * 
+         */
+        var hubFrontToCenterOffsetMeters = 0.591;
+        var robotFrontToCenterOffsetMeters = 0.33; // with bumpers
+        var offset = hubFrontToCenterOffsetMeters + robotFrontToCenterOffsetMeters;
+
+        shooterVelocityLUT.put(Units.inchesToMeters(25) + offset, 0.0);
+        shooterVelocityLUT.put(Units.inchesToMeters(50) + offset, 0.0);
+        shooterVelocityLUT.put(Units.inchesToMeters(75) + offset, 0.0);
+        shooterVelocityLUT.put(Units.inchesToMeters(100) + offset, 0.0);
+        shooterVelocityLUT.put(Units.inchesToMeters(125) + offset, 0.0);
+        shooterVelocityLUT.put(Units.inchesToMeters(150) + offset, 0.0);
+        shooterVelocityLUT.put(Units.inchesToMeters(175) + offset, 0.0);
+        shooterVelocityLUT.put(Units.inchesToMeters(200) + offset, 0.0);
     }
 
     private void configureAccelerator() {
