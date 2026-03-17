@@ -9,10 +9,10 @@
       "prevControl": null,
       "nextControl": {
         "x": 3.453223304703363,
-        "y": 2.1332233047033635
+        "y": 2.133223304703364
       },
       "isLocked": false,
-      "linkedName": "RightBumpAlliance180"
+      "linkedName": "LeftBumpAlliance180"
     },
     {
       "anchor": {
@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 2.676776695296637,
-        "y": 2.233223304703364
+        "y": 2.2332233047033645
       },
       "nextControl": null,
       "isLocked": false,

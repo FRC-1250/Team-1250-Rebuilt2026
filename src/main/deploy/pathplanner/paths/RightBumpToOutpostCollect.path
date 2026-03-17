@@ -33,8 +33,19 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
+      "name": "reset_starting_fuel",
+      "waypointRelativePos": 0.1484098939929463,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "reset_starting_fuel"
+        }
+      }
+    },
+    {
       "name": "activate_fuel_pick_up",
-      "waypointRelativePos": 0.5003533568904598,
+      "waypointRelativePos": 0.7505300353357033,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
