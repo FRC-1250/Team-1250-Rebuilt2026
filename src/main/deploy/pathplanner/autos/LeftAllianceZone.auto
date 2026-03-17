@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LeftBumpToDepotCollectStart"
+            "pathName": "LeftBumpToDepotCollect"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DepotCollectEndToTowerLeft"
+            "pathName": "DepotCollectToLeftFiringPosition"
           }
         },
         {

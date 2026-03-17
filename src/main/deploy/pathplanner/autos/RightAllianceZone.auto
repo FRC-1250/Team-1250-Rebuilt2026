@@ -19,19 +19,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "OutpostCollectToTowerRightShoot"
+            "pathName": "OutpostCollectToRightFiringPosition"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "fire_fuel_with_timeout"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "TowerRightShootToTowerRight"
           }
         }
       ]

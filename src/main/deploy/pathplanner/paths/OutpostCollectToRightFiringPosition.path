@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 1.6,
-        "y": 3.31
+        "x": 2.7032,
+        "y": 1.7150000000000007
       },
       "prevControl": {
-        "x": 2.242787609686539,
-        "y": 2.543955556881022
+        "x": 2.2032,
+        "y": 0.8489745962155621
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "TowerRightShoot"
+      "linkedName": "RightFiringPosition"
     }
   ],
   "rotationTargets": [],
@@ -54,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 11.848
+    "rotation": 52.0
   },
   "reversed": false,
   "folder": null,

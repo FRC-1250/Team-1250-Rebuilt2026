@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.64,
-        "y": 2.3100000000000005
+        "x": 0.9,
+        "y": 5.7
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.89,
-        "y": 2.3100000000000005
+        "x": 1.9,
+        "y": 5.7
       },
       "isLocked": false,
-      "linkedName": "RightBumpAlliance0"
+      "linkedName": "DepotCollectEnd"
     },
     {
       "anchor": {
-        "x": 5.31,
-        "y": 2.3100000000000005
+        "x": 2.7032,
+        "y": 6.495
       },
       "prevControl": {
-        "x": 5.06,
-        "y": 2.3100000000000005
+        "x": 1.9960932188134524,
+        "y": 5.787893218813453
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "RightBumpNeutral0"
+      "linkedName": "LeftFiringPosition"
     }
   ],
   "rotationTargets": [],
@@ -33,34 +33,34 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "reset_starting_fuel",
-      "waypointRelativePos": 0.3985865724381672,
+      "name": "shooter_prep",
+      "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "reset_starting_fuel"
+          "name": "shooter_prep"
         }
       }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 1.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 1.0,
-    "rotation": -0.0
+    "velocity": 0,
+    "rotation": -52.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": -0.0
+    "velocity": 1.0,
+    "rotation": -135.0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

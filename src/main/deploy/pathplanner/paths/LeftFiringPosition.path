@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 2.5,
-        "y": 5.8
+        "x": 2.7032,
+        "y": 6.495
       },
       "prevControl": {
-        "x": 2.676776695296637,
-        "y": 5.976776695296636
+        "x": 2.879976695296637,
+        "y": 6.671776695296637
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "LeftFiringPosition"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -45.00000000000006
+    "rotation": -52.0
   },
   "reversed": false,
   "folder": null,

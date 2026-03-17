@@ -12,20 +12,20 @@
         "y": 2.133223304703364
       },
       "isLocked": false,
-      "linkedName": "LeftBumpAlliance180"
+      "linkedName": "RightBumpAlliance180"
     },
     {
       "anchor": {
-        "x": 2.5,
-        "y": 2.410000000000001
+        "x": 2.7032,
+        "y": 1.7150000000000007
       },
       "prevControl": {
-        "x": 2.676776695296637,
-        "y": 2.2332233047033645
+        "x": 2.879976695296637,
+        "y": 1.538223304703364
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "RightFiringPosition"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 45.00000000000006
+    "rotation": 52.0
   },
   "reversed": false,
   "folder": null,
