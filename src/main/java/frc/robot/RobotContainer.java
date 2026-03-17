@@ -257,7 +257,10 @@ public class RobotContainer {
                 commandFactory.cmdSetFuelShooterVelocity(0).andThen(commandFactory.cmdSetFuelAcceleratorVelocity(0)));
 
         SmartDashboard.putData("Commands/Shared/Fire fuel",
-                commandFactory.cmdFireFuel(shooterVelocity.get()));
+                commandFactory.cmdFireFuel(() -> shooterVelocity.get()));
+
+        SmartDashboard.putData("Commands/Shared/Fire fuel no agi",
+                commandFactory.cmdFireFuelNoAgitation(() -> shooterVelocity.get()));
 
         SmartDashboard.putData("Commands/Shared/Prove out", commandFactory.proveOut());
         SmartDashboard.putData("Commands/Drivetrain/Prove out", commandFactory.driveProveOut());

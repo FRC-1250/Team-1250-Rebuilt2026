@@ -266,6 +266,29 @@ public class CommandFactory {
                 }, shooter, fuelLine);
     }
 
+    public Command cmdFireFuelNoAgitation(DoubleSupplier supplier) {
+        return Commands.runEnd(
+                () -> {
+                    var rotationsPerSecond = supplier.getAsDouble();
+                    shooter.setAcceleratorVelocity(rotationsPerSecond);
+                    shooter.setShooterVelocity(rotationsPerSecond);
+                    if (shooter.isAcceleratorNearRotationsPerSecond(rotationsPerSecond, 2)
+                            && shooter.isShooterNearRotationsPerSecond(rotationsPerSecond, 2)) {
+                        fuelLine.setLoaderVelocity(LoaderVelocity.FIRE.rotationsPerSecond);
+                        fuelLine.setRollerVelocity(RollerVelocity.GO.rotationsPerSecond);
+                    } else {
+                        fuelLine.stopLoader();
+                        fuelLine.stopRoller();
+                    }
+                },
+                () -> {
+                    shooter.setAcceleratorVelocity(ShooterVelocity.WARM.rotationsPerSecond);
+                    shooter.setShooterVelocity(ShooterVelocity.WARM.rotationsPerSecond);
+                    fuelLine.stopLoader();
+                    fuelLine.stopRoller();
+                }, shooter, fuelLine);
+    }
+
     public Command cmdAgitateFuelWithHopper() {
         return Commands.runEnd(
                 () -> {
