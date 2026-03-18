@@ -83,7 +83,7 @@ public class CommandFactory {
     }
 
     public double getVelocityBasedOnTargetDistance() {
-        return shooter.getTargetVelocity(targetManager.getTargetingState().distance());
+        return shooter.getInterpolatedVelocity(targetManager.getTargetingState().distance());
     }
 
     /*

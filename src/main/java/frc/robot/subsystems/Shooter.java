@@ -215,15 +215,14 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
          * 
          */
         var hubFrontToCenterOffsetMeters = 0.591;
-        var robotFrontToCenterOffsetMeters = 0.33; // with bumpers
+        var robotFrontToCenterOffsetMeters = 0.724 / 2; // with bumpers
         var offset = hubFrontToCenterOffsetMeters + robotFrontToCenterOffsetMeters;
 
-        shooterVelocityLUT.put(Units.inchesToMeters(24) + offset, 40.0);
-        shooterVelocityLUT.put(Units.inchesToMeters(24 * 2) + offset, 40.0);
-        shooterVelocityLUT.put(Units.inchesToMeters(24 * 3) + offset, 45.0);
-        shooterVelocityLUT.put(Units.inchesToMeters(24 * 4) + offset, 48.0);
-        shooterVelocityLUT.put(Units.inchesToMeters(24 * 5) + offset, 53.0);
-        shooterVelocityLUT.put(Units.inchesToMeters(24 * 10) + offset, 70.0);
+        shooterVelocityLUT.put(Units.feetToMeters(4) + offset, 40.0);
+        shooterVelocityLUT.put(Units.feetToMeters(6) + offset, 45.0);
+        shooterVelocityLUT.put(Units.feetToMeters(8) + offset, 48.0);
+        shooterVelocityLUT.put(Units.feetToMeters(10) + offset, 53.0);
+        shooterVelocityLUT.put(Units.feetToMeters(20) + offset, 70.0);
     }
 
     private void configureAccelerator() {
