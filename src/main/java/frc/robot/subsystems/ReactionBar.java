@@ -30,8 +30,8 @@ import frc.robot.utility.AgitationStep;
 public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
     public enum ReactionBarPosition {
         HOME(0.515625),
-        EXTENDED(0.656738),
-        THREAD(0.515625);
+        EXTENDED(0.487793),
+        THREAD(0.297607);
 
         public double rotations;
 

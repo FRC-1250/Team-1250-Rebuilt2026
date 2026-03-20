@@ -31,6 +31,7 @@ import frc.robot.subsystems.Intake.IntakeVelocity;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.ReactionBar;
+import frc.robot.subsystems.ReactionBar.ReactionBarPosition;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Climber.ClimberPosition;
 
@@ -314,7 +315,7 @@ public class CommandFactory {
         return Commands.sequence(
                 cmdSetHopperPosition(HopperPosition.EXTENDED.rotations),
                 cmdStopHopper(),
-                // cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations),
+                cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations),
                 cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond))
                 .withName("Activate fuel pick up");
     }
@@ -340,6 +341,7 @@ public class CommandFactory {
         return Commands.sequence(
                 cmdSetHopperPosition(HopperPosition.EXTENDED.rotations),
                 cmdStopHopper(),
+                cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations),
                 cmdSetFuelShooterVelocity(ShooterVelocity.UNJAM.rotationsPerSecond),
                 cmdSetFuelAcceleratorVelocity(ShooterVelocity.UNJAM.rotationsPerSecond),
                 cmdSetLoaderVelocity(LoaderVelocity.UNJAM.rotationsPerSecond),
