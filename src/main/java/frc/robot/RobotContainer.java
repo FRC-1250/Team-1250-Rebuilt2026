@@ -151,7 +151,7 @@ public class RobotContainer {
         robotIsAligned = new Trigger(singlePlayer,
                 () -> commandFactory.targetManager.getTargetingState().isAligned());
 
-        primary.start()
+        primary.start(singlePlayer)
                 .onTrue(swerve.runOnce(() -> swerve.seedFieldCentric()).withName("Reseed swerve"));
 
         primary.rightTrigger(0.5, singlePlayer).and(primary.leftTrigger(0.5, singlePlayer)).and(robotIsAligned)
