@@ -274,9 +274,9 @@ public class RobotContainer {
         autoChooser.setDefaultOption("Do nothing", new WaitCommand(15));
         addPathAuto("LeftCenterQuadrant", "LeftCenterQuadrant");
         addPathAuto("RightCenterQuadrant", "RightCenterQuadrant");
-        addPathAuto("LeftAllianceZone", "LeftAllianceZone");
-        addPathAuto("RightAllianceZone", "RightAllianceZone");
-        addPathAuto("FullSweepAllianceZone", "FullSweepAllianceZone");
+        addPathAuto("LeftDepot", "LeftDepot");
+        addPathAuto("RightOutpost", "RightOutpost");
+        addPathAuto("DepotOutpost", "DepotOutpost");
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 

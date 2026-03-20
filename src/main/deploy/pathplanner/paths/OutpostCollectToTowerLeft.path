@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.164213562373095,
-        "y": 2.0642135623730953
+        "x": 2.6968674698795176,
+        "y": 1.324927710843374
       },
       "isLocked": false,
       "linkedName": "OutpostCollectEnd"
@@ -20,8 +20,8 @@
         "y": 4.02
       },
       "prevControl": {
-        "x": 2.2071067811865475,
-        "y": 3.312893218813452
+        "x": 2.565734939759036,
+        "y": 3.4776867469879518
       },
       "nextControl": null,
       "isLocked": false,
