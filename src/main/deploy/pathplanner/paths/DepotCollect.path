@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.85,
-        "y": 7.16
+        "x": 0.8,
+        "y": 7.2368192771084345
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.85,
-        "y": 6.91
+        "x": 0.8,
+        "y": 6.9868192771084345
       },
       "isLocked": false,
       "linkedName": "DepotCollectStart"
     },
     {
       "anchor": {
-        "x": 0.85,
-        "y": 5.7
+        "x": 0.8,
+        "y": 5.75
       },
       "prevControl": {
-        "x": 0.85,
-        "y": 5.95
+        "x": 0.8,
+        "y": 6.0
       },
       "nextControl": null,
       "isLocked": false,

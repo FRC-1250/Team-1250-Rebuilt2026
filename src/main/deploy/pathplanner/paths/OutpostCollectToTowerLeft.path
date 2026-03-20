@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.75,
-        "y": 0.65
+        "x": 0.6533855421686747,
+        "y": 0.6474096385542167
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.6968674698795176,
-        "y": 1.324927710843374
+        "x": 2.600253012048192,
+        "y": 1.3223373493975905
       },
       "isLocked": false,
       "linkedName": "OutpostCollectEnd"
