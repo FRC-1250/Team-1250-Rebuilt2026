@@ -282,14 +282,25 @@ public class RobotContainer {
 
     private void configureNamedCommands() {
         final double fireTimeout = 5;
+        final double aimingTimeout = 2;
 
         NamedCommands.registerCommand("shooter_prep", commandFactory.cmdWarmUpShooter());
-        NamedCommands.registerCommand("fire_fuel_with_timeout",
+        NamedCommands.registerCommand("fire_fuel",
                 commandFactory.cmdFireFuel(ShooterVelocity.TOWER.rotationsPerSecond)
                         .withTimeout(fireTimeout));
 
-        NamedCommands.registerCommand("climb", commandFactory.cmdSetClimberPosition(ClimberPosition.CLIMB.rotations));
-        NamedCommands.registerCommand("deactivate_fuel_pick_up", commandFactory.cmdDeactivateFuelPickUp());
+        NamedCommands.registerCommand("fire_fuel_by_distance",
+                swerve.applyRequest(
+                        () -> driveWithAngle
+                                .withVelocityX(0)
+                                .withVelocityY(0)
+                                .withHeadingPID(15, 0, 0)
+                                .withTargetDirection(commandFactory.getRotationToTargetBasedOnZone()))
+                        .withTimeout(aimingTimeout).andThen(
+
+                                commandFactory.cmdFireFuel(() -> commandFactory.getVelocityBasedOnTargetDistance())
+                                        .withTimeout(fireTimeout)));
+
         NamedCommands.registerCommand("activate_fuel_pick_up", commandFactory.cmdActivateFuelPickUp());
         NamedCommands.registerCommand("reset_starting_fuel", commandFactory.cmdResetStartingFuel());
 
