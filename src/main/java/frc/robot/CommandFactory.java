@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.util.List;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -28,7 +29,6 @@ import frc.robot.utility.TargetManager;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.HopperPosition;
 import frc.robot.subsystems.Intake.IntakeVelocity;
-import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.ReactionBar;
 import frc.robot.subsystems.ReactionBar.ReactionBarPosition;
@@ -41,8 +41,6 @@ public class CommandFactory {
     private final FuelLine fuelLine;
     private final Shooter shooter;
     private final Climber climber;
-    private final Limelight limelight;
-    private final Leds leds;
     private final Intake intake;
     private final ReactionBar reactionBar;
     public final RobotLocalization robotLocalization;
@@ -54,18 +52,15 @@ public class CommandFactory {
             Intake intake,
             Shooter shooter,
             Climber climber,
-            Limelight limelight,
-            Leds leds,
+            List<Limelight> limelights,
             ReactionBar reactionBar) {
         this.swerve = swerve;
         this.intake = intake;
         this.fuelLine = fuelLine;
         this.shooter = shooter;
         this.climber = climber;
-        this.limelight = limelight;
-        this.leds = leds;
         this.reactionBar = reactionBar;
-        robotLocalization = new RobotLocalization(limelight, swerve);
+        robotLocalization = new RobotLocalization(limelights, swerve);
         targetManager = new TargetManager(swerve);
     }
 

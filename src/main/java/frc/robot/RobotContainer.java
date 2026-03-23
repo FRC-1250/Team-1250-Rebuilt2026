@@ -7,6 +7,8 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.util.List;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentricFacingAngle;
@@ -19,7 +21,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -36,11 +37,9 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FuelLine;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter.ShooterVelocity;
-import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.ReactionBar;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Climber.ClimberPosition;
 import frc.robot.telemetry.HealthMonitor;
 
 public class RobotContainer {
@@ -61,7 +60,7 @@ public class RobotContainer {
     private final Climber climber = new Climber();
 
     private final Limelight limelight = new Limelight();
-    private final Leds leds = new Leds();
+    private final Limelight limelightRear = new Limelight("rear");
 
     @Logged(name = "Reaction bar")
     private final ReactionBar reactionBar = new ReactionBar();
@@ -72,8 +71,7 @@ public class RobotContainer {
             intake,
             shooter,
             climber,
-            limelight,
-            leds,
+            List.of(limelight, limelightRear),
             reactionBar);
 
     private final Telemetry logger = new Telemetry();
