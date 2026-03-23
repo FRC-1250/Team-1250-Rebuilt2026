@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.825,
-        "y": 5.75
+        "x": 0.8535307692307696,
+        "y": 5.339684615384615
       },
       "isLocked": false,
       "linkedName": "DepotCollectEnd"
     },
     {
       "anchor": {
-        "x": 2.7032,
-        "y": 6.495
+        "x": 1.793,
+        "y": 5.355
       },
       "prevControl": {
-        "x": 1.9960932188134524,
-        "y": 5.787893218813453
+        "x": 1.4535461538461536,
+        "y": 5.095492307692307
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "LeftFiringPosition"
+      "linkedName": "LeftTowerFiringPosition"
     }
   ],
   "rotationTargets": [],
@@ -54,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -52.0
+    "rotation": -35.0
   },
   "reversed": false,
   "folder": null,

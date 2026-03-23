@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.1837156280585852,
-        "y": 1.1777397244441277
+        "x": 1.4884307692307694,
+        "y": 0.8465461538461534
       },
       "isLocked": false,
       "linkedName": "OutpostCollectEnd"
     },
     {
       "anchor": {
-        "x": 2.7032,
-        "y": 1.7150000000000007
+        "x": 1.793,
+        "y": 2.8746
       },
       "prevControl": {
-        "x": 1.9531999999999998,
-        "y": 1.7150000000000007
+        "x": 1.7744846153846159,
+        "y": 1.704707692307693
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "RightFiringPosition"
+      "linkedName": "RightTowerFiringPosition"
     }
   ],
   "rotationTargets": [],
@@ -54,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 52.0
+    "rotation": 29.999999999999996
   },
   "reversed": false,
   "folder": null,
