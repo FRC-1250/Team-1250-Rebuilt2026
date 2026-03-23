@@ -38,6 +38,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FuelLine;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.HopperPosition;
+import frc.robot.subsystems.Intake.IntakeVelocity;
 import frc.robot.subsystems.ReactionBar.ReactionBarPosition;
 import frc.robot.subsystems.Shooter.ShooterVelocity;
 import frc.robot.subsystems.Leds;
@@ -222,6 +223,7 @@ public class RobotContainer {
                 .onFalse(commandFactory.cmdSetHopperPosition(HopperPosition.EXTENDED.rotations));
         primary.b(singlePlayer).whileTrue(commandFactory.cmdAgitateFuelWithReactionBar())
                 .onFalse(commandFactory.cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations));
+        primary.y(singlePlayer).whileTrue(commandFactory.cmdSetIntakeVelocity(IntakeVelocity.UNJAM.rotationsPerSecond));
 
         primary.pov(0, 0, singlePlayer).onTrue(Commands.none()); // Climb
         primary.pov(0, 180, singlePlayer).onTrue(Commands.none()); // Unclim

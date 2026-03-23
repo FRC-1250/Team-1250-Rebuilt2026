@@ -8,58 +8,33 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.825887192899711,
-        "y": 5.915784776115137
+        "x": 3.366248216833095,
+        "y": 5.878758915834522
       },
       "isLocked": false,
       "linkedName": "DepotSideCenterPreCollect"
     },
     {
       "anchor": {
-        "x": 7.712686746987952,
-        "y": 5.991060240963854
+        "x": 1.0613404507710564,
+        "y": 5.944756820877817
       },
       "prevControl": {
-        "x": 6.565277108433736,
-        "y": 6.023843373493976
+        "x": 1.8006704707610135,
+        "y": 5.930513552062916
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "DepotSideCenterStart"
+      "linkedName": "DepotIntake"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.7809128630705258,
-      "rotationDegrees": 0.0
-    }
-  ],
-  "constraintZones": [
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.7950372208436733,
-      "maxWaypointRelativePos": 1.0,
-      "constraints": {
-        "maxVelocity": 3.0,
-        "maxAcceleration": 3.0,
-        "maxAngularVelocity": 150.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    }
-  ],
+  "rotationTargets": [],
+  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "shooter_prep",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
       "name": "activate_fuel_pick_up",
-      "waypointRelativePos": 0.5667493796526061,
+      "waypointRelativePos": 0.48885887913571874,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -74,7 +49,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": null,
