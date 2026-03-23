@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 3.64,
-        "y": 2.3100000000000005
+        "y": 2.36
       },
       "prevControl": null,
       "nextControl": {
         "x": 3.89,
-        "y": 2.3100000000000005
+        "y": 2.36
       },
       "isLocked": false,
       "linkedName": "RightBumpAlliance0"
