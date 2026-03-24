@@ -49,7 +49,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     }
 
     public enum IntakeVelocity {
-        UNJAM(-10),
+        UNJAM(-25),
         GO(80);
 
         public double rotationsPerSecond;
@@ -59,9 +59,13 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         }
     }
 
-    private final TalonFX intakeLeader = new TalonFX(40);
-    private final TalonFX intakeFollower = new TalonFX(42);
-    private final VelocityVoltage intakeVelocityControl = new VelocityVoltage(0).withSlot(0);
+    private final TalonFX intakeUpper = new TalonFX(40);
+    private final TalonFX intakeLower = new TalonFX(42);
+    private final VelocityVoltage intakeUpperVelocityControl = new VelocityVoltage(0).withSlot(0);
+    private final VelocityVoltage intakeLowerVelocityControl = new VelocityVoltage(0).withSlot(0);
+    private final Follower intakeLowerFollowerControl = new Follower(
+            intakeUpper.getDeviceID(),
+            MotorAlignmentValue.Opposed);
 
     private final TalonFX hopper = new TalonFX(41);
     private final PositionVoltage hopperPositionVoltage = new PositionVoltage(0).withSlot(1);
@@ -81,14 +85,30 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     }
 
     public void setIntakeVelocity(double rotationsPerSecond) {
-        intakeLeader.setControl(
-                intakeVelocityControl
+        intakeUpper.setControl(
+                intakeUpperVelocityControl
+                        .withVelocity(rotationsPerSecond)
+                        .withFeedForward(Volts.of(0)));
+
+        intakeLower.setControl(intakeLowerFollowerControl);
+    }
+
+    public void setIntakeUpperVelocity(double rotationsPerSecond) {
+        intakeUpper.setControl(
+                intakeUpperVelocityControl
+                        .withVelocity(rotationsPerSecond)
+                        .withFeedForward(Volts.of(0)));
+    }
+
+    public void setIntakeLowerVelocity(double rotationsPerSecond) {
+        intakeLower.setControl(
+                intakeLowerVelocityControl
                         .withVelocity(rotationsPerSecond)
                         .withFeedForward(Volts.of(0)));
     }
 
     public void stopIntake() {
-        intakeLeader.stopMotor();
+        intakeUpper.stopMotor();
     }
 
     public void agitate() {
@@ -130,19 +150,34 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         return hopper.getPosition().isNear(rotations, tolerance);
     }
 
-    @Logged(name = "Intake velocity")
-    public double getIntakeVelocity() {
-        return intakeLeader.getVelocity().getValueAsDouble();
+    @Logged(name = "Intake upper velocity")
+    public double getIntakeUpperVelocity() {
+        return intakeUpper.getVelocity().getValueAsDouble();
     }
 
-    @Logged(name = "intake stator current")
-    public double getLeaderStatorCurrent() {
-        return intakeLeader.getStatorCurrent().getValueAsDouble();
+    @Logged(name = "intake upper stator current")
+    public double getIntakeUpperStatorCurrent() {
+        return intakeUpper.getStatorCurrent().getValueAsDouble();
     }
 
-    @Logged(name = "intake supply current")
-    public double getLeaderSupplyCurrent() {
-        return intakeLeader.getSupplyCurrent().getValueAsDouble();
+    @Logged(name = "intake upper supply current")
+    public double getIntakeUpperSupplyCurrent() {
+        return intakeUpper.getSupplyCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Intake lower velocity")
+    public double getIntakeLowerVelocity() {
+        return intakeLower.getVelocity().getValueAsDouble();
+    }
+
+    @Logged(name = "intake lower stator current")
+    public double getIntakeLowerCurrent() {
+        return intakeLower.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "intake lower supply current")
+    public double getIntakeLowerSupplyCurrent() {
+        return intakeLower.getSupplyCurrent().getValueAsDouble();
     }
 
     @Logged(name = "Hopper position")
@@ -167,8 +202,8 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
     @Override
     public void registerWithHealthMonitor(HealthMonitor monitor) {
-        monitor.addComponent(getSubsystem(), "Intake leader", intakeLeader);
-        monitor.addComponent(getSubsystem(), "Intake follower", intakeFollower);
+        monitor.addComponent(getSubsystem(), "Intake upper", intakeUpper);
+        monitor.addComponent(getSubsystem(), "Intake lower", intakeLower);
         monitor.addComponent(getSubsystem(), "hopper", hopper);
         monitor.setSubsystemColor(getSubsystem(), systemColor);
     }
@@ -217,9 +252,13 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     }
 
     private void configureIntake() {
-        MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
-        motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
-        motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
+        MotorOutputConfigs motorOutputConfigsUpper = new MotorOutputConfigs();
+        motorOutputConfigsUpper.NeutralMode = NeutralModeValue.Coast;
+        motorOutputConfigsUpper.Inverted = InvertedValue.Clockwise_Positive;
+
+        MotorOutputConfigs motorOutputConfigsLower = new MotorOutputConfigs();
+        motorOutputConfigsLower.NeutralMode = NeutralModeValue.Coast;
+        motorOutputConfigsLower.Inverted = InvertedValue.Clockwise_Positive;
 
         Slot0Configs velocityGains = new Slot0Configs()
                 .withKS(0.1)
@@ -232,11 +271,14 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         talonFXConfiguration.Slot0 = velocityGains;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 50;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
-        talonFXConfiguration.MotorOutput = motorOutputConfigs;
 
-        intakeLeader.getConfigurator().apply(talonFXConfiguration);
-        intakeLeader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
-        intakeFollower.setControl(new Follower(intakeLeader.getDeviceID(), MotorAlignmentValue.Opposed));
+        talonFXConfiguration.MotorOutput = motorOutputConfigsUpper;
+        intakeUpper.getConfigurator().apply(talonFXConfiguration);
+        intakeUpper.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
+
+        talonFXConfiguration.MotorOutput = motorOutputConfigsLower;
+        intakeLower.getConfigurator().apply(talonFXConfiguration);
+        intakeLower.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
     }
 
     private void configureMotionMagicHopper() {
