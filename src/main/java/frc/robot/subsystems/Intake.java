@@ -14,11 +14,13 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
@@ -57,7 +59,8 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         }
     }
 
-    private final TalonFX intake = new TalonFX(40);
+    private final TalonFX intakeLeader = new TalonFX(40);
+    private final TalonFX intakeFollower = new TalonFX(42);
     private final VelocityVoltage intakeVelocityControl = new VelocityVoltage(0).withSlot(0);
 
     private final TalonFX hopper = new TalonFX(41);
@@ -78,14 +81,14 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     }
 
     public void setIntakeVelocity(double rotationsPerSecond) {
-        intake.setControl(
+        intakeLeader.setControl(
                 intakeVelocityControl
                         .withVelocity(rotationsPerSecond)
                         .withFeedForward(Volts.of(0)));
     }
 
     public void stopIntake() {
-        intake.stopMotor();
+        intakeLeader.stopMotor();
     }
 
     public void agitate() {
@@ -129,17 +132,17 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
     @Logged(name = "Intake velocity")
     public double getIntakeVelocity() {
-        return intake.getVelocity().getValueAsDouble();
+        return intakeLeader.getVelocity().getValueAsDouble();
     }
 
     @Logged(name = "intake stator current")
     public double getLeaderStatorCurrent() {
-        return intake.getStatorCurrent().getValueAsDouble();
+        return intakeLeader.getStatorCurrent().getValueAsDouble();
     }
 
     @Logged(name = "intake supply current")
     public double getLeaderSupplyCurrent() {
-        return intake.getSupplyCurrent().getValueAsDouble();
+        return intakeLeader.getSupplyCurrent().getValueAsDouble();
     }
 
     @Logged(name = "Hopper position")
@@ -148,12 +151,12 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
     }
 
     @Logged(name = "Hopper stator current")
-    public double getClimberStatorCurrent() {
+    public double getHopperStatorCurrent() {
         return hopper.getStatorCurrent().getValueAsDouble();
     }
 
     @Logged(name = "Hopper supply current")
-    public double getClimberSupplyCurrent() {
+    public double getHopperSupplyCurrent() {
         return hopper.getSupplyCurrent().getValueAsDouble();
     }
 
@@ -164,7 +167,8 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
     @Override
     public void registerWithHealthMonitor(HealthMonitor monitor) {
-        monitor.addComponent(getSubsystem(), "Intake", intake);
+        monitor.addComponent(getSubsystem(), "Intake leader", intakeLeader);
+        monitor.addComponent(getSubsystem(), "Intake follower", intakeFollower);
         monitor.addComponent(getSubsystem(), "hopper", hopper);
         monitor.setSubsystemColor(getSubsystem(), systemColor);
     }
@@ -230,8 +234,9 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
 
-        intake.getConfigurator().apply(talonFXConfiguration);
-        intake.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
+        intakeLeader.getConfigurator().apply(talonFXConfiguration);
+        intakeLeader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
+        intakeFollower.setControl(new Follower(intakeLeader.getDeviceID(), MotorAlignmentValue.Opposed));
     }
 
     private void configureMotionMagicHopper() {
