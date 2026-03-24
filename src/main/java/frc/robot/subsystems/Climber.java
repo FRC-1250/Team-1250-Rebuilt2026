@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -23,6 +25,8 @@ import frc.robot.telemetry.HealthMonitor;
 import frc.robot.telemetry.MonitoredSubsystem;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase implements MonitoredSubsystem {
@@ -123,5 +127,18 @@ public class Climber extends SubsystemBase implements MonitoredSubsystem {
     @Logged(name = "Follower supply current")
     public double getClimberSupplyCurrent() {
         return climberFollower.getSupplyCurrent().getValueAsDouble();
+    }
+
+    /*
+     * Climber
+     */
+    public Command cmdSetClimberPosition(DoubleSupplier supplier) {
+        return Commands.runOnce(
+                () -> this.setClimberPosition(supplier.getAsDouble()))
+                .andThen(Commands.waitUntil(() -> this.isNearPosition(supplier.getAsDouble())));
+    }
+
+    public Command cmdSetClimberPosition(double rotations) {
+        return cmdSetClimberPosition(() -> rotations);
     }
 }

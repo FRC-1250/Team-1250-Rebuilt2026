@@ -32,7 +32,6 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FuelLine;
 import frc.robot.subsystems.Intake;
@@ -56,9 +55,6 @@ public class RobotContainer {
     @Logged(name = "Shooter")
     private final Shooter shooter = new Shooter();
 
-    @Logged(name = "Climber")
-    private final Climber climber = new Climber();
-
     private final Limelight limelight = new Limelight();
     private final Limelight limelightRear = new Limelight("rear");
 
@@ -70,7 +66,6 @@ public class RobotContainer {
             fuelLine,
             intake,
             shooter,
-            climber,
             List.of(limelight, limelightRear),
             reactionBar);
 
@@ -101,7 +96,6 @@ public class RobotContainer {
     private final DoubleEntry rollerVelocity = commandInputs.getDoubleTopic("rollerVelocity").getEntry(0.0);
     private final DoubleEntry loaderLoaderVelocity = commandInputs.getDoubleTopic("loaderLoaderVelocity").getEntry(0.0);
     private final DoubleEntry shooterVelocity = commandInputs.getDoubleTopic("shooterVelocity").getEntry(0.0);
-    private final DoubleEntry climberPosition = commandInputs.getDoubleTopic("climberPosition").getEntry(0.0);
     private final DoubleEntry hopperposition = commandInputs.getDoubleTopic("hopperPosition").getEntry(0.0);
 
     private Trigger robotIsAligned;
@@ -128,7 +122,6 @@ public class RobotContainer {
         fuelLine.registerWithHealthMonitor(hm);
         intake.registerWithHealthMonitor(hm);
         shooter.registerWithHealthMonitor(hm);
-        climber.registerWithHealthMonitor(hm);
         swerve.registerWithHealthMonitor(hm);
         swerve.registerTelemetry(logger::telemeterize);
     }
@@ -223,7 +216,6 @@ public class RobotContainer {
         rollerVelocity.set(0);
         loaderLoaderVelocity.set(0);
         shooterVelocity.set(0);
-        climberPosition.set(0);
         hopperposition.set(0);
 
         SmartDashboard.putData("Commands/Intake/Set intake velocity",

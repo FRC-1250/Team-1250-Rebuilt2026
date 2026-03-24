@@ -18,7 +18,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FuelLine;
 import frc.robot.subsystems.FuelLine.LoaderVelocity;
@@ -33,14 +32,12 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.ReactionBar;
 import frc.robot.subsystems.ReactionBar.ReactionBarPosition;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Climber.ClimberPosition;
 
 public class CommandFactory {
 
     private final CommandSwerveDrivetrain swerve;
     private final FuelLine fuelLine;
     private final Shooter shooter;
-    private final Climber climber;
     private final Intake intake;
     private final ReactionBar reactionBar;
     public final RobotLocalization robotLocalization;
@@ -51,14 +48,12 @@ public class CommandFactory {
             FuelLine fuelLine,
             Intake intake,
             Shooter shooter,
-            Climber climber,
             List<Limelight> limelights,
             ReactionBar reactionBar) {
         this.swerve = swerve;
         this.intake = intake;
         this.fuelLine = fuelLine;
         this.shooter = shooter;
-        this.climber = climber;
         this.reactionBar = reactionBar;
         robotLocalization = new RobotLocalization(limelights, swerve);
         targetManager = new TargetManager(swerve);
@@ -215,19 +210,6 @@ public class CommandFactory {
 
     public Command cmdStopShooter() {
         return Commands.runOnce(() -> shooter.stopShooter(), shooter);
-    }
-
-    /*
-     * Climber
-     */
-    public Command cmdSetClimberPosition(DoubleSupplier supplier) {
-        return Commands.runOnce(
-                () -> climber.setClimberPosition(supplier.getAsDouble()))
-                .andThen(Commands.waitUntil(() -> climber.isNearPosition(supplier.getAsDouble())));
-    }
-
-    public Command cmdSetClimberPosition(double rotations) {
-        return cmdSetClimberPosition(() -> rotations);
     }
 
     /*
@@ -390,15 +372,6 @@ public class CommandFactory {
                 cmdSetFuelAcceleratorVelocity(ShooterVelocity.TOWER.rotationsPerSecond),
                 Commands.waitSeconds(5),
                 cmdStopAccelerator());
-    }
-
-    private Command climberTestCommand() {
-        return Commands.sequence(
-                cmdSetClimberPosition(ClimberPosition.HOME.rotations),
-                Commands.waitSeconds(2),
-                cmdSetClimberPosition(ClimberPosition.CLIMB.rotations),
-                Commands.waitSeconds(2),
-                cmdSetClimberPosition(ClimberPosition.HOME.rotations));
     }
 
     private Command driveTest(double targetVelocityX, double targetVelocityY, double duration, int steps) {
