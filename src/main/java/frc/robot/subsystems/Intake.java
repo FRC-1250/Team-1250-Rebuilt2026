@@ -269,8 +269,10 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
         TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
         talonFXConfiguration.Slot0 = velocityGains;
-        talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 50;
-        talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+        // Try default limits. Supply = 70 amp, stator = 120 amp, reduce supply to 40
+        // amps after 1 second
+        // talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 70;
+        // talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
 
         talonFXConfiguration.MotorOutput = motorOutputConfigsUpper;
         intakeUpper.getConfigurator().apply(talonFXConfiguration);
