@@ -140,8 +140,10 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 40;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
+
         loader.getConfigurator().apply(talonFXConfiguration);
-        loader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
+        loader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
+        loader.optimizeBusUtilization();
     }
 
     private void configureRoller() {
@@ -162,6 +164,7 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
 
         roller.getConfigurator().apply(talonFXConfiguration);
-        roller.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
+        roller.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
+        roller.optimizeBusUtilization();
     }
 }

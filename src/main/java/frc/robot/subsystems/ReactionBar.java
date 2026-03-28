@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
@@ -20,6 +21,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.telemetry.HealthMonitor;
@@ -68,7 +70,11 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
         talonFXConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
         talonFXConfiguration.Feedback.RotorToSensorRatio = 34.7826;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
+
         reactionBar.getConfigurator().apply(talonFXConfiguration);
+        reactionBar.getPosition().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
+        reactionBar.getRotorPosition().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
+        reactionBar.optimizeBusUtilization();
 
         CANcoderConfiguration canCoderConfiguration = new CANcoderConfiguration();
         canCoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
@@ -76,6 +82,9 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
         canCoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
         reactionBarEncoder.getConfigurator().apply(canCoderConfiguration);
+        reactionBarEncoder.getPosition().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
+        reactionBarEncoder.getAbsolutePosition().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
+        reactionBarEncoder.optimizeBusUtilization();
 
         configureAgitiationProfiles();
         active = wave;

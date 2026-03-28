@@ -49,10 +49,14 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
     private final TalonFX acceleratorLeader = new TalonFX(21);
     private final TalonFX acceleratorFollower = new TalonFX(22);
     private final VelocityVoltage acceleratorVelocityControl = new VelocityVoltage(0).withSlot(0);
+    private final Follower acceleratorFollowerControl = new Follower(acceleratorLeader.getDeviceID(),
+            MotorAlignmentValue.Opposed);
 
     private final TalonFX shooterLeader = new TalonFX(23);
     private final TalonFX shooterFollower = new TalonFX(24);
     private final VelocityVoltage shooterVelocityControl = new VelocityVoltage(0).withSlot(0);
+    private final Follower shooterFollowerControl = new Follower(shooterLeader.getDeviceID(),
+            MotorAlignmentValue.Opposed);
 
     private final Color systemColor = new Color(0, 0, 0);
 
@@ -230,8 +234,6 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
         motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
         motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
 
-        acceleratorLeader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
-
         Slot0Configs velocityGains = new Slot0Configs()
                 .withKS(0.09)
                 .withKV(0.11)
@@ -244,19 +246,21 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 50;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
-        acceleratorLeader.getConfigurator().apply(talonFXConfiguration);
-        acceleratorFollower.getConfigurator().apply(talonFXConfiguration);
 
-        acceleratorFollower
-                .setControl(new Follower(acceleratorLeader.getDeviceID(), MotorAlignmentValue.Opposed));
+        acceleratorLeader.getConfigurator().apply(talonFXConfiguration);
+        acceleratorLeader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
+        acceleratorLeader.optimizeBusUtilization();
+
+        acceleratorFollower.getConfigurator().apply(talonFXConfiguration);
+        acceleratorFollower.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
+        acceleratorFollower.optimizeBusUtilization();
+        acceleratorFollower.setControl(acceleratorFollowerControl);
     }
 
     private void configureShooter() {
         MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
         motorOutputConfigs.NeutralMode = NeutralModeValue.Coast;
         motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
-
-        shooterLeader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(200, Hertz));
 
         Slot0Configs velocityGains = new Slot0Configs()
                 .withKS(0.09)
@@ -270,10 +274,14 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 50;
         talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         talonFXConfiguration.MotorOutput = motorOutputConfigs;
-        shooterLeader.getConfigurator().apply(talonFXConfiguration);
-        shooterFollower.getConfigurator().apply(talonFXConfiguration);
 
-        shooterFollower
-                .setControl(new Follower(shooterLeader.getDeviceID(), MotorAlignmentValue.Opposed));
+        shooterLeader.getConfigurator().apply(talonFXConfiguration);
+        shooterLeader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
+        shooterLeader.optimizeBusUtilization();
+
+        shooterFollower.getConfigurator().apply(talonFXConfiguration);
+        shooterFollower.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
+        shooterFollower.optimizeBusUtilization();
+        shooterFollower.setControl(shooterFollowerControl);
     }
 }
