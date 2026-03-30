@@ -78,8 +78,8 @@ public class RobotContainer {
     private final SendableChooser<EventLoop> robotOperationModeChooser = new SendableChooser<>();
     private final EventLoop singlePlayer = new EventLoop();
 
-    private final SlewRateLimiter xLimiter = new SlewRateLimiter(14, -18, 0);
-    private final SlewRateLimiter yLimiter = new SlewRateLimiter(14, -18, 0);
+    private final SlewRateLimiter xLimiter = new SlewRateLimiter(20, -20, 0);
+    private final SlewRateLimiter yLimiter = new SlewRateLimiter(20, -20, 0);
     private final CommandXboxController primary = new CommandXboxController(0);
 
     private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
