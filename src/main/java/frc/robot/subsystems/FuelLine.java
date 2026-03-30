@@ -11,6 +11,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -79,6 +80,41 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
     public void stopLoader() {
         loader.stopMotor();
+    }
+
+    @Logged(name = "Loader velocity")
+    public double getLoaderVelocity() {
+        return loader.getVelocity().getValueAsDouble();
+    }
+
+    @Logged(name = "Loader stator current")
+    public double getLoaderStatorCurrent() {
+        return loader.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Loader supply current")
+    public double getLoaderSupplyCurrent() {
+        return loader.getSupplyCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Roller velocity")
+    public double getRollerVelocity() {
+        return roller.getVelocity().getValueAsDouble();
+    }
+
+    @Logged(name = "Roller stator current")
+    public double getRollerStatorCurrent() {
+        return roller.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Roller supply current")
+    public double getRollerSupplyCurrent() {
+        return roller.getSupplyCurrent().getValueAsDouble();
+    }
+
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
     }
 
     @Override

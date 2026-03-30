@@ -15,6 +15,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -106,6 +107,56 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
     public void stopAccelerator() {
         acceleratorLeader.stopMotor();
+    }
+
+    @Logged(name = "Shooter velocity")
+    public double getShooterVelocity() {
+        return shooterLeader.getVelocity().getValueAsDouble();
+    }
+
+    @Logged(name = "Shooter leader stator current")
+    public double getShooterLeaderStatorCurrent() {
+        return shooterLeader.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Shooter leader supply current")
+    public double getShooterLeaderSupplyCurrent() {
+        return shooterLeader.getSupplyCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Shooter follower stator current")
+    public double getShooterFollowerStatorCurrent() {
+        return shooterFollower.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Shooter follower supply current")
+    public double getShooterFollowerSupplyCurrent() {
+        return shooterFollower.getSupplyCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Accelerator velocity")
+    public double getAcceleratorVelocity() {
+        return acceleratorLeader.getVelocity().getValueAsDouble();
+    }
+
+    @Logged(name = "Accelerator leader stator current")
+    public double getAcceleratorLeaderStatorCurrent() {
+        return acceleratorLeader.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Accelerator leader supply current")
+    public double getAcceleratorLeaderSupplyCurrent() {
+        return acceleratorLeader.getSupplyCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Accelerator follower stator current")
+    public double getAcceleratorFollowerStatorCurrent() {
+        return acceleratorFollower.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Accelerator follower supply current")
+    public double getAcceleratorFollowerSupplyCurrent() {
+        return acceleratorFollower.getSupplyCurrent().getValueAsDouble();
     }
 
     @Override

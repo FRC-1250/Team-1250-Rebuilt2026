@@ -24,6 +24,7 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -147,6 +148,56 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
     public boolean isHopperNearPosition(double rotations, double tolerance) {
         return hopper.getPosition().isNear(rotations, tolerance);
+    }
+
+    @Logged(name = "Intake upper velocity")
+    public double getIntakeUpperVelocity() {
+        return intakeUpper.getVelocity().getValueAsDouble();
+    }
+
+    @Logged(name = "intake upper stator current")
+    public double getIntakeUpperStatorCurrent() {
+        return intakeUpper.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "intake upper supply current")
+    public double getIntakeUpperSupplyCurrent() {
+        return intakeUpper.getSupplyCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Intake lower velocity")
+    public double getIntakeLowerVelocity() {
+        return intakeLower.getVelocity().getValueAsDouble();
+    }
+
+    @Logged(name = "intake lower stator current")
+    public double getIntakeLowerCurrent() {
+        return intakeLower.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "intake lower supply current")
+    public double getIntakeLowerSupplyCurrent() {
+        return intakeLower.getSupplyCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Hopper position")
+    public double getHopperPosition() {
+        return hopper.getPosition().getValueAsDouble();
+    }
+
+    @Logged(name = "Hopper stator current")
+    public double getHopperStatorCurrent() {
+        return hopper.getStatorCurrent().getValueAsDouble();
+    }
+
+    @Logged(name = "Hopper supply current")
+    public double getHopperSupplyCurrent() {
+        return hopper.getSupplyCurrent().getValueAsDouble();
+    }
+
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
     }
 
     @Override
