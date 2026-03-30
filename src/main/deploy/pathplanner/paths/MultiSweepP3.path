@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.825,
-        "y": 5.75
+        "x": 5.643452211126961,
+        "y": 5.374151212553495
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.2058313253012045,
-        "y": 4.931072289156628
+        "x": 5.878677535796699,
+        "y": 5.289480989723883
       },
       "isLocked": false,
-      "linkedName": "DepotCollectEnd"
+      "linkedName": "MultiSweepP2"
     },
     {
       "anchor": {
-        "x": 0.403295292439371,
-        "y": 0.6256633380884444
+        "x": 1.793,
+        "y": 5.355
       },
       "prevControl": {
-        "x": 1.403295292439371,
-        "y": 0.6256633380884443
+        "x": 2.217205747258345,
+        "y": 5.328770839813463
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "OutpostCollectStart"
+      "linkedName": "LeftTowerFiringPosition"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.4776119402985081,
+      "rotationDegrees": 180.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -42,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -35.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
-    "velocity": 1.25,
-    "rotation": -135.0
+    "velocity": 0,
+    "rotation": -177.27368900609375
   },
   "useDefaultConstraints": true
 }

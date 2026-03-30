@@ -1,0 +1,131 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.752453637660485,
+        "y": 6.435121255349501
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.768242057004907,
+        "y": 6.142424008856762
+      },
+      "isLocked": false,
+      "linkedName": "LeftBumpMultiSweepCollect"
+    },
+    {
+      "anchor": {
+        "x": 7.752453637660485,
+        "y": 4.546077032810271
+      },
+      "prevControl": {
+        "x": 7.98010044407458,
+        "y": 4.766448816746134
+      },
+      "nextControl": {
+        "x": 7.507444891872,
+        "y": 4.308898153651817
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.691483594864478,
+        "y": 4.42962910128388
+      },
+      "prevControl": {
+        "x": 7.000371705082012,
+        "y": 4.230541408028865
+      },
+      "nextControl": {
+        "x": 6.282230942751767,
+        "y": 4.693404765585873
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.484465049928673,
+        "y": 6.31867332382311
+      },
+      "prevControl": {
+        "x": 7.021891082941808,
+        "y": 6.301016500970974
+      },
+      "nextControl": {
+        "x": 6.006232888189213,
+        "y": 6.334385366119768
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.070427960057061,
+        "y": 6.31867332382311
+      },
+      "prevControl": {
+        "x": 6.382990963204833,
+        "y": 6.259568021333701
+      },
+      "nextControl": {
+        "x": 5.824781345969739,
+        "y": 6.365124814514304
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.643452211126961,
+        "y": 5.374151212553495
+      },
+      "prevControl": {
+        "x": 5.777800723141366,
+        "y": 5.608270171691001
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "MultiSweepP2"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0149253731343162,
+      "rotationDegrees": -90.0
+    },
+    {
+      "waypointRelativePos": 2.0724946695095814,
+      "rotationDegrees": 90.0
+    },
+    {
+      "waypointRelativePos": 2.507462686567151,
+      "rotationDegrees": 90.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 1.5,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 270.0,
+    "maxAngularAcceleration": 640.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -177.27368900609375
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -90.0
+  },
+  "useDefaultConstraints": true
+}

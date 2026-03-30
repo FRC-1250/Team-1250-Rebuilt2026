@@ -4,55 +4,50 @@
     {
       "anchor": {
         "x": 3.64,
-        "y": 2.36
+        "y": 5.85
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.89,
-        "y": 2.36
+        "x": 4.453095577741281,
+        "y": 5.490599144085409
       },
       "isLocked": false,
-      "linkedName": "RightBumpAlliance0"
+      "linkedName": "LeftBumpAlliance0"
     },
     {
       "anchor": {
-        "x": 0.403295292439371,
-        "y": 0.6256633380884444
+        "x": 7.752453637660485,
+        "y": 6.435121255349501
       },
       "prevControl": {
-        "x": 1.1532952924393713,
-        "y": 0.6256633380884443
+        "x": 7.506619115544419,
+        "y": 6.33161198288712
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "OutpostCollectStart"
+      "linkedName": "LeftBumpMultiSweepCollect"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.36886993603411566,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "reset_starting_fuel",
-      "waypointRelativePos": 0.1484098939929463,
+      "name": "shooter_prep",
+      "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "reset_starting_fuel"
-        }
-      }
+      "command": null
     },
     {
       "name": "activate_fuel_pick_up",
-      "waypointRelativePos": 0.7505300353357033,
+      "waypointRelativePos": 0.47265361242403064,
       "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "activate_fuel_pick_up"
-        }
-      }
+      "command": null
     }
   ],
   "globalConstraints": {
@@ -64,8 +59,8 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 1.25,
-    "rotation": 0.0
+    "velocity": 0,
+    "rotation": -90.0
   },
   "reversed": false,
   "folder": null,
