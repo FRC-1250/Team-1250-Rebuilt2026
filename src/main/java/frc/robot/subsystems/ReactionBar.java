@@ -20,7 +20,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
-import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -94,11 +93,6 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
         reactionBar.stopMotor();
     }
 
-    @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
-    }
-
     public void setReactionBarPosition(double rotations) {
         reactionBar.setControl(
                 reactionBarPositionControl
@@ -117,21 +111,6 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
 
     public void resetAgitation() {
         active.reset();
-    }
-
-    @Logged(name = "Reaction bar abs position")
-    public double getReactionBarPosition() {
-        return reactionBarEncoder.getAbsolutePosition().getValueAsDouble();
-    }
-
-    @Logged(name = "Reaction bar stator current")
-    public double getReactionBarStatorCurrent() {
-        return reactionBar.getStatorCurrent().getValueAsDouble();
-    }
-
-    @Logged(name = "Reaction bar supply current")
-    public double getReactionBarSupplyCurrent() {
-        return reactionBar.getSupplyCurrent().getValueAsDouble();
     }
 
     @Override

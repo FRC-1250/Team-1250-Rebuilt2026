@@ -45,20 +45,11 @@ public class RobotContainer {
 
     /* Subsystems */
     private final CommandSwerveDrivetrain swerve = TunerConstants.createDrivetrain();
-
-    @Logged(name = "Fuel line")
     private final FuelLine fuelLine = new FuelLine();
-
-    @Logged(name = "Intake")
     private final Intake intake = new Intake();
-
-    @Logged(name = "Shooter")
     private final Shooter shooter = new Shooter();
-
     private final Limelight limelight = new Limelight();
     private final Limelight limelightRear = new Limelight("rear");
-
-    @Logged(name = "Reaction bar")
     private final ReactionBar reactionBar = new ReactionBar();
 
     public final CommandFactory commandFactory = new CommandFactory(
@@ -83,6 +74,7 @@ public class RobotContainer {
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
+    @Logged
     private final SendableChooser<EventLoop> robotOperationModeChooser = new SendableChooser<>();
     private final EventLoop singlePlayer = new EventLoop();
 
@@ -101,6 +93,7 @@ public class RobotContainer {
     private Trigger robotIsAligned;
 
     /* Auto */
+    @Logged
     private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
     public RobotContainer() {

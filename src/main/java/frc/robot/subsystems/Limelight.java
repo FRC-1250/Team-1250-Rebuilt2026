@@ -60,7 +60,4 @@ public class Limelight extends SubsystemBase {
                 .ignoringDisable(true);
     }
 
-    @Override
-    public void periodic() {
-    }
 }
