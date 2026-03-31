@@ -143,7 +143,6 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
         loader.getConfigurator().apply(talonFXConfiguration);
         loader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
-        loader.optimizeBusUtilization();
     }
 
     private void configureRoller() {
@@ -165,6 +164,5 @@ public class FuelLine extends SubsystemBase implements MonitoredSubsystem {
 
         roller.getConfigurator().apply(talonFXConfiguration);
         roller.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
-        roller.optimizeBusUtilization();
     }
 }

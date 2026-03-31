@@ -249,11 +249,9 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
         acceleratorLeader.getConfigurator().apply(talonFXConfiguration);
         acceleratorLeader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
-        acceleratorLeader.optimizeBusUtilization();
 
         acceleratorFollower.getConfigurator().apply(talonFXConfiguration);
         acceleratorFollower.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
-        acceleratorFollower.optimizeBusUtilization();
         acceleratorFollower.setControl(acceleratorFollowerControl);
     }
 
@@ -277,11 +275,9 @@ public class Shooter extends SubsystemBase implements MonitoredSubsystem {
 
         shooterLeader.getConfigurator().apply(talonFXConfiguration);
         shooterLeader.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
-        shooterLeader.optimizeBusUtilization();
 
         shooterFollower.getConfigurator().apply(talonFXConfiguration);
         shooterFollower.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
-        shooterFollower.optimizeBusUtilization();
         shooterFollower.setControl(shooterFollowerControl);
     }
 }

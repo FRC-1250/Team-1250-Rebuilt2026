@@ -277,12 +277,10 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         talonFXConfiguration.MotorOutput = motorOutputConfigsUpper;
         intakeUpper.getConfigurator().apply(talonFXConfiguration);
         intakeUpper.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
-        intakeUpper.optimizeBusUtilization();
 
         talonFXConfiguration.MotorOutput = motorOutputConfigsLower;
         intakeLower.getConfigurator().apply(talonFXConfiguration);
         intakeLower.getVelocity().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
-        intakeLower.optimizeBusUtilization();
     }
 
     private void configureMotionMagicHopper() {
@@ -323,7 +321,6 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         hopper.getConfigurator().apply(talonFXConfiguration);
         hopper.setPosition(0);
         hopper.getPosition().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
-        hopper.optimizeBusUtilization();
     }
 
 }

@@ -74,7 +74,6 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
         reactionBar.getConfigurator().apply(talonFXConfiguration);
         reactionBar.getPosition().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
         reactionBar.getRotorPosition().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
-        reactionBar.optimizeBusUtilization();
 
         CANcoderConfiguration canCoderConfiguration = new CANcoderConfiguration();
         canCoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
@@ -84,7 +83,6 @@ public class ReactionBar extends SubsystemBase implements MonitoredSubsystem {
         reactionBarEncoder.getConfigurator().apply(canCoderConfiguration);
         reactionBarEncoder.getPosition().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
         reactionBarEncoder.getAbsolutePosition().setUpdateFrequency(Frequency.ofBaseUnits(100, Hertz));
-        reactionBarEncoder.optimizeBusUtilization();
 
         configureAgitiationProfiles();
         active = wave;
