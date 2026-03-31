@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.55,
+        "x": 5.54,
         "y": 5.85
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.55,
-        "y": 5.85
+        "x": 5.276834560875655,
+        "y": 5.841342066641777
       },
       "isLocked": false,
       "linkedName": "LeftBumpNeutral180"
     },
     {
       "anchor": {
-        "x": 3.64,
-        "y": 5.85
+        "x": 3.63796005706134,
+        "y": 5.865820256776035
       },
       "prevControl": {
-        "x": 4.640000000000001,
-        "y": 5.85
+        "x": 4.570746564801441,
+        "y": 5.861804864549595
       },
       "nextControl": null,
       "isLocked": false,

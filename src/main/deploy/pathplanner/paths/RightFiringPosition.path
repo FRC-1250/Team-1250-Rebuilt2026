@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.64,
-        "y": 2.370000000000001
+        "x": 3.63796005706134,
+        "y": 2.3441797432239655
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.463223304703363,
-        "y": 2.1932233047033645
+        "x": 3.461183361764703,
+        "y": 2.167403047927329
       },
       "isLocked": false,
       "linkedName": "RightBumpAlliance180"
@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 2.879976695296637,
-        "y": 1.538223304703364
+        "y": 1.5382233047033642
       },
       "nextControl": null,
       "isLocked": false,
