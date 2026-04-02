@@ -4,6 +4,10 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -11,8 +15,6 @@ import frc.robot.utility.LimelightHelpers;
 import frc.robot.utility.LimelightHelpers.PoseEstimate;
 
 public class Limelight extends SubsystemBase {
-
-    private final String name;
 
     public enum LimeLightPipeline {
         DEFAULT(0),
@@ -26,12 +28,25 @@ public class Limelight extends SubsystemBase {
         }
     }
 
-    public Limelight(String name) {
+    public enum LimelightLocalizationMode {
+        ENABLED,
+        DISABED
+    }
+
+    private final String name;
+    private final LimelightLocalizationMode mode;
+    private final StructPublisher<Pose2d> llPosePublisher;
+    private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    private final NetworkTable llTable = inst.getTable("Robot/RobotContainer/limelight");
+
+    public Limelight(String name, LimelightLocalizationMode mode) {
         this.name = name;
+        this.mode = mode;
+        this.llPosePublisher = llTable.getStructTopic(name, Pose2d.struct).publish();
     }
 
     public Limelight() {
-        name = "limelight";
+        this("limelight", LimelightLocalizationMode.ENABLED);
     }
 
     public double getFid() {
@@ -60,7 +75,12 @@ public class Limelight extends SubsystemBase {
                 .ignoringDisable(true);
     }
 
-    @Override
-    public void periodic() {
+    public LimelightLocalizationMode getMode() {
+        return mode;
     }
+
+    public StructPublisher<Pose2d> getPosePublisher() {
+        return llPosePublisher;
+    }
+
 }

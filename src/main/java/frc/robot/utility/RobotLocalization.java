@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Limelight.LimelightLocalizationMode;
 import frc.robot.utility.LimelightHelpers.PoseEstimate;
 import frc.robot.utility.LimelightHelpers.RawFiducial;
 
@@ -90,9 +91,12 @@ public class RobotLocalization {
             }
 
             xTrust = yTrust = calculateTrust(megaTag);
+            limelight.getPosePublisher().set(megaTag.pose);
 
-            swerveDrivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(xTrust, yTrust, 9999999));
-            swerveDrivetrain.addVisionMeasurement(megaTag.pose, megaTag.timestampSeconds);
+            if (limelight.getMode() == LimelightLocalizationMode.ENABLED) {
+                swerveDrivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(xTrust, yTrust, 9999999));
+                swerveDrivetrain.addVisionMeasurement(megaTag.pose, megaTag.timestampSeconds);
+            }
         }
 
         if (reportTimer.advanceIfElapsed(5)) {

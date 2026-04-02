@@ -39,6 +39,7 @@ import frc.robot.subsystems.Shooter.ShooterVelocity;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.ReactionBar;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Limelight.LimelightLocalizationMode;
 import frc.robot.telemetry.HealthMonitor;
 
 public class RobotContainer {
@@ -55,8 +56,8 @@ public class RobotContainer {
     @Logged(name = "Shooter")
     private final Shooter shooter = new Shooter();
 
-    private final Limelight limelight = new Limelight();
-    private final Limelight limelightRear = new Limelight("rear");
+    private final Limelight limelight = new Limelight("limelight", LimelightLocalizationMode.ENABLED);
+    private final Limelight limelightRear = new Limelight("rear", LimelightLocalizationMode.DISABED);
 
     @Logged(name = "Reaction bar")
     private final ReactionBar reactionBar = new ReactionBar();
