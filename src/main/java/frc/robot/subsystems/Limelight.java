@@ -37,12 +37,12 @@ public class Limelight extends SubsystemBase {
     private final LimelightLocalizationMode mode;
     private final StructPublisher<Pose2d> llPosePublisher;
     private final NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    private final NetworkTable llTable = inst.getTable("Robot/RobotContainer/limelight");
+    private final NetworkTable llTable = inst.getTable("Robot/RobotContainer/Limelight");
 
     public Limelight(String name, LimelightLocalizationMode mode) {
         this.name = name;
         this.mode = mode;
-        this.llPosePublisher = llTable.getStructTopic(name, Pose2d.struct).publish();
+        this.llPosePublisher = llTable.getStructTopic(name + " pose2d", Pose2d.struct).publish();
     }
 
     public Limelight() {
