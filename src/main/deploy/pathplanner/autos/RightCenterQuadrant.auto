@@ -31,7 +31,7 @@
         {
           "type": "named",
           "data": {
-            "name": "fire_fuel"
+            "name": "fire_fuel_by_distance"
           }
         }
       ]
