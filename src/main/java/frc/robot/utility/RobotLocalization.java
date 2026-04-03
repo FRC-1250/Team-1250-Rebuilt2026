@@ -61,47 +61,48 @@ public class RobotLocalization {
             PoseEstimate megaTag = limelight.getBotPoseEstimate_wpiBlue_MegaTag2();
             framesProcessed++;
 
+            if (reportTimer.advanceIfElapsed(5)) {
+                reportToNT();
+                reportTimer.reset();
+            }
+
             if (Math.abs(Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond)) > maxRadiansPerSecond)
-                return;
+                continue;
 
             if (megaTag == null)
-                return;
+                continue;
 
             if (megaTag.tagCount == 0)
-                return;
+                continue;
 
             if (areAnyTagsAmbiguous(megaTag.rawFiducials)) {
                 tagAmbiguous++;
-                return;
+                continue;
             }
 
             if (isTagTooSmall(megaTag.rawFiducials)) {
                 tagTooSmall++;
-                return;
+                continue;
             }
 
             if (isEstimateOutOfBounds(megaTag.pose)) {
                 resultOutOfBounds++;
-                return;
-            }
-
-            if (hasTeleported(megaTag.pose, driveState.Pose, maxTeleportDistance)) {
-                resultTeleported++;
-                return;
+                continue;
             }
 
             xTrust = yTrust = calculateTrust(megaTag);
             limelight.getPosePublisher().set(megaTag.pose);
 
             if (limelight.getMode() == LimelightLocalizationMode.ENABLED) {
+
+                if (hasTeleported(megaTag.pose, driveState.Pose, maxTeleportDistance)) {
+                    resultTeleported++;
+                    continue;
+                }
+
                 swerveDrivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(xTrust, yTrust, 9999999));
                 swerveDrivetrain.addVisionMeasurement(megaTag.pose, megaTag.timestampSeconds);
             }
-        }
-
-        if (reportTimer.advanceIfElapsed(5)) {
-            reportToNT();
-            reportTimer.reset();
         }
 
     }
