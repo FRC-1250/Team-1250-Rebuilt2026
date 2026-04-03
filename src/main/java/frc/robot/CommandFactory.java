@@ -144,6 +144,12 @@ public class CommandFactory {
         }).ignoringDisable(true);
     }
 
+    public Command cmdResetHopperPositionExtended() {
+        return Commands.runOnce(() -> {
+            intake.resetHopperPosition(HopperPosition.MAX.rotations);
+        }).ignoringDisable(true);
+    }
+
     public Command cmdSetHopperNeutralMode(NeutralModeValue neutralModeValue) {
         return Commands.runOnce(() -> intake.setHopperNeutralMode(neutralModeValue), intake);
     }

@@ -158,8 +158,8 @@ public class RobotContainer {
         primary.leftTrigger(0.5, singlePlayer).whileTrue(
                 swerve.applyRequest(
                         () -> driveWithAngle
-                                .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
-                                .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
+                                .withVelocityX(yLimiter.calculate(-primary.getLeftY() * (MaxSpeed * 0.5)))
+                                .withVelocityY(xLimiter.calculate(-primary.getLeftX() * (MaxSpeed * 0.5)))
                                 .withHeadingPID(15, 0, 0)
                                 .withTargetDirection(commandFactory.getRotationToTargetBasedOnZone()))
                         .withName("Point centric swerve"));
@@ -167,8 +167,8 @@ public class RobotContainer {
         primary.b(singlePlayer).whileTrue(
                 swerve.applyRequest(
                         () -> driveWithAngle
-                                .withVelocityX(yLimiter.calculate(-primary.getLeftY() * (MaxSpeed / 3)))
-                                .withVelocityY(xLimiter.calculate(-primary.getLeftX() * (MaxSpeed / 3)))
+                                .withVelocityX(yLimiter.calculate(-primary.getLeftY() * (MaxSpeed * 0.33)))
+                                .withVelocityY(xLimiter.calculate(-primary.getLeftX() * (MaxSpeed * 0.33)))
                                 .withHeadingPID(15, 0, 0)
                                 .withTargetDirection(Rotation2d.k180deg))
                         .withName("Snap backwards"));
@@ -176,8 +176,8 @@ public class RobotContainer {
         primary.a(singlePlayer).whileTrue(
                 swerve.applyRequest(
                         () -> driveWithAngle
-                                .withVelocityX(yLimiter.calculate(-primary.getLeftY() * (MaxSpeed / 3)))
-                                .withVelocityY(xLimiter.calculate(-primary.getLeftX() * (MaxSpeed / 3)))
+                                .withVelocityX(yLimiter.calculate(-primary.getLeftY() * (MaxSpeed * 0.33)))
+                                .withVelocityY(xLimiter.calculate(-primary.getLeftX() * (MaxSpeed * 0.33)))
                                 .withHeadingPID(15, 0, 0)
                                 .withTargetDirection(Rotation2d.kZero))
                         .withName("Snap forward"));
@@ -194,8 +194,8 @@ public class RobotContainer {
     private void configureCommonBindings(EventLoop loop) {
         swerve.setDefaultCommand(
                 swerve.applyRequest(() -> drive
-                        .withVelocityX(yLimiter.calculate(-primary.getLeftY() * MaxSpeed))
-                        .withVelocityY(xLimiter.calculate(-primary.getLeftX() * MaxSpeed))
+                        .withVelocityX(yLimiter.calculate(-primary.getLeftY() * (MaxSpeed * 0.8)))
+                        .withVelocityY(xLimiter.calculate(-primary.getLeftX() * (MaxSpeed * 0.8)))
                         .withRotationalRate(-primary.getRightX() * MaxAngularRate))
                         .withName("Field centric swerve"));
 
