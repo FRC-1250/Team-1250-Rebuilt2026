@@ -36,7 +36,7 @@ import frc.robot.utility.AgitationStep;
 public class Intake extends SubsystemBase implements MonitoredSubsystem {
     public enum HopperPosition {
         MIN(0),
-        HOME(0.1),
+        HOME(0.25),
         EXTENDED(4),
         MAX(4.05);
 
