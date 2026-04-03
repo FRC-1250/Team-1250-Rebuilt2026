@@ -274,7 +274,7 @@ public class RobotContainer {
 
     private void configureNamedCommands() {
         final double fireTimeout = 5;
-        final double aimingTimeout = 2;
+        final double aimingTimeout = 1;
 
         NamedCommands.registerCommand("shooter_prep", commandFactory.cmdWarmUpShooter());
         NamedCommands.registerCommand("fire_fuel",
