@@ -267,7 +267,8 @@ public class RobotContainer {
         addPathAuto("RightCenterQuadrant", "RightCenterQuadrant");
         addPathAuto("LeftDepot", "LeftDepot");
         addPathAuto("RightOutpost", "RightOutpost");
-        addPathAuto("DepotOutpost", "DepotOutpost");
+        addPathAuto("LeftDepotOutpost", "LeftDepotOutpost");
+        addPathAuto("CenterDepotOutpost", "CenterDepotOutpost");
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
