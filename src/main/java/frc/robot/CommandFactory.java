@@ -84,7 +84,7 @@ public class CommandFactory {
     public Command cmdSetReactionBarPosition(DoubleSupplier supplier) {
         return Commands.runOnce(() -> reactionBar.setReactionBarPosition(supplier.getAsDouble()), reactionBar)
                 .andThen(
-                        Commands.waitUntil((() -> reactionBar.isReactionBarNearPosition(supplier.getAsDouble(), .08))));
+                        Commands.waitUntil((() -> reactionBar.isReactionBarNearPosition(supplier.getAsDouble(), .16))));
     }
 
     public Command cmdSetReactionBarPosition(double rotations) {
@@ -120,6 +120,56 @@ public class CommandFactory {
 
     public Command cmdStopHopper() {
         return Commands.runOnce(() -> intake.stopHopper(), intake);
+    }
+
+    public Command cmdMonitorHopperAmps(double thresholdAmps) {
+        return new Command() {
+            private final double[] history = new double[10];
+            private int idx = 0;
+            private boolean triggered = false;
+            private static final double HYSTERESIS = 2.5;
+
+            {
+                addRequirements(intake); // Ensures scheduler handles interruption safely
+            }
+
+            @Override
+            public void initialize() {
+            }
+
+            @Override
+            public void execute() {
+                if (triggered)
+                    return;
+
+                history[idx % 10] = intake.getHopperStatorCurrent();
+                idx++;
+
+                double sum = 0;
+                for (double val : history)
+                    sum += val;
+                double avg = sum / 10.0;
+
+                if (avg > thresholdAmps + HYSTERESIS) {
+                    triggered = true;
+                    intake.stopHopper(); // Respects your NeutralMode config
+                }
+            }
+
+            @Override
+            public boolean isFinished() {
+                return triggered;
+            }
+
+            @Override
+            public void end(boolean interrupted) {
+            }
+
+            @Override
+            public boolean runsWhenDisabled() {
+                return false;
+            }
+        }.withName("MonitorHopperAmps");
     }
 
     public Command cmdResetHopperPositionRetract() {
@@ -299,7 +349,8 @@ public class CommandFactory {
                 cmdSetHopperPosition(HopperPosition.EXTENDED.rotations),
                 cmdStopHopper(),
                 cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations),
-                cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond))
+                cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond),
+                cmdMonitorHopperAmps(30))
                 .withName("Activate fuel pick up");
     }
 

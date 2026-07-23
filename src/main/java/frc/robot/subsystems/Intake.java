@@ -12,6 +12,7 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
+import com.ctre.phoenix6.configs.Slot2Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
@@ -69,6 +70,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
     private final TalonFX hopper = new TalonFX(41);
     private final PositionVoltage hopperPositionVoltage = new PositionVoltage(0).withSlot(1);
+    private final PositionVoltage hopperHoldPosition = new PositionVoltage(0).withSlot(2);
 
     private final Color systemColor = new Color(0, 0, 0);
 
@@ -140,6 +142,12 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
 
     public void stopHopper() {
         hopper.stopMotor();
+        holdHopperPosition();
+    }
+
+    public void holdHopperPosition() {
+        var pos = hopper.getPosition().waitForUpdate(0.02);
+        hopper.setControl(hopperHoldPosition.withPosition(pos.getValueAsDouble()).withSlot(2));
     }
 
     public void setHopperNeutralMode(NeutralModeValue neutralModeValue) {
@@ -302,6 +310,9 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         positionGains.kP = 2; // output per unit of error in position (output/rotation)
         positionGains.kI = 0; // output per unit of integrated error in position (output/(rotation*s))
         positionGains.kD = 0.01; // output per unit of error in velocity (output/rps)
+
+        Slot2Configs holdConfigs = talonFXConfiguration.Slot2;
+        holdConfigs.kP = 8;
 
         CurrentLimitsConfigs currentLimitsConfigs = talonFXConfiguration.CurrentLimits;
         currentLimitsConfigs.SupplyCurrentLimit = 20;
