@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 
@@ -125,9 +126,8 @@ public class CommandFactory {
     public Command cmdMonitorHopperAmps(double thresholdAmps) {
         return new Command() {
             private final double[] history = new double[10];
-            private int idx = 0;
+            private int index = 0;
             private boolean triggered = false;
-            private static final double HYSTERESIS = 2.5;
 
             {
                 addRequirements(intake); // Ensures scheduler handles interruption safely
@@ -135,6 +135,7 @@ public class CommandFactory {
 
             @Override
             public void initialize() {
+                Arrays.fill(history, 0.0);
             }
 
             @Override
@@ -142,15 +143,15 @@ public class CommandFactory {
                 if (triggered)
                     return;
 
-                history[idx % 10] = intake.getHopperStatorCurrent();
-                idx++;
+                history[index % 10] = intake.getHopperStatorCurrent();
+                index++;
 
                 double sum = 0;
                 for (double val : history)
                     sum += val;
                 double avg = sum / 10.0;
 
-                if (avg > thresholdAmps + HYSTERESIS) {
+                if (avg > thresholdAmps) {
                     triggered = true;
                     intake.stopHopper(); // Respects your NeutralMode config
                 }
@@ -350,7 +351,7 @@ public class CommandFactory {
                 cmdStopHopper(),
                 cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations),
                 cmdSetIntakeVelocity(IntakeVelocity.GO.rotationsPerSecond),
-                cmdMonitorHopperAmps(30))
+                cmdMonitorHopperAmps(80))
                 .withName("Activate fuel pick up");
     }
 
