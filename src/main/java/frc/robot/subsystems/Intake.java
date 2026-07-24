@@ -312,7 +312,7 @@ public class Intake extends SubsystemBase implements MonitoredSubsystem {
         positionGains.kD = 0.01; // output per unit of error in velocity (output/rps)
 
         Slot2Configs holdConfigs = talonFXConfiguration.Slot2;
-        holdConfigs.kP = 8;
+        holdConfigs.kP = 20;
 
         CurrentLimitsConfigs currentLimitsConfigs = talonFXConfiguration.CurrentLimits;
         currentLimitsConfigs.SupplyCurrentLimit = 20;
