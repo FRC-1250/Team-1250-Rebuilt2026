@@ -60,8 +60,10 @@ public class Robot extends TimedRobot {
         robotContainer.commandFactory.robotLocalization.processMegaTag2Measurement();
         robotContainer.commandFactory.robotLocalization.processActiveZone();
         robotContainer.commandFactory.updateTargetState();
+        robotContainer.processShiftClock();
         CommandScheduler.getInstance().run();
         SmartDashboard.putNumber("Match time", DriverStation.getMatchTime());
+        SmartDashboard.putNumber("Shift time", robotContainer.getTimeLeftInShift());
     }
 
     @Override

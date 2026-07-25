@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -21,7 +22,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,6 +44,10 @@ import frc.robot.subsystems.ReactionBar;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Limelight.LimelightLocalizationMode;
 import frc.robot.telemetry.HealthMonitor;
+import frc.robot.utility.HubTracker;
+import frc.robot.utility.HubTracker.Shift;
+import frc.robot.utility.RumbleProfile;
+import frc.robot.utility.RumbleStep;
 
 public class RobotContainer {
 
@@ -104,6 +111,44 @@ public class RobotContainer {
     /* Auto */
     private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
+    private final double SHIFT_CLOCK_WARNING = 10.0;
+    private double timeLeftInShift = 0;
+    private Shift shift = Shift.AUTO;
+    private Optional<Time> timeOpt;
+    private Optional<Shift> shiftOpt;
+
+    public Shift getShift() {
+        return shift;
+    }
+
+    public double getTimeLeftInShift() {
+        return timeLeftInShift;
+    }
+
+    public void processShiftClock() {
+        timeOpt = HubTracker.timeRemainingInCurrentShift();
+        if (timeOpt.isPresent()) {
+            timeLeftInShift = timeOpt.get().baseUnitMagnitude();
+        } else {
+            timeLeftInShift = Double.MAX_VALUE;
+        }
+
+        shiftOpt = HubTracker.getCurrentShift();
+        if (shiftOpt.isPresent()) {
+            shift = shiftOpt.get();
+        } else {
+            shift = Shift.AUTO;
+        }
+    }
+
+    private RumbleProfile shiftTransition = new RumbleProfile();
+    private RumbleProfile positionWarning = new RumbleProfile();
+    private RumbleProfile activeHub = new RumbleProfile();
+
+    private Trigger hubActiveSoon;
+    private Trigger hubActive;
+    private Trigger shiftChanged;
+
     public RobotContainer() {
         configureRobotOperationMode();
         configureSinglePlayerBindings();
@@ -112,10 +157,30 @@ public class RobotContainer {
         configureNamedCommands();
         configureAutoCommands();
         configureHealthMonitor();
+        configureShiftTransition();
+        configurePositionWarning();
+        configureActiveHub();
     }
 
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
+    }
+
+    private void configureShiftTransition() {
+        shiftTransition.addStep(new RumbleStep(RumbleType.kBothRumble, 1, 0.5));
+        shiftTransition.addStep(new RumbleStep(RumbleType.kBothRumble, 0.00, 5.00));
+    }
+
+    private void configurePositionWarning() {
+        positionWarning.addStep(new RumbleStep(RumbleType.kLeftRumble, 0.50, 0.25));
+        positionWarning.addStep(new RumbleStep(RumbleType.kLeftRumble, 0.0, 0.25));
+        positionWarning.addStep(new RumbleStep(RumbleType.kRightRumble, 0.50, 0.25));
+        positionWarning.addStep(new RumbleStep(RumbleType.kRightRumble, 0.0, 0.25));
+    }
+
+    private void configureActiveHub() {
+        activeHub.addStep(new RumbleStep(RumbleType.kBothRumble, 0.05, 3.0));
+        activeHub.addStep(new RumbleStep(RumbleType.kBothRumble, 0.25, 0.25));
     }
 
     private void configureHealthMonitor() {
@@ -139,6 +204,22 @@ public class RobotContainer {
 
     private void configureSinglePlayerBindings() {
         configureCommonBindings(singlePlayer);
+
+        shiftChanged.whileTrue(Commands.run(() -> {
+            var t = shiftTransition.shift();
+            primary.setRumble(t.getRumbleType(), t.getIntensity());
+        })).onFalse(Commands.runOnce(() -> {
+            primary.setRumble(RumbleType.kBothRumble, 0);
+            shiftTransition.reset();
+        }));
+
+        hubActiveSoon.whileTrue(Commands.run(() -> {
+            var t = positionWarning.shift();
+            primary.setRumble(t.getRumbleType(), t.getIntensity());
+        })).onFalse(Commands.runOnce(() -> {
+            primary.setRumble(RumbleType.kBothRumble, 0);
+            positionWarning.reset();
+        }));
 
         robotIsAligned = new Trigger(singlePlayer,
                 () -> commandFactory.targetManager.getTargetingState().isAligned());
@@ -198,8 +279,20 @@ public class RobotContainer {
                         .withVelocityY(xLimiter.calculate(-primary.getLeftX() * (MaxSpeed * 0.8)))
                         .withRotationalRate(-primary.getRightX() * MaxAngularRate))
                         .withName("Field centric swerve"));
-
         configureDevBindings();
+
+        shiftChanged = new Trigger(
+                loop,
+                () -> (timeLeftInShift <= 0.5));
+
+        hubActiveSoon = new Trigger(
+                loop,
+                () -> (timeLeftInShift <= SHIFT_CLOCK_WARNING
+                        && !HubTracker.isActive()));
+
+        hubActive = new Trigger(
+                loop,
+                () -> (HubTracker.isActive()));
     }
 
     private void addPathAuto(String name, String pathName) {
