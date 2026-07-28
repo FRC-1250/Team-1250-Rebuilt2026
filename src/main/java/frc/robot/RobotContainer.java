@@ -64,7 +64,7 @@ public class RobotContainer {
     private final Shooter shooter = new Shooter();
 
     private final Limelight limelight = new Limelight("limelight", LimelightLocalizationMode.ENABLED);
-    private final Limelight limelightRear = new Limelight("limelight-rear", LimelightLocalizationMode.DISABED);
+    private final Limelight limelightRear = new Limelight("limelight-rear", LimelightLocalizationMode.ENABLED);
 
     @Logged(name = "Reaction bar")
     private final ReactionBar reactionBar = new ReactionBar();
