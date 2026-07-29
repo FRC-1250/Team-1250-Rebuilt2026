@@ -136,6 +136,7 @@ public class CommandFactory {
             @Override
             public void initialize() {
                 Arrays.fill(history, 0.0);
+                SmartDashboard.putBoolean("Hopper holding", true);
             }
 
             @Override
@@ -164,6 +165,7 @@ public class CommandFactory {
 
             @Override
             public void end(boolean interrupted) {
+                SmartDashboard.putBoolean("Hopper holding", false);
             }
 
             @Override
@@ -297,7 +299,7 @@ public class CommandFactory {
                     intake.resetAgitation();
                     intake.setHopperPosition(HopperPosition.EXTENDED.rotations);
                     intake.stopHopper();
-                }, shooter, fuelLine);
+                }, shooter, fuelLine).andThen(cmdMonitorHopperAmps(80));
     }
 
     public Command cmdFireFuelNoAgitation(DoubleSupplier supplier) {
@@ -380,7 +382,8 @@ public class CommandFactory {
                 cmdSetFuelShooterVelocity(ShooterVelocity.UNJAM.rotationsPerSecond),
                 cmdSetFuelAcceleratorVelocity(ShooterVelocity.UNJAM.rotationsPerSecond),
                 cmdSetLoaderVelocity(LoaderVelocity.UNJAM.rotationsPerSecond),
-                cmdSetRollerVelocity(RollerVelocity.UNJAM.rotationsPerSecond));
+                cmdSetRollerVelocity(RollerVelocity.UNJAM.rotationsPerSecond),
+                cmdMonitorHopperAmps(80));
     }
 
     /*
