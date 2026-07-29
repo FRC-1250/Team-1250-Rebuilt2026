@@ -64,6 +64,7 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().run();
         SmartDashboard.putNumber("Match time", DriverStation.getMatchTime());
         SmartDashboard.putNumber("Shift time", robotContainer.getTimeLeftInShift());
+        SmartDashboard.putString("Shift", robotContainer.getShift().toString());
     }
 
     @Override
