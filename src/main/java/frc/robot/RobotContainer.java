@@ -205,22 +205,6 @@ public class RobotContainer {
     private void configureSinglePlayerBindings() {
         configureCommonBindings(singlePlayer);
 
-        shiftChanged.whileTrue(Commands.run(() -> {
-            var t = shiftTransition.shift();
-            primary.setRumble(t.getRumbleType(), t.getIntensity());
-        })).onFalse(Commands.runOnce(() -> {
-            primary.setRumble(RumbleType.kBothRumble, 0);
-            shiftTransition.reset();
-        }));
-
-        hubActiveSoon.whileTrue(Commands.run(() -> {
-            var t = positionWarning.shift();
-            primary.setRumble(t.getRumbleType(), t.getIntensity());
-        })).onFalse(Commands.runOnce(() -> {
-            primary.setRumble(RumbleType.kBothRumble, 0);
-            positionWarning.reset();
-        }));
-
         robotIsAligned = new Trigger(singlePlayer,
                 () -> commandFactory.targetManager.getTargetingState().isAligned());
 
