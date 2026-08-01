@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LeftBumpToDepotCollect"
+            "pathName": "RightTrenchStart"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "DepotCollect"
+            "pathName": "OutpostCollect"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "DepotCollectToLeftFiringPosition"
+            "pathName": "OutpostCollectToRightFiringPosition"
           }
         },
         {

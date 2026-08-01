@@ -298,7 +298,7 @@ public class CommandFactory {
                     fuelLine.stopRoller();
                     intake.resetAgitation();
                     intake.setHopperPosition(HopperPosition.EXTENDED.rotations);
-                    intake.stopHopper();
+                    // intake.stopHopper();
                 }, shooter, fuelLine).andThen(cmdMonitorHopperAmps(80));
     }
 

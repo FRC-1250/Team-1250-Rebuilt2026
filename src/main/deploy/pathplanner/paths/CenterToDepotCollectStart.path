@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "reset_starting_fuel",
-      "waypointRelativePos": 0.15123674911657342,
+      "waypointRelativePos": 0.3265508684863481,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
