@@ -386,6 +386,23 @@ public class CommandFactory {
                 cmdMonitorHopperAmps(80));
     }
 
+    public Command cmdUnjam() {
+        return Commands.sequence(
+                cmdSetHopperPosition(HopperPosition.EXTENDED.rotations),
+                cmdSetReactionBarPosition(ReactionBarPosition.EXTENDED.rotations),
+                cmdSetLoaderVelocity(LoaderVelocity.UNJAM.rotationsPerSecond),
+                cmdSetRollerVelocity(RollerVelocity.UNJAM.rotationsPerSecond),
+                cmdSetIntakeVelocity(IntakeVelocity.UNJAM.rotationsPerSecond),
+                cmdMonitorHopperAmps(80));
+    }
+
+    public Command cmdStopUnjam() {
+        return Commands.sequence(
+                cmdSetLoaderVelocity(LoaderVelocity.UNJAM.rotationsPerSecond),
+                cmdSetRollerVelocity(RollerVelocity.UNJAM.rotationsPerSecond),
+                cmdSetIntakeVelocity(IntakeVelocity.UNJAM.rotationsPerSecond));
+    }
+
     /*
      * Prove Out
      */

@@ -247,6 +247,8 @@ public class RobotContainer {
                                 .withTargetDirection(Rotation2d.kZero))
                         .withName("Snap forward"));
 
+        primary.y(singlePlayer).whileTrue(commandFactory.cmdUnjam()).onFalse(commandFactory.cmdActivateFuelPickUp());
+
         primary.rightBumper(singlePlayer)
                 .onTrue(commandFactory.cmdActivateFuelPickUp().withName("Activate fuel pick up")); // Intake out
         primary.leftBumper(singlePlayer)
